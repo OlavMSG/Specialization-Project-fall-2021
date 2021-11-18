@@ -129,7 +129,7 @@ dmypy.json
 .pyre/
 
 # other
-*.egg-info
+.idea
 
 # old code
 old_code
