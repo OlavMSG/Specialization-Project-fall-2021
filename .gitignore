@@ -127,3 +127,16 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# other
+*.egg-info
+
+# old code
+old_code
+# folders for saved data and plots
+reduced_order_error_check_plots
+saved_data
+other_plots
+
+# not finished files
+contour_and_mesh_plotter.py
