@@ -134,9 +134,9 @@ dmypy.json
 # old code
 old_code
 # folders for saved data and plots
-reduced_order_error_check_plots
-saved_data
-other_plots
+example_use/reduced_order_error_check_plots
+example_use/saved_data
+example_use/other_plots
 
 # not finished files
 contour_and_mesh_plotter.py

@@ -20,7 +20,7 @@ def dirichlet_bc_func(x, y):
 
 
 def main():
-    n_vec = [3, 4, 5, 10, 20, 30, 40]
+    n_vec = [3, 4, 5, 10, 20, 30, 40, 50]
     for n in n_vec:
         print(n)
         e_mean = 160e3
