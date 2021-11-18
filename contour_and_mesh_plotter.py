@@ -90,7 +90,7 @@ def meshplot(n_list, n_cols=3, save=False, deculany=False):
 
     # save the plot?
     if save:
-        plt.savefig("plot_mesh.pdf")
+        plt.savefig("other_plots/plot_mesh.pdf")
     plt.show()
 
 
