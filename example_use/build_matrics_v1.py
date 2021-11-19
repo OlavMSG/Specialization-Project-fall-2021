@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on 04.10.2021
-
 @author: Olav Milian Gran
 """
+
 from linear_elasticity_2d_solver import LinearElasticity2DProblem
 
 rho_steal = 8e3  # kg/m^3

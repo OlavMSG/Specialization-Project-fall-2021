@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on 15.11.2021
-
 @author: Olav Milian Gran
 """
+
 import numpy as np
 import matplotlib.pyplot as plt
 

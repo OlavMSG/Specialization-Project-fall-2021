@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on 04.10.2021
-
 @author: Olav Milian Gran
 """
+
 import numpy as np
 from linear_elasticity_2d_solver import TOL_EDGE
 
