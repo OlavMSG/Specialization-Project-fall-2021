@@ -6,6 +6,7 @@ import numpy as np
 
 from ._assembly import assemble_a1_a2_f, assemble_f_neumann
 from ._default_constants import PLATE_LIMITS
+from ._exceptions import EdgesAreIllegalError
 from ._getplate import getPlatev3
 from ._helpers import expand_index, FunctionValues2D
 
@@ -14,7 +15,7 @@ class HighFidelityData:
 
     def __init__(self):
 
-        self.get_dirichlet_and_neumann_edge = None
+        self.get_dirichlet_edge_func = None
 
         self.p = None
         self.tri = None
@@ -49,18 +50,42 @@ class HighFidelityData:
         self.a1_full, self.a2_full, self.f_load_lv_full = \
             assemble_a1_a2_f(self.n, self.p, self.tri, f_func_vec)
 
+    def _get_dirichlet_edge(self):
+        if self.get_dirichlet_edge_func is not None:
+            dirichlet_edge_func_vec = np.vectorize(self.get_dirichlet_edge_func, otypes=[bool])
+            index = dirichlet_edge_func_vec(self.p[self.edge, 0], self.p[self.edge, 1]).all(axis=1)
+            if index.any():
+                self.dirichlet_edge = self.edge[index, :]
+
+    def get_neumann_edge(self):
+        if self.dirichlet_edge is None:
+            self.neumann_edge = self.edge
+        elif self.dirichlet_edge.shape != self.edge.shape:
+            neumann_edge = np.array(list(set(map(tuple, self.edge)) - set(map(tuple, self.dirichlet_edge))))
+            self.neumann_edge = neumann_edge[np.argsort(neumann_edge[:, 0]), :]
+
+    def _are_edges_illegal(self):
+        if self.get_dirichlet_edge_func is not None:
+            if (self.dirichlet_edge is None) and np.all(self.neumann_edge == self.edge):
+                raise EdgesAreIllegalError("get_dirichlet_edge_func gives dirichlet_edge=None and neumann_edge=edge.")
+            if (self.neumann_edge is None) and np.all(self.dirichlet_edge == self.edge):
+                raise EdgesAreIllegalError("get_dirichlet_edge_func gives dirichlet_edge=edge and neumann_edge=None.")
+
     def hf_assemble_f_neumann(self, neumann_bc_func_vec):
-        self.dirichlet_edge, self.neumann_edge = \
-            self.get_dirichlet_and_neumann_edge(self.p, self.edge)
+        self._get_dirichlet_edge()
+        self.get_neumann_edge()
+        self._are_edges_illegal()
         self.f_load_neumann_full = assemble_f_neumann(self.n, self.p, self.neumann_edge, neumann_bc_func_vec)
 
     def _set_free_and_dirichlet_edge_index(self):
-        # find the unique neumann _edge index
-        self.dirichlet_edge_index = np.unique(self.dirichlet_edge)
-        # find the unique indexes
-        unique_index = np.unique(self.tri)
-        # free index is unique index minus neumann _edge indexes
-        self.free_index = np.setdiff1d(unique_index, self.dirichlet_edge_index)
+        if self.dirichlet_edge is None:
+            self.dirichlet_edge_index = np.array([])
+            self.free_index = np.unique(self.tri)
+        else:
+            # find the unique neumann _edge index
+            self.dirichlet_edge_index = np.unique(self.dirichlet_edge)
+            # free index is unique index minus dirichlet edge index
+            self.free_index = np.setdiff1d(self.tri, self.dirichlet_edge_index)
 
     def _set_expanded_free_and_dirichlet_edge_index(self):
         self.expanded_free_index = expand_index(self.free_index)

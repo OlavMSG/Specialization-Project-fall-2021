@@ -8,8 +8,8 @@ import warnings
 import numpy as np
 import scipy.sparse as sparse
 
-from ._exceptions import DirectoryDoesNotExistsError, FileDoesNotExistError
 from ._default_constants import FILE_NAMES_DICT
+from ._exceptions import DirectoryDoesNotExistsError, FileDoesNotExistError
 
 
 def _check_and_make_folder(n, folder_path):
@@ -120,6 +120,7 @@ def hf_from_files(hf_data, directory_path, default_file_names_dict=FILE_NAMES_DI
     if has_neumann:
         hf_data.f_load_neumann_full = np.load(f_load_neumann_file_path, allow_pickle=False)
 
+    hf_data.get_neumann_edge()
     hf_data.compute_free_and_expanded_edges(has_neumann)
     hf_data.plate_limits = (np.min(hf_data.p), np.max(hf_data.p))
 

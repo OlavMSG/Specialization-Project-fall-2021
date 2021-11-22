@@ -195,15 +195,6 @@ class LinearElasticity2DProblem:
         error_a = np.sqrt(err.T @ self.compute_a_full(e_young, nu_poisson) @ err)
         return error_a
 
-    def _set_vec_functions(self):
-        self._f_func_vec = VectorizedFunction2D(self._f_func_non_vec)
-        if self._neumann_bc_func_non_vec is not None:
-            self._neumann_bc_func_vec = VectorizedFunction2D(self._neumann_bc_func_non_vec)
-            self._has_neumann = True
-        if self._dirichlet_bc_func_non_vec is not None:
-            self._dirichlet_bc_func_vec = VectorizedFunction2D(self._dirichlet_bc_func_non_vec)
-            self._has_non_homo_dirichlet = True
-
     def f_func(self, x_vec, y_vec):
         if self._f_func_vec is None:
             raise MissingInputFunctionPointerError(
@@ -316,17 +307,37 @@ class LinearElasticity2DProblem:
         problem._is_from_files = True
         return problem
 
+    def _set_vec_functions(self):
+        self._f_func_vec = VectorizedFunction2D(self._f_func_non_vec)
+        if self._neumann_bc_func_non_vec is not None:
+            self._neumann_bc_func_vec = VectorizedFunction2D(self._neumann_bc_func_non_vec)
+            self._has_neumann = True
+        if self._dirichlet_bc_func_non_vec is not None:
+            self._dirichlet_bc_func_vec = VectorizedFunction2D(self._dirichlet_bc_func_non_vec)
+            self._has_non_homo_dirichlet = True
+
     @classmethod
-    def from_functions(cls, n, f_func, neumann_bc_func=None, get_dirichlet_and_neumann_edge_func=None,
+    def from_functions(cls, n, f_func, neumann_bc_func=None, get_dirichlet_edge_func=None,
                        dirichlet_bc_func=None, plate_limits=None):
         problem = cls()
         problem._hf_data.n = n
         problem._f_func_non_vec = f_func
         problem._neumann_bc_func_non_vec = neumann_bc_func
         problem._dirichlet_bc_func_non_vec = dirichlet_bc_func
+
+        if get_dirichlet_edge_func is not None and neumann_bc_func is None:
+            def default_neumann_bc_func(x, y):
+                return 0, 0
+            problem._neumann_bc_func_non_vec = default_neumann_bc_func
+
+        problem._hf_data.get_dirichlet_edge_func = get_dirichlet_edge_func
         problem._set_vec_functions()
 
-        problem._hf_data.get_dirichlet_and_neumann_edge = get_dirichlet_and_neumann_edge_func
+        if problem._has_neumann and problem._hf_data.get_dirichlet_edge_func is None \
+                and problem._has_non_homo_dirichlet:
+                error_text = "Have neumann and non homo. dirichlet conditions, " \
+                             + "but no function giving the neumann and dirichlet edges. "
+                raise MissingInputFunctionPointerError(error_text)
 
         if plate_limits is not None:
             problem._hf_data.plate_limits = plate_limits
@@ -334,14 +345,6 @@ class LinearElasticity2DProblem:
         start_time = perf_counter()
         problem._hf_assemble()
         print("Assembled matrices and load-vectors in {:.6f} sec".format(perf_counter() - start_time))
-
-        if problem._has_neumann and problem._hf_data.get_dirichlet_and_neumann_edge is None:
-            if problem._has_non_homo_dirichlet:
-                raise MissingInputFunctionPointerError("Have neumann and non homo. dirichlet conditions, "
-                                                       "but no function giving the neumann and dirichlet edges. ")
-            else:
-                warnings.warn("Have neumann conditions, but no function giving the neumann and dirichlet edges. \n"
-                              "Assuming the whole edge is a neumann edge.")
 
         return problem
 

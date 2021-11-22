@@ -3,18 +3,12 @@
 @author: Olav Milian Gran
 """
 
-import numpy as np
-
 from linear_elasticity_2d_solver import DEFAULT_TOL
 
 
 # Here just example
-def get_dirichlet_and_neumann_edge(p, edge):
-    # know _edge = np.vstack((south_edge, east_edge, north_edge, west_edge))
-    south_edge, east_edge, north_edge, west_edge = np.split(edge, 4)
-    dirichlet_edge = west_edge
-    neumann_edge = np.vstack((south_edge, east_edge, north_edge))
-    return dirichlet_edge, neumann_edge
+def get_dirichlet_edge(x, y):
+    return abs(x) < DEFAULT_TOL
 
 
 # Here just example used
@@ -51,34 +45,14 @@ def u_exact(x, y):
 
 
 def main():
-    """n = 10
+    n = 10
     print(n)
     e_young, nu_poisson = 2.1e5, 0.3
     directory_path = r"reduced_order_error_check_plots"
     le2d = LinearElasticity2DProblem.from_functions(f)
     le2d._hf_save(n, directory_path)
     le2d = LinearElasticity2DProblem.from_saves(n, directory_path)
-    le2d.solve(e_young, nu_poisson)"""
-    from time import perf_counter
-    A = np.array([[1, 4], [2, 5], [3, 6], [10, 11], [33, 21]])
-    B = np.array([[1, 4], [3, 6], [7, 8]])
-
-    s = perf_counter()
-    nrows, ncols = A.shape
-    dtype = {'names': ['f{}'.format(i) for i in range(ncols)],
-             'formats': ncols * [A.dtype]}
-
-    C = np.setdiff1d(A.view(dtype), B.view(dtype))
-
-    # This last bit is optional if you're okay with "C" being a structured array...
-    C = C.view(A.dtype).reshape(-1, ncols)
-    print(perf_counter() - s)
-    print(C)
-    s = perf_counter()
-    res = np.array(list(set(map(tuple, A)) - set(map(tuple, B))))
-    res = res[np.argsort(res[:, 0]), :]
-    print(perf_counter() - s)
-    print(res)
+    le2d.solve(e_young, nu_poisson)
 
 
 if __name__ == '__main__':

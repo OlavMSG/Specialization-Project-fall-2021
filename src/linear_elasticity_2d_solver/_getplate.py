@@ -21,7 +21,7 @@ import numpy as np
 import scipy.spatial as spsa
 
 
-def getPlatev2(n, a=-1, b=1):
+def getPlatev2(n, a=0, b=1):
     # By: Olav Milian
     # Defining auxiliary variables.
     l = np.linspace(a, b, n)
@@ -50,7 +50,7 @@ def getPlatev2(n, a=-1, b=1):
     return p, tri, edge
 
 
-def getPlatev3(n, a=-1, b=1):
+def getPlatev3(n, a=0, b=1):
     # By: Olav Milian
     # Defining auxiliary variables.
     l = np.linspace(a, b, n)
