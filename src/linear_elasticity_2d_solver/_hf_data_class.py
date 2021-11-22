@@ -7,7 +7,7 @@ import numpy as np
 from ._assembly import assemble_a1_a2_f, assemble_f_neumann
 from ._default_constants import PLATE_LIMITS
 from ._getplate import getPlatev3
-from ._helpers import expand_index, FunctionValuesLE2D
+from ._helpers import expand_index, FunctionValues2D
 
 
 class HighFidelityData:
@@ -99,4 +99,4 @@ class HighFidelityData:
         x_vec = self.p[self.dirichlet_edge_index][:, 0]
         y_vec = self.p[self.dirichlet_edge_index][:, 1]
         # lifting function
-        self.rg = FunctionValuesLE2D.from_nx2(dirichlet_bc_func_vec(x_vec, y_vec)).flatt_values
+        self.rg = FunctionValues2D.from_nx2(dirichlet_bc_func_vec(x_vec, y_vec)).flatt_values

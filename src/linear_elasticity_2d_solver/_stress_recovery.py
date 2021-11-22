@@ -46,11 +46,12 @@ def get_nodal_stress(uh, p, tri):
     return nodal_stress
 
 
-def von_mises_yield(nodal_stress):
+def von_mises_yield(uh, p, tri):
+    nodal_stress = get_nodal_stress(uh, p, tri)
     n_nodes = nodal_stress.shape[0]
     von_mises = np.zeros(n_nodes)
     for node_nr in range(n_nodes):
         # deviatoric stress
         s = nodal_stress[node_nr, :, :] - np.trace(nodal_stress[node_nr, :, :]) * np.identity(2) / 3
         von_mises[node_nr] = np.sqrt(3 / 2 * np.sum(s * s))
-    return von_mises
+    uh.set_von_mises(von_mises)

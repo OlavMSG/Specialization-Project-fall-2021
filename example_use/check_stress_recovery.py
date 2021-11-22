@@ -22,8 +22,9 @@ def main():
     le2d = LinearElasticity2DProblem.from_functions(n, f, dirichlet_bc_func=dirichlet_bc_func)
     le2d.build_rb_model()
     le2d.hfsolve(e_mean, nu_mean)
+    le2d.hf_von_mises_yield()
     le2d.rbsolve(e_mean, nu_mean)
-    le2d.get_nodal_stress()
+    le2d.rb_von_mises_yield()
 
 
 if __name__ == '__main__':

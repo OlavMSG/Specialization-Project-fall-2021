@@ -4,7 +4,26 @@
 """
 import numpy as np
 
-from ._default_constants import DEFAULT_TOL
+
+class VectorizedFunction2D:
+
+    def __init__(self, func_non_vec):
+
+        def vectorize_func_2d(x_vec, y_vec):
+            if isinstance(x_vec, (float, int)):
+                x_vec = np.array([x_vec])
+            if isinstance(y_vec, (float, int)):
+                y_vec = np.array([y_vec])
+            x_vals = np.zeros_like(x_vec, dtype=float)
+            y_vals = np.zeros_like(x_vec, dtype=float)
+            for i, (x, y) in enumerate(zip(x_vec, y_vec)):
+                x_vals[i], y_vals[i] = func_non_vec(x, y)
+            return np.column_stack((x_vals, y_vals))
+
+        self._func_vec = vectorize_func_2d
+
+    def __call__(self, x_vec, y_vec):
+        return self._func_vec(x_vec, y_vec)
 
 
 def index_map(i, d):
@@ -45,7 +64,7 @@ def compute_a(e_young, nu_poisson, a1, a2):
 def get_u_exact(p, u_exact_func):
     x_vec = p[:, 0]
     y_vec = p[:, 1]
-    u_exact = FunctionValuesLE2D.from_nx2(VectorizedFunction2D(u_exact_func)(x_vec, y_vec))
+    u_exact = FunctionValues2D.from_nx2(VectorizedFunction2D(u_exact_func)(x_vec, y_vec))
     return u_exact.flatt_values
 
 
@@ -76,99 +95,71 @@ def singularity_check(a):
     print("-" * 60)
 
 
-class VectorizedFunction2D:
-
-    def __init__(self, func_non_vec):
-
-        def vectorize_func_2d(x_vec, y_vec):
-            if isinstance(x_vec, (float, int)):
-                x_vec = np.array([x_vec])
-            if isinstance(y_vec, (float, int)):
-                y_vec = np.array([y_vec])
-            x_vals = np.zeros_like(x_vec, dtype=float)
-            y_vals = np.zeros_like(x_vec, dtype=float)
-            for i, (x, y) in enumerate(zip(x_vec, y_vec)):
-                x_vals[i], y_vals[i] = func_non_vec(x, y)
-            return np.column_stack((x_vals, y_vals))
-
-        self._func_vec = vectorize_func_2d
-
-    def __call__(self, x_vec, y_vec):
-        return self._func_vec(x_vec, y_vec)
-
-
-class FunctionValuesLE2D:
+class FunctionValues2D:
 
     def __init__(self):
-        self.values = None
-        self.n = None
-        self.e_young = None
-        self.nu_poisson = None
-        self.von_mises = None
+        self._values = None
+        self._n = None
 
     def __repr__(self):
-        return self.values.__repr__()
+        return self._values.__repr__()
 
     def __str__(self):
-        return self.values.__str__()
+        return self._values.__str__()
 
-    def set_from_nx2(self, values):
-        self.values = np.asarray(values, dtype=float)
-        self.n = self.values.shape[0]
+    def _set_from_nx2(self, values):
+        self._values = np.asarray(values, dtype=float)
+        self._n = self._values.shape[0]
 
-    def set_from_1xn2(self, values):
+    def _set_from_1xn2(self, values):
         m = values.shape[0]
         if m % 2 != 0:
             raise ValueError("Shape of values must be (1, 2k), where k is an integer")
-        self.n = m // 2
-        self.values = np.zeros((self.n, 2))
-        self.values[:, 0] = values[np.arange(0, m, 2)]
-        self.values[:, 1] = values[np.arange(1, m, 2)]
-
-    def set_e_young_and_nu_poisson(self, e_young, nu_poisson):
-        self.e_young = e_young
-        self.nu_poisson = nu_poisson
-
-    def check_e_young_and_nu_poisson(self, e_young, nu_poisson):
-        if self.values is None:
-            return False
-        elif abs(self.e_young - e_young) <= DEFAULT_TOL and abs(self.nu_poisson - nu_poisson) <= DEFAULT_TOL:
-            return True
-        else:
-            return False
+        self._n = m // 2
+        self._values = np.zeros((self.n, 2))
+        self._values[:, 0] = values[np.arange(0, m, 2)]
+        self._values[:, 1] = values[np.arange(1, m, 2)]
 
     @classmethod
     def from_nx2(cls, values):
         out = cls()
-        out.set_from_nx2(values)
+        out._set_from_nx2(values)
         return out
 
     @classmethod
     def from_1xn2(cls, values):
         out = cls()
-        out.set_from_1xn2(values)
+        out._set_from_1xn2(values)
         return out
 
     @property
+    def values(self):
+        return self._values
+
+    @property
     def x(self):
-        return self.values[:, 0]
+        return self._values[:, 0]
 
     @property
     def y(self):
-        return self.values[:, 1]
+        return self._values[:, 1]
 
     @property
     def flatt_values(self):
         # return [x0, y0, x1, y1, ...]
-        return self.values.reshape((1, self.n * 2)).ravel()
+        return self._values.reshape((1, self.n * 2)).ravel()
 
     @property
     def dim(self):
         return 2
 
     @property
+    def n(self):
+        return self._n
+
+    @property
     def shape(self):
-        return self.values.shape
+        return self._values.shape
 
 
 if __name__ == "__main__":
@@ -183,16 +174,15 @@ if __name__ == "__main__":
     print(f(x, y))
 
     f_vec = VectorizedFunction2D(f)
+    print(f_vec)
 
     values = np.arange(4).reshape((2, 2))
     print(values)
-    val = f_vec(x, y)
-    print(val)
 
-    val = FunctionValuesLE2D.from_nx2(values)
+    val = FunctionValues2D.from_nx2(values)
     print(val)
     print(val.flatt_values)
 
-    val2 = FunctionValuesLE2D.from_1xn2(val.flatt_values)
+    val2 = FunctionValues2D.from_1xn2(val.flatt_values)
     print(val2)
     print(val2.flatt_values)

@@ -13,13 +13,14 @@ from scipy.sparse.linalg import spsolve
 from ._default_constants import FILE_NAMES_DICT, EPS_POD, E_YOUNG_RANGE, NU_POISSON_RANGE, RB_GRID, POD_MODE, N_ROM_CUT
 from ._exceptions import IsNotAssembledError, PodNotComputedError, CanNotForceNromError, DirectoryDoesNotExistsError, \
     MissingInputFunctionPointerError, LinearElasticity2DProblemNotSolved, PlateLimitsNotFoundError
-from ._helpers import compute_a, FunctionValuesLE2D, VectorizedFunction2D
+from ._helpers import compute_a, VectorizedFunction2D
 from ._hf_data_class import HighFidelityData
 from ._plotting import plot_singular_values, plot_relative_information_content
 from ._pod import pod, get_e_young_nu_poisson_mat
 from ._rb_data_class import ReducedOrderData
 from ._save_and_load import hf_save, rb_save, rb_from_files, hf_from_files
-from ._stress_recovery import get_nodal_stress, von_mises_yield
+from ._solution_function_class import SolutionFunctionValues2D
+from ._stress_recovery import von_mises_yield
 
 
 class LinearElasticity2DProblem:
@@ -40,8 +41,8 @@ class LinearElasticity2DProblem:
 
         self._hf_data = HighFidelityData()
         self._rb_data = ReducedOrderData()
-        self._uh = FunctionValuesLE2D()
-        self._uh_rom = FunctionValuesLE2D()
+        self._uh = SolutionFunctionValues2D()
+        self._uh_rom = SolutionFunctionValues2D()
 
         self._is_pod_computed = False
         self._is_from_files = False
@@ -122,7 +123,7 @@ class LinearElasticity2DProblem:
         self._rb_data.set_n_rom_max()
         print("Built reduced order model in {:.6f} sec".format(perf_counter() - start_time))
         # reset uh
-        self._uh = self._uh = FunctionValuesLE2D()
+        self._uh = self._uh = SolutionFunctionValues2D()
         self._is_pod_computed = True
 
     def hfsolve(self, e_young, nu_poisson, print_info=True):
@@ -138,7 +139,7 @@ class LinearElasticity2DProblem:
         if self._has_non_homo_dirichlet:
             uh[self._hf_data.expanded_dirichlet_edge_index] = self._hf_data.rg
         # set uh
-        self._uh.set_from_1xn2(uh)
+        self._uh = SolutionFunctionValues2D.from_1xn2(uh)
         self._uh.set_e_young_and_nu_poisson(e_young, nu_poisson)
         if print_info:
             print("Get solution by the property uh, uh_free or uh_full of the class.\n" +
@@ -171,7 +172,7 @@ class LinearElasticity2DProblem:
         if self._has_non_homo_dirichlet:
             uh_rom[self._hf_data.expanded_dirichlet_edge_index] = self._hf_data.rg
         # set uh
-        self._uh_rom.set_from_1xn2(uh_rom)
+        self._uh_rom = SolutionFunctionValues2D.from_1xn2(uh_rom)
         self._uh_rom.set_e_young_and_nu_poisson(e_young, nu_poisson)
         if print_info:
             print("Get solution by the property uh_rom, uh_rom_free or uh_rom_full of the class.\n" +
@@ -220,24 +221,8 @@ class LinearElasticity2DProblem:
                 "dirichlet_bc_func is not given, set it in the Linear Elasticity 2D Problem first.")
         return self._dirichlet_bc_func_vec(x_vec, y_vec)
 
-    def _hf_get_nodal_stress(self):
-        if self._uh.values is None:
-            raise LinearElasticity2DProblemNotSolved(
-                "High fidelity Linear Elasticity 2D Problem has not been solved, "
-                "can not compute high fidelity nodal stress")
-        return get_nodal_stress(self._uh, self._hf_data.p, self._hf_data.tri)
-
-    def _rb_get_nodal_stress(self):
-        if self._uh_rom.values is None:
-            raise LinearElasticity2DProblemNotSolved(
-                "Reduced order Linear Elasticity 2D Problem has not been solved, "
-                "can not compute reduced order nodal stress")
-        else:
-            return get_nodal_stress(self._uh_rom, self._hf_data.p, self._hf_data.tri)
-
     def hf_von_mises_yield(self, print_info=True):
-        nodal_stress = self._hf_get_nodal_stress()
-        self._uh.von_mises = von_mises_yield(nodal_stress)
+        von_mises_yield(self._uh, self._hf_data.p, self._hf_data.tri)
         if print_info:
             print("Get von Mises yield by the property uh.von_mises of the class.")
 
@@ -245,8 +230,7 @@ class LinearElasticity2DProblem:
         self.hf_von_mises_yield(print_info=print_info)
 
     def rb_von_mises_yield(self, print_info=True):
-        nodal_stress = self._rb_get_nodal_stress()
-        self._uh_rom.von_mises = von_mises_yield(nodal_stress)
+        von_mises_yield(self._uh_rom, self._hf_data.p, self._hf_data.tri)
         if print_info:
             print("Get von Mises yield by the property uh_rom.von_mises of the class.")
 
