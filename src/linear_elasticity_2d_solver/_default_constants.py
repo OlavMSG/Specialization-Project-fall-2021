@@ -7,7 +7,7 @@
 DEFAULT_TOL = 1e-14
 # Default plate limits
 # we will use the plate [self._plate_limits[0], self._plate_limits[1]]^2
-PLATE_LIMITS = (-1, 1)
+PLATE_LIMITS = (0, 1)
 # Default rb grid
 RB_GRID = (5, 5)
 # default pod mode

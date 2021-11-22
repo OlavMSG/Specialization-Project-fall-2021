@@ -5,27 +5,6 @@
 import numpy as np
 
 
-class VectorizedFunction2D:
-
-    def __init__(self, func_non_vec):
-
-        def vectorize_func_2d(x_vec, y_vec):
-            if isinstance(x_vec, (float, int)):
-                x_vec = np.array([x_vec])
-            if isinstance(y_vec, (float, int)):
-                y_vec = np.array([y_vec])
-            x_vals = np.zeros_like(x_vec, dtype=float)
-            y_vals = np.zeros_like(x_vec, dtype=float)
-            for i, (x, y) in enumerate(zip(x_vec, y_vec)):
-                x_vals[i], y_vals[i] = func_non_vec(x, y)
-            return np.column_stack((x_vals, y_vals))
-
-        self._func_vec = vectorize_func_2d
-
-    def __call__(self, x_vec, y_vec):
-        return self._func_vec(x_vec, y_vec)
-
-
 def index_map(i, d):
     return 2 * i + d
 
@@ -68,31 +47,25 @@ def get_u_exact(p, u_exact_func):
     return u_exact.flatt_values
 
 
-def singularity_check(a):
-    """
-    Function to check i A is singular
+class VectorizedFunction2D:
 
-    Parameters
-    ----------
-    a : scipy.sparse.dok_matrix
-        The matrix A stored in the lil sparse format.
+    def __init__(self, func_non_vec):
 
-    Returns
-    -------
-    None.
+        def vectorize_func_2d(x_vec, y_vec):
+            if isinstance(x_vec, (float, int)):
+                x_vec = np.array([x_vec])
+            if isinstance(y_vec, (float, int)):
+                y_vec = np.array([y_vec])
+            x_vals = np.zeros_like(x_vec, dtype=float)
+            y_vals = np.zeros_like(x_vec, dtype=float)
+            for i, (x, y) in enumerate(zip(x_vec, y_vec)):
+                x_vals[i], y_vals[i] = func_non_vec(x, y)
+            return np.column_stack((x_vals, y_vals))
 
-    """
-    # check condition number
-    cond_a = np.linalg.cond(a.toarray())
-    print("-" * 60)
-    print('The condition number of matrix a is: ' + str(cond_a))
-    # Check the max value of a
-    max_a = np.max(a.toarray())
-    print('The max value of the stiffness matrix a is ' + str(max_a))
-    # if the condition number is larger than 1/eps vere eps is the machine epsilon, then a is most likely singular
-    if cond_a > 1 / np.finfo(a.dtype).eps:
-        print("a is most likely singular before implementation of BC.")
-    print("-" * 60)
+        self._func_vec = vectorize_func_2d
+
+    def __call__(self, x_vec, y_vec):
+        return self._func_vec(x_vec, y_vec)
 
 
 class FunctionValues2D:

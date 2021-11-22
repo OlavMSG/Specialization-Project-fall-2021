@@ -2,7 +2,6 @@
 """
 @author: Olav M.S. Gran
 """
-
 import matplotlib.pyplot as plt
 
 from linear_elasticity_2d_solver import LinearElasticity2DProblem, get_mu_lambda
@@ -23,19 +22,17 @@ def dirichlet_bc_func(x, y):
 def main():
     n = 3
     print(n)
-    e_mean = 160e3
-    nu_mean = 0.2
     le2d = LinearElasticity2DProblem.from_functions(n, f, dirichlet_bc_func=dirichlet_bc_func)
-    le2d.build_rb_model()
     le2d.hfsolve(e_mean, nu_mean)
-    le2d.hf_von_mises_yield()
+    le2d.hf_plot_displacement()
+    plt.show()
+    le2d.build_rb_model()
     le2d.rbsolve(e_mean, nu_mean)
-    le2d.rb_von_mises_yield()
+    le2d.rb_plot_displacement()
+    # plt.savefig("other_plots/test_plot.pdf")
+    plt.show()
 
-    le2d.hf_plot_von_mises()
-    plt.show()
-    le2d.rb_plot_von_mises()
-    plt.show()
 
 if __name__ == '__main__':
     main()
+

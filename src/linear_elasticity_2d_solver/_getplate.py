@@ -3,7 +3,7 @@
 #   Generate a mesh triangulation of the reference square (a,b)^2.
 #
 # Arguments:
-#    n_rom      Number of nodes in each spatial direction (n_rom^2 total nodes).
+#    n      Number of nodes in each spatial direction (n^2 total nodes).
 #    a      Lower limit for x and y
 #    b      Upper limit for x and y
 #

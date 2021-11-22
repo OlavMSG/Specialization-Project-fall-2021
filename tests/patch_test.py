@@ -26,7 +26,7 @@ def base(dirichlet_bc_func, u_exact_func, f=None):
     if f is None:
         f = default_f
 
-    le2d = LinearElasticity2DProblem.from_functions(n, f, plate_limits=(0, 1), dirichlet_bc_func=dirichlet_bc_func)
+    le2d = LinearElasticity2DProblem.from_functions(n, f, dirichlet_bc_func=dirichlet_bc_func)
 
     le2d.solve(e_mean, nu_mean, print_info=False)
     u_exact = get_u_exact(le2d.p, u_exact_func)
