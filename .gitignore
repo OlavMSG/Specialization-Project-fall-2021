@@ -138,5 +138,5 @@ example_use/reduced_order_error_check_plots
 example_use/saved_data
 example_use/other_plots
 
-# not finished files
-contour_and_mesh_plotter.py
+# not included files
+find_derivatives_xy.py

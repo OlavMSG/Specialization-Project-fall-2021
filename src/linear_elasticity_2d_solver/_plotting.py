@@ -91,4 +91,3 @@ def plot_von_mises(uh, p, tri, solve_mode=""):
                     cmap=plt.cm.get_cmap("jet"))
     plt.colorbar()
     plt.grid()
-
