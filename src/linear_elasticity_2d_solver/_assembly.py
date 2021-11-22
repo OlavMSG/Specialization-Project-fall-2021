@@ -5,6 +5,7 @@
 
 import numpy as np
 import scipy.sparse as sparse
+
 from ._gauss_quadrature import quadrature2D, line_integral_with_basis, get_area_triangle
 from ._helpers import inv_index_map, expand_index
 
@@ -100,9 +101,9 @@ def assemble_a1_a2_f(n, p, tri, f_func):
     for nk in tri:
         # nk : node-numbers for the k'th triangle
         # the points of the triangle
-        # p1 = _p[nk[0], :]
-        # p2 = _p[nk[1], :]
-        # p3 = _p[nk[2], :]
+        # p1 = p[nk[0], :]
+        # p2 = p[nk[1], :]
+        # p3 = p[nk[2], :]
         # using indexmap k = 2 * i + d, d=0 for x, 1 for y, i is the node number
         # calculate the area of the triangle
         # and basis functions coef. or Jacobin inverse

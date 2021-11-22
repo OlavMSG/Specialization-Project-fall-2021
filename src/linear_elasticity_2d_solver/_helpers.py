@@ -4,6 +4,8 @@
 """
 import numpy as np
 
+from ._default_constants import DEFAULT_TOL
+
 
 def index_map(i, d):
     return 2 * i + d
@@ -29,8 +31,9 @@ def get_mu_lambda(e_young, nu_poisson):
 
 
 def get_e_young_nu_poisson(mu, lam):
-    nu_poisson = 0.5 * lam / (lam + mu)
-    e_young = 2 * mu * (1 + nu_poisson)
+    lam_p_mu = lam + mu
+    nu_poisson = 0.5 * lam / lam_p_mu
+    e_young = mu * (3 * lam + 2 * mu) / lam_p_mu
     return e_young, nu_poisson
 
 
@@ -42,7 +45,7 @@ def compute_a(e_young, nu_poisson, a1, a2):
 def get_u_exact(p, u_exact_func):
     x_vec = p[:, 0]
     y_vec = p[:, 1]
-    u_exact = FunctionValues2D.from_nx2(VectorizedFunction2D(u_exact_func)(x_vec, y_vec))
+    u_exact = FunctionValuesLE2D.from_nx2(VectorizedFunction2D(u_exact_func)(x_vec, y_vec))
     return u_exact.flatt_values
 
 
@@ -94,17 +97,45 @@ class VectorizedFunction2D:
         return self._func_vec(x_vec, y_vec)
 
 
-class FunctionValues2D:
+class FunctionValuesLE2D:
 
     def __init__(self):
-        self._values = None
-        self._n = None
+        self.values = None
+        self.n = None
+        self.e_young = None
+        self.nu_poisson = None
+        self.von_mises = None
 
     def __repr__(self):
-        return self._values.__repr__()
+        return self.values.__repr__()
 
     def __str__(self):
-        return self._values.__str__()
+        return self.values.__str__()
+
+    def set_from_nx2(self, values):
+        self.values = np.asarray(values, dtype=float)
+        self.n = self.values.shape[0]
+
+    def set_from_1xn2(self, values):
+        m = values.shape[0]
+        if m % 2 != 0:
+            raise ValueError("Shape of values must be (1, 2k), where k is an integer")
+        self.n = m // 2
+        self.values = np.zeros((self.n, 2))
+        self.values[:, 0] = values[np.arange(0, m, 2)]
+        self.values[:, 1] = values[np.arange(1, m, 2)]
+
+    def set_e_young_and_nu_poisson(self, e_young, nu_poisson):
+        self.e_young = e_young
+        self.nu_poisson = nu_poisson
+
+    def check_e_young_and_nu_poisson(self, e_young, nu_poisson):
+        if self.values is None:
+            return False
+        elif abs(self.e_young - e_young) <= DEFAULT_TOL and abs(self.nu_poisson - nu_poisson) <= DEFAULT_TOL:
+            return True
+        else:
+            return False
 
     @classmethod
     def from_nx2(cls, values):
@@ -118,43 +149,26 @@ class FunctionValues2D:
         out.set_from_1xn2(values)
         return out
 
-    def set_from_nx2(self, values):
-        self._values = np.asarray(values, dtype=float)
-        self._n = self._values.shape[0]
-
-    def set_from_1xn2(self, values):
-        m = values.shape[0]
-        if m % 2 != 0:
-            raise ValueError("Shape of values must be (1, 2k), where k is an integer")
-        self._n = m // 2
-        self._values = np.zeros((self._n, 2))
-        self._values[:, 0] = values[np.arange(0, m, 2)]
-        self._values[:, 1] = values[np.arange(1, m, 2)]
-
-    @property
-    def values(self):
-        return self._values
-
     @property
     def x(self):
-        return self._values[:, 0]
+        return self.values[:, 0]
 
     @property
     def y(self):
-        return self._values[:, 1]
+        return self.values[:, 1]
 
     @property
     def flatt_values(self):
         # return [x0, y0, x1, y1, ...]
-        return self._values.reshape((1, self._n * 2)).ravel()
-
-    @property
-    def n(self):
-        return self._n
+        return self.values.reshape((1, self.n * 2)).ravel()
 
     @property
     def dim(self):
         return 2
+
+    @property
+    def shape(self):
+        return self.values.shape
 
 
 if __name__ == "__main__":
@@ -175,10 +189,10 @@ if __name__ == "__main__":
     val = f_vec(x, y)
     print(val)
 
-    val = FunctionValues2D.from_nx2(values)
+    val = FunctionValuesLE2D.from_nx2(values)
     print(val)
     print(val.flatt_values)
 
-    val2 = FunctionValues2D.from_1xn2(val.flatt_values)
+    val2 = FunctionValuesLE2D.from_1xn2(val.flatt_values)
     print(val2)
     print(val2.flatt_values)

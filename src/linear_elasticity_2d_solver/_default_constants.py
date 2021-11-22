@@ -3,8 +3,8 @@
 @author: Olav M.S. Gran
 """
 
-# Tolerance for edge checking
-TOL_EDGE = 1e-14
+# Default tolerance for checking
+DEFAULT_TOL = 1e-14
 # Default plate limits
 # we will use the plate [self._plate_limits[0], self._plate_limits[1]]^2
 PLATE_LIMITS = (-1, 1)

@@ -29,11 +29,12 @@ def main():
         le2d.build_rb_model()
         le2d.hfsolve(e_mean, nu_mean)
         le2d.rbsolve(e_mean, nu_mean)
-        le2d.save(directory_path)
-        # le2d.solve(_n, e_young, nu_poisson)
-        # e_max = 3.1e5
-        # nu_max = 4e-1
-        # print(le2d.error_a_rb(e_max, nu_max))
+        # le2d.save(directory_path)
+        # le2d.solve(n, e_young, nu_poisson)
+        """e_max = 3.1e5
+        nu_max = 4e-1
+        print(le2d.error_a_rb(e_max, nu_max, print_info=True))
+        print(le2d.error_a_rb(e_max, nu_max, print_info=True))"""
         le2d = LinearElasticity2DProblem.from_saves(n, directory_path)
 
 

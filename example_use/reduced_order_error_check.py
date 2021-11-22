@@ -3,8 +3,8 @@
 @author: Olav Milian Gran
 """
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 from linear_elasticity_2d_solver import LinearElasticity2DProblem
 
@@ -48,7 +48,7 @@ def main():
                 errs = np.zeros(le2d.ns_rom)
                 for i, (e_young, nu_poisson) in enumerate(le2d.e_young_nu_poisson_mat):
                     # print(i, e_young, nu_poisson)
-                    errs[i] = le2d.error_a_rb_set_n_rom(n_rom, e_young, nu_poisson)
+                    errs[i] = le2d.error_a_rb(e_young, nu_poisson, n_rom=n_rom)
                 max_err[n_rom - 1] = np.max(errs)
                 mean_err[n_rom - 1] = np.mean(errs)
 
