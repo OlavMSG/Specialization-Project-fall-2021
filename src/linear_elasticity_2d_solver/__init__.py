@@ -2,6 +2,7 @@
 """
 @author: Olav M.S. Gran
 """
+from . import exceptions
 from ._default_constants import DEFAULT_TOL, E_YOUNG_RANGE, NU_POISSON_RANGE, EPS_POD
 from ._getplate import getPlatev2, getPlatev3
 from ._helpers import get_mu_lambda, get_e_young_nu_poisson, get_u_exact
@@ -17,5 +18,6 @@ __all__ = [
     "get_mu_lambda",
     "get_e_young_nu_poisson",
     "get_u_exact",
-    "LinearElasticity2DProblem"
+    "LinearElasticity2DProblem",
+    "exceptions"
 ]

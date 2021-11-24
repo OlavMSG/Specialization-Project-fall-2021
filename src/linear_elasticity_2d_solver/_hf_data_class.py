@@ -6,9 +6,9 @@ import numpy as np
 
 from ._assembly import assemble_a1_a2_f, assemble_f_neumann
 from ._default_constants import PLATE_LIMITS
-from ._exceptions import EdgesAreIllegalError
 from ._getplate import getPlatev3
 from ._helpers import expand_index, FunctionValues2D
+from .exceptions import EdgesAreIllegalError
 
 
 class HighFidelityData:
@@ -65,7 +65,12 @@ class HighFidelityData:
             self.neumann_edge = neumann_edge[np.argsort(neumann_edge[:, 0]), :]
 
     def _are_edges_illegal(self):
-        if self.get_dirichlet_edge_func is not None:
+        if self.get_dirichlet_edge_func is None:
+            if np.all(self.neumann_edge == self.edge):
+                error_text = "Only neumann conditions are not allowed, gives neumann_edge=edge, " \
+                             + "please define get_dirichlet_edge_func."
+                raise EdgesAreIllegalError(error_text)
+        else:
             if (self.dirichlet_edge is None) and np.all(self.neumann_edge == self.edge):
                 raise EdgesAreIllegalError("get_dirichlet_edge_func gives dirichlet_edge=None and neumann_edge=edge.")
             if (self.neumann_edge is None) and np.all(self.dirichlet_edge == self.edge):

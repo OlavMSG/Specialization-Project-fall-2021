@@ -9,7 +9,7 @@ import numpy as np
 import scipy.sparse as sparse
 
 from ._default_constants import FILE_NAMES_DICT
-from ._exceptions import DirectoryDoesNotExistsError, FileDoesNotExistError
+from .exceptions import DirectoryDoesNotExistsError, FileDoesNotExistError
 
 
 def _check_and_make_folder(n, folder_path):

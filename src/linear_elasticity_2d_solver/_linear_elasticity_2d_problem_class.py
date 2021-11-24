@@ -11,8 +11,6 @@ import numpy as np
 from scipy.sparse.linalg import spsolve
 
 from ._default_constants import FILE_NAMES_DICT, EPS_POD, E_YOUNG_RANGE, NU_POISSON_RANGE, RB_GRID, POD_MODE, N_ROM_CUT
-from ._exceptions import IsNotAssembledError, PodNotComputedError, CanNotForceNromError, DirectoryDoesNotExistsError, \
-    MissingInputFunctionPointerError, LinearElasticity2DProblemNotSolved, PlateLimitsNotFoundError
 from ._helpers import compute_a, VectorizedFunction2D
 from ._hf_data_class import HighFidelityData
 from ._plotting import plot_singular_values, plot_relative_information_content, plot_mesh, plot_displacement, \
@@ -22,6 +20,8 @@ from ._rb_data_class import ReducedOrderData
 from ._save_and_load import hf_save, rb_save, rb_from_files, hf_from_files
 from ._solution_function_class import SolutionFunctionValues2D
 from ._stress_recovery import von_mises_yield
+from .exceptions import IsNotAssembledError, PodNotComputedError, CanNotForceNromError, DirectoryDoesNotExistsError, \
+    MissingInputFunctionPointerError, LinearElasticity2DProblemNotSolved, PlateLimitsNotFoundError
 
 
 class LinearElasticity2DProblem:

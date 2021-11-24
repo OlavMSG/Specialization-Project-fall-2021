@@ -11,18 +11,18 @@ nu_mean = 0.2
 mu, lam = get_mu_lambda(e_mean, nu_mean)
 
 def f(x, y):
-    # alpha = 5e3  # Newton/m^2...?
-    return 0, -mu -lam
+    alpha = 5e3  # Newton/m^2...?
+    return -alpha, 0
 
 
 def dirichlet_bc_func(x, y):
-    return x*y, 0
+    return 0, 0
 
 
 def main():
     n = 3
     print(n)
-    le2d = LinearElasticity2DProblem.from_functions(n, f, dirichlet_bc_func=dirichlet_bc_func)
+    le2d = LinearElasticity2DProblem.from_functions(n, f, neumann_bc_func=dirichlet_bc_func)
     le2d.hfsolve(e_mean, nu_mean)
     le2d.hf_plot_displacement()
     plt.show()
