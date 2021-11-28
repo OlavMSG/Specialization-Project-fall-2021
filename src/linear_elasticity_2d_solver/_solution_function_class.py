@@ -3,8 +3,8 @@
 @author: Olav M.S. Gran
 """
 
-from ._default_constants import DEFAULT_TOL
 from ._helpers import FunctionValues2D
+from .default_constants import default_tol
 
 
 class SolutionFunctionValues2D(FunctionValues2D):
@@ -22,7 +22,7 @@ class SolutionFunctionValues2D(FunctionValues2D):
     def check_e_young_and_nu_poisson(self, e_young, nu_poisson):
         if self._values is None:
             return False
-        elif abs(self._e_young - e_young) <= DEFAULT_TOL and abs(self._nu_poisson - nu_poisson) <= DEFAULT_TOL:
+        elif abs(self._e_young - e_young) <= default_tol and abs(self._nu_poisson - nu_poisson) <= default_tol:
             return True
         else:
             return False

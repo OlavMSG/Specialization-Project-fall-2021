@@ -10,7 +10,6 @@ from time import perf_counter
 import numpy as np
 from scipy.sparse.linalg import spsolve
 
-from ._default_constants import FILE_NAMES_DICT, EPS_POD, E_YOUNG_RANGE, NU_POISSON_RANGE, RB_GRID, POD_MODE, N_ROM_CUT
 from ._helpers import compute_a, VectorizedFunction2D
 from ._hf_data_class import HighFidelityData
 from ._plotting import plot_singular_values, plot_relative_information_content, plot_mesh, plot_displacement, \
@@ -20,12 +19,13 @@ from ._rb_data_class import ReducedOrderData
 from ._save_and_load import hf_save, rb_save, rb_from_files, hf_from_files
 from ._solution_function_class import SolutionFunctionValues2D
 from ._stress_recovery import von_mises_yield
+from .default_constants import file_names_dict, eps_pod, e_young_range, nu_poisson_range, rb_grid, pod_mode, n_rom_cut
 from .exceptions import IsNotAssembledError, PodNotComputedError, CanNotForceNromError, DirectoryDoesNotExistsError, \
     MissingInputFunctionPointerError, LinearElasticity2DProblemNotSolved, PlateLimitsNotFoundError
 
 
 class LinearElasticity2DProblem:
-    DEFAULT_FILE_NAMES_DICT = FILE_NAMES_DICT
+    DEFAULT_FILE_NAMES_DICT = file_names_dict
 
     def __init__(self):
         self._f_func_non_vec = None
@@ -110,8 +110,8 @@ class LinearElasticity2DProblem:
             f_load_rom -= self._compute_a_dirichlet_rom(e_young, nu_poisson) @ self._hf_data.rg
         return f_load_rom
 
-    def build_rb_model(self, grid=RB_GRID, mode=POD_MODE, e_young_range=E_YOUNG_RANGE,
-                       nu_poisson_range=NU_POISSON_RANGE, eps_pod=EPS_POD, n_rom_cut=N_ROM_CUT):
+    def build_rb_model(self, grid=rb_grid, mode=pod_mode, e_young_range=e_young_range,
+                       nu_poisson_range=nu_poisson_range, eps_pod=eps_pod, n_rom_cut=n_rom_cut):
 
         self._rb_data.set_rb_model_params(grid, e_young_range, nu_poisson_range, eps_pod, mode, n_rom_cut)
 
@@ -351,6 +351,7 @@ class LinearElasticity2DProblem:
         if get_dirichlet_edge_func is not None and neumann_bc_func is None:
             def default_neumann_bc_func(x, y):
                 return 0, 0
+
             problem._neumann_bc_func_non_vec = default_neumann_bc_func
 
         problem._hf_data.get_dirichlet_edge_func = get_dirichlet_edge_func
@@ -358,9 +359,9 @@ class LinearElasticity2DProblem:
 
         if problem._has_neumann and problem._hf_data.get_dirichlet_edge_func is None \
                 and problem._has_non_homo_dirichlet:
-                error_text = "Have neumann and non homo. dirichlet conditions, " \
-                             + "but no function giving the neumann and dirichlet edges. "
-                raise MissingInputFunctionPointerError(error_text)
+            error_text = "Have neumann and non homo. dirichlet conditions, " \
+                         + "but no function giving the neumann and dirichlet edges. "
+            raise MissingInputFunctionPointerError(error_text)
 
         if plate_limits is not None:
             problem._hf_data.plate_limits = plate_limits

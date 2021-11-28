@@ -5,16 +5,16 @@
 
 import numpy as np
 
-from linear_elasticity_2d_solver import LinearElasticity2DProblem, get_u_exact, get_mu_lambda, E_YOUNG_RANGE, \
-    NU_POISSON_RANGE
+from linear_elasticity_2d_solver import LinearElasticity2DProblem, get_u_exact, get_mu_lambda, e_young_range, \
+    nu_poisson_range
 
 
 def get_mean(range_):
     return 0.5 * (range_[0] + range_[1])
 
 
-e_mean = get_mean(E_YOUNG_RANGE)
-nu_mean = get_mean(NU_POISSON_RANGE)
+e_mean = get_mean(e_young_range)
+nu_mean = get_mean(nu_poisson_range)
 mu, lam = get_mu_lambda(e_mean, nu_mean)
 
 

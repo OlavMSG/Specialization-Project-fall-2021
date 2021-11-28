@@ -5,9 +5,9 @@
 import numpy as np
 
 from ._assembly import assemble_a1_a2_f, assemble_f_neumann
-from ._default_constants import PLATE_LIMITS
 from ._getplate import getPlatev3
 from ._helpers import expand_index, FunctionValues2D
+from .default_constants import plate_limits
 from .exceptions import EdgesAreIllegalError
 
 
@@ -34,7 +34,7 @@ class HighFidelityData:
         self.n_full = None
         self.n_free = None
 
-        self.plate_limits = PLATE_LIMITS
+        self.plate_limits = plate_limits
 
         self.free_index = None
         self.dirichlet_edge_index = None

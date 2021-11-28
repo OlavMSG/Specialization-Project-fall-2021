@@ -8,7 +8,7 @@ import warnings
 import numpy as np
 import scipy.sparse as sparse
 
-from ._default_constants import FILE_NAMES_DICT
+from .default_constants import file_names_dict
 from .exceptions import DirectoryDoesNotExistsError, FileDoesNotExistError
 
 
@@ -22,7 +22,7 @@ def _check_and_make_folder(n, folder_path):
     return folder_path
 
 
-def hf_save(hf_data, directory_path, has_neumann, has_non_homo_dirichlet, default_file_names_dict=FILE_NAMES_DICT):
+def hf_save(hf_data, directory_path, has_neumann, has_non_homo_dirichlet, default_file_names_dict=file_names_dict):
 
     hf_folder_path = os.path.join(directory_path, "high_fidelity")
     hf_folder_path = _check_and_make_folder(hf_data.n, hf_folder_path)
@@ -52,7 +52,7 @@ def hf_save(hf_data, directory_path, has_neumann, has_non_homo_dirichlet, defaul
     print(f"Saved the high fidelity data in {hf_folder_path}")
 
 
-def rb_save(n, rb_data, directory_path, has_neumann, has_non_homo_dirichlet, default_file_names_dict=FILE_NAMES_DICT):
+def rb_save(n, rb_data, directory_path, has_neumann, has_non_homo_dirichlet, default_file_names_dict=file_names_dict):
 
     rb_folder_path = os.path.join(directory_path, "reduced_order")
     rb_folder_path = _check_and_make_folder(n, rb_folder_path)
@@ -91,7 +91,7 @@ def rb_save(n, rb_data, directory_path, has_neumann, has_non_homo_dirichlet, def
     print(f"Saved the reduced order data in {rb_folder_path}")
 
 
-def hf_from_files(hf_data, directory_path, default_file_names_dict=FILE_NAMES_DICT):
+def hf_from_files(hf_data, directory_path, default_file_names_dict=file_names_dict):
 
     hf_folder_path = os.path.join(directory_path, "high_fidelity", f"n{hf_data.n}")
     if not os.path.isdir(hf_folder_path):
@@ -132,7 +132,7 @@ def hf_from_files(hf_data, directory_path, default_file_names_dict=FILE_NAMES_DI
     return has_neumann, has_non_homo_dirichlet
 
 
-def rb_from_files(n, rb_data, directory_path, warn=True, default_file_names_dict=FILE_NAMES_DICT):
+def rb_from_files(n, rb_data, directory_path, warn=True, default_file_names_dict=file_names_dict):
     rb_folder_path = os.path.join(directory_path, "reduced_order", f"n{n}")
 
     if not os.path.isdir(rb_folder_path):

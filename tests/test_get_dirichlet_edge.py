@@ -4,7 +4,7 @@
 """
 import numpy as np
 
-from linear_elasticity_2d_solver import LinearElasticity2DProblem, DEFAULT_TOL
+from linear_elasticity_2d_solver import LinearElasticity2DProblem, default_tol
 from linear_elasticity_2d_solver.exceptions import EdgesAreIllegalError
 
 
@@ -42,7 +42,7 @@ def test3():
     n = 3
 
     def get_dirichlet_bc_func(x, y):
-        return abs(x) < DEFAULT_TOL
+        return abs(x) < default_tol
 
     le2d = LinearElasticity2DProblem.from_functions(n, f, neumann_bc_func=neumann_bc_func,
                                                     dirichlet_bc_func=dirichlet_bc_func,
@@ -59,7 +59,7 @@ def test4():
     n = 3
 
     def get_dirichlet_bc_func(x, y):
-        return abs(x) < DEFAULT_TOL
+        return abs(x) < default_tol
 
     le2d = LinearElasticity2DProblem.from_functions(n, f, dirichlet_bc_func=dirichlet_bc_func,
                                                     get_dirichlet_edge_func=get_dirichlet_bc_func)
@@ -75,7 +75,7 @@ def test5():
     n = 3
 
     def get_dirichlet_bc_func(x, y):
-        return abs(x) < DEFAULT_TOL
+        return abs(x) < default_tol
 
     le2d = LinearElasticity2DProblem.from_functions(n, f, neumann_bc_func=neumann_bc_func,
                                                     get_dirichlet_edge_func=get_dirichlet_bc_func)

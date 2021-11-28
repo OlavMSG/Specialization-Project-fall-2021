@@ -4,8 +4,8 @@
 """
 import numpy as np
 
-from ._default_constants import EPS_POD, E_YOUNG_RANGE, NU_POISSON_RANGE, RB_GRID, POD_MODE, N_ROM_CUT
 from ._pod import compute_v
+from .default_constants import eps_pod, e_young_range, nu_poisson_range, rb_grid, pod_mode, n_rom_cut
 
 
 class ReducedOrderData:
@@ -14,14 +14,14 @@ class ReducedOrderData:
         self.last_n_rom = -1
         # set as a large number
         self.n_rom_max = np.inf
-        self.n_rom_cut = N_ROM_CUT
+        self.n_rom_cut = n_rom_cut
 
-        self.e_young_range = E_YOUNG_RANGE
-        self.nu_poisson_range = NU_POISSON_RANGE
-        self.rb_grid = RB_GRID
-        self.ns_rom = RB_GRID[0] * RB_GRID[1]
-        self.eps_pod = EPS_POD
-        self.pod_mode = POD_MODE
+        self.e_young_range = e_young_range
+        self.nu_poisson_range = nu_poisson_range
+        self.rb_grid = rb_grid
+        self.ns_rom = rb_grid[0] * rb_grid[1]
+        self.eps_pod = eps_pod
+        self.pod_mode = pod_mode
 
         self.v = None
         self.n_rom = None

@@ -23,7 +23,7 @@ def plot_singular_values(sigma2_vec):
     arg0 = np.argwhere(sigma2_vec >= 0)
     sigma_vec = np.sqrt(sigma2_vec[arg0])
     rel_sigma_vec = sigma_vec / sigma_vec[0]
-    plt.semilogy(np.arange(len(rel_sigma_vec)) + 1, rel_sigma_vec, "mx--", label="Singular Values, $\\sigma$.")
+    plt.semilogy(np.arange(len(rel_sigma_vec)) + 1, rel_sigma_vec, "mx--", label="Singular Values, $\\sigma_i$.")
     plt.grid()
     plt.legend()
 
