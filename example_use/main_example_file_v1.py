@@ -3,7 +3,7 @@
 @author: Olav Milian Gran
 """
 
-from linear_elasticity_2d_solver import DEFAULT_TOL
+from linear_elasticity_2d_solver import DEFAULT_TOL, LinearElasticity2DProblem
 
 
 # Here just example
@@ -48,10 +48,7 @@ def main():
     n = 10
     print(n)
     e_young, nu_poisson = 2.1e5, 0.3
-    directory_path = r"reduced_order_error_check_plots"
-    le2d = LinearElasticity2DProblem.from_functions(f)
-    le2d._hf_save(n, directory_path)
-    le2d = LinearElasticity2DProblem.from_saves(n, directory_path)
+    le2d = LinearElasticity2DProblem.from_functions(n, f)
     le2d.solve(e_young, nu_poisson)
 
 

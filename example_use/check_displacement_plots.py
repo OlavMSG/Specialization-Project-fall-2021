@@ -16,13 +16,13 @@ def f(x, y):
 
 
 def dirichlet_bc_func(x, y):
-    return 0, 0
+    return x*y, 0
 
 
 def main():
     n = 3
     print(n)
-    le2d = LinearElasticity2DProblem.from_functions(n, f, neumann_bc_func=dirichlet_bc_func)
+    le2d = LinearElasticity2DProblem.from_functions(n, f, dirichlet_bc_func=dirichlet_bc_func)
     le2d.hfsolve(e_mean, nu_mean)
     le2d.hf_plot_displacement()
     plt.show()

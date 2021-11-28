@@ -264,12 +264,12 @@ class LinearElasticity2DProblem:
     def plot_pod_singular_values(self):
         if not self._is_pod_computed:
             raise PodNotComputedError("Pod is not computed. Can not return.")
-        plot_singular_values(self._rb_data.sigma2_vec, self._rb_data.n_rom, self._rb_data.eps_pod)
+        plot_singular_values(self._rb_data.sigma2_vec, self._rb_data.n_rom)
 
     def plot_pod_relative_information_content(self):
         if not self._is_pod_computed:
             raise PodNotComputedError("Pod is not computed. Can not return.")
-        plot_relative_information_content(self._rb_data.sigma2_vec, self._rb_data.n_rom, self._rb_data.eps_pod)
+        plot_relative_information_content(self._rb_data.sigma2_vec, self._rb_data.n_rom)
 
     def save(self, directory_path):
         if not os.path.isdir(directory_path):

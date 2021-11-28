@@ -7,8 +7,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sympy as sym
 
-from ._default_constants import EPS_POD
-
 """for nice representation of plots"""
 
 sym.init_printing()
@@ -19,29 +17,27 @@ new_params = {'axes.titlesize': fontsize, 'axes.labelsize': fontsize, 'figure.fi
 plt.rcParams.update(new_params)
 
 
-def plot_singular_values(sigma2_vec, n=None, eps_pod=EPS_POD):
+def plot_singular_values(sigma2_vec, n):
     plt.figure("Singular values")
-    plt.title("Singular values")
-    plt.semilogy(np.arange(len(sigma2_vec)) + 1, sigma2_vec, "mx--", label="Singular Values, $\\sigma^2$")
-    plt.hlines(eps_pod, xmin=-10, xmax=len(sigma2_vec) + 10, linestyles="dashed", colors="k",
-               label="$\\epsilon_{POD}$")
+    plt.title("Singular values, scaled to $\\sigma_1$")
+    arg0 = np.argwhere(sigma2_vec >= 0)
+    sigma_vec = np.sqrt(sigma2_vec[arg0])
+    rel_sigma_vec = sigma_vec / sigma_vec[0]
+    plt.semilogy(np.arange(len(rel_sigma_vec)) + 1, rel_sigma_vec, "mx--", label="Singular Values, $\\sigma$.")
     if n is not None:
-        plt.plot(n, sigma2_vec[n - 1], "bo", label="$(n_{min}, \\sigma_{n_{min}}^2)$")
-    plt.xlim(-1, len(sigma2_vec) + 1)
+        plt.plot(n, rel_sigma_vec[n - 1], "bo", label="$(n_{min}, \\sigma_{n_{min}})$")
     plt.grid()
     plt.legend()
 
 
-def plot_relative_information_content(sigma2_vec, n=None, eps_pod=EPS_POD):
-    i_n = np.cumsum(sigma2_vec) / np.sum(sigma2_vec)
+def plot_relative_information_content(sigma2_vec, n):
+    arg0 = np.argwhere(sigma2_vec >= 0)
+    i_n = np.cumsum(sigma2_vec[arg0]) / np.sum(sigma2_vec[arg0])
     plt.figure("Relative information content")
     plt.title("Relative information content")
-    plt.plot(np.arange(len(i_n)) + 1, i_n, "mx--", label="$I(n_rom)$")
-    plt.hlines(1 - eps_pod ** 2, xmin=-10, xmax=len(i_n) + 10, linestyles="dashed", colors="k",
-               label="$1-\\epsilon_{POD}^2$")
+    plt.plot(np.arange(len(i_n)) + 1, i_n, "mx--", label="$I(n_{rom})$")
     if n is not None:
         plt.plot(n, i_n[n - 1], "bo", label="$(n_{min}, I(n_{min}))$")
-    plt.xlim(-1, len(i_n) + 1)
     plt.grid()
     plt.legend()
 
@@ -60,7 +56,7 @@ def plot_displacement(uh, p, tri, solve_mode=""):
         title_text = "Displacement in reduced order solution"
     else:
         title_text = "Displacement"
-    fig, axs = plt.subplots(1, 2, figsize=(16, 7), num=title_text)
+    """fig, axs = plt.subplots(1, 2, figsize=(16, 7), num=title_text)
     fig.suptitle(title_text)
     ax1, ax2 = axs
 
@@ -73,7 +69,11 @@ def plot_displacement(uh, p, tri, solve_mode=""):
     ax2.set_title("Displaced position")
 
     # adjust
-    plt.subplots_adjust(hspace=0.3, wspace=0.3)
+    plt.subplots_adjust(hspace=0.3, wspace=0.3)"""
+    plt.figure(title_text)
+    plt.title(title_text)
+    plt.triplot(p[:, 0] + uh.x, p[:, 1] + uh.y, tri)
+    plt.grid()
 
 
 def plot_von_mises(uh, p, tri, solve_mode=""):

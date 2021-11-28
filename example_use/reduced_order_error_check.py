@@ -23,7 +23,7 @@ def dirichlet_bc_func(x, y):
 
 def main():
     n = 5
-    save = False
+    save = True
     save_dict = r"reduced_order_error_check_plots"
     for mode in ("uniform", "gauss lobatto"):
         for grid in (5, 11):
