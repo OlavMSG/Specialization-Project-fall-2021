@@ -120,7 +120,7 @@ def assemble_a1_a2_f(n, p, tri, f_func):
         a = np.array([8, 9])
         count += 1
         if count % 10000 == 0:
-            print("a1, a2, f computed for {} element".format(count))
+            print(f"a1, a2, f computed for element {count} element")
     return a1, a2, f_load_lv
 
 
@@ -136,5 +136,5 @@ def assemble_f_neumann(n, p, neumann_edge, neumann_bc_func):
         f_load_neumann[expanded_ek] += line_integral_with_basis(*p[ek, :], 4, neumann_bc_func)
         count += 1
         if count % 10000 == 0:
-            print("a1, a2, f computed for {} element".format(count))
+            print(f"f_neumann computed for {count} element")
     return f_load_neumann

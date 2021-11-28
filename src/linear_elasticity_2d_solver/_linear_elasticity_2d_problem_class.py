@@ -186,9 +186,32 @@ class LinearElasticity2DProblem:
             n_rom = self._rb_data.n_rom
         if not self._uh.check_e_young_and_nu_poisson(e_young, nu_poisson) \
                 or compute_again:
-            self.hfsolve(e_young, nu_poisson, print_info=print_info)
+            if self._rb_data.s_mat is None:
+                # solve new
+                self.hfsolve(e_young, nu_poisson, print_info=print_info)
+            else:
+                # get solution from s_mat
+                e_nu_mat = self.e_young_nu_poisson_mat
+                index = np.argwhere((e_nu_mat[:, 0] == e_young) & (e_nu_mat[:, 1] == nu_poisson)).ravel()
+                if len(index) == 0:
+                    # solve new
+                    self.hfsolve(e_young, nu_poisson, print_info=print_info)
+                else:
+                    # build from s_mat
+                    uh = np.zeros(self._hf_data.n_full)
+                    start_time = perf_counter()
+                    uh[self._hf_data.expanded_free_index] = self._rb_data.s_mat[:, index].flatten()
+                    if self._has_non_homo_dirichlet:
+                        uh[self._hf_data.expanded_dirichlet_edge_index] = self._hf_data.rg
+                    # set uh
+                    self._uh = SolutionFunctionValues2D.from_1xn2(uh)
+                    self._uh.set_e_young_and_nu_poisson(e_young, nu_poisson)
+                    if print_info:
+                        print("Loaded a @ uh = f_load from s_mat in {:.6f} sec".format(perf_counter() - start_time))
+
         if not self._uh_rom.check_e_young_and_nu_poisson(e_young, nu_poisson) \
-                or n_rom != self._rb_data.last_n_rom or compute_again:
+                or n_rom != self._rb_data.last_n_rom \
+                or compute_again:
             self.rbsolve(e_young, nu_poisson, n_rom=n_rom, print_info=print_info)
 
         err = self.uh.flatt_values - self.uh_rom.flatt_values
@@ -264,7 +287,7 @@ class LinearElasticity2DProblem:
     def plot_pod_singular_values(self):
         if not self._is_pod_computed:
             raise PodNotComputedError("Pod is not computed. Can not return.")
-        plot_singular_values(self._rb_data.sigma2_vec, self._rb_data.n_rom)
+        plot_singular_values(self._rb_data.sigma2_vec)
 
     def plot_pod_relative_information_content(self):
         if not self._is_pod_computed:

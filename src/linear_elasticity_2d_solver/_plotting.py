@@ -17,27 +17,25 @@ new_params = {'axes.titlesize': fontsize, 'axes.labelsize': fontsize, 'figure.fi
 plt.rcParams.update(new_params)
 
 
-def plot_singular_values(sigma2_vec, n):
+def plot_singular_values(sigma2_vec):
     plt.figure("Singular values")
     plt.title("Singular values, scaled to $\\sigma_1$")
     arg0 = np.argwhere(sigma2_vec >= 0)
     sigma_vec = np.sqrt(sigma2_vec[arg0])
     rel_sigma_vec = sigma_vec / sigma_vec[0]
     plt.semilogy(np.arange(len(rel_sigma_vec)) + 1, rel_sigma_vec, "mx--", label="Singular Values, $\\sigma$.")
-    if n is not None:
-        plt.plot(n, rel_sigma_vec[n - 1], "bo", label="$(n_{min}, \\sigma_{n_{min}})$")
     plt.grid()
     plt.legend()
 
 
-def plot_relative_information_content(sigma2_vec, n):
+def plot_relative_information_content(sigma2_vec, n=None):
     arg0 = np.argwhere(sigma2_vec >= 0)
     i_n = np.cumsum(sigma2_vec[arg0]) / np.sum(sigma2_vec[arg0])
     plt.figure("Relative information content")
     plt.title("Relative information content")
-    plt.plot(np.arange(len(i_n)) + 1, i_n, "mx--", label="$I(n_{rom})$")
+    plt.plot(np.arange(len(i_n)) + 1, i_n, "mx--", label="$I(n)$")
     if n is not None:
-        plt.plot(n, i_n[n - 1], "bo", label="$(n_{min}, I(n_{min}))$")
+        plt.plot(n, i_n[n - 1], "bo", label="$(n_{rom}, I(n_{rom}))$")
     plt.grid()
     plt.legend()
 

@@ -22,15 +22,15 @@ def dirichlet_bc_func(x, y):
 
 
 def main():
-    n = 5
+    n = 80
     save = True
-    save_dict = r"reduced_order_error_check_plots"
+    save_dict = r"reduced_order_error_check_plots" + f"/n{n}"
+    # define problem
+    le2d = LinearElasticity2DProblem.from_functions(n, f, dirichlet_bc_func=dirichlet_bc_func)
     for mode in ("uniform", "gauss lobatto"):
         for grid in (5, 11):
             print("-" * 20)
             print(mode, grid)
-            # define problem
-            le2d = LinearElasticity2DProblem.from_functions(n, f, dirichlet_bc_func=dirichlet_bc_func)
             le2d.build_rb_model(grid=grid, mode=mode)
             le2d.plot_pod_singular_values()
             if save:
@@ -54,7 +54,7 @@ def main():
 
             plt.figure("relative_information_content_{mode}_{grid}", figsize=(12, 7))
             plt.title("Reduced order errors v. $n_{rom}$")
-            plt.semilogy(np.arange(1, le2d.n_rom_max + 1), mean_err, "cx--", label="$mean$")
+            plt.semilogy(np.arange(1, le2d.n_rom_max + 1), mean_err, "cx-", label="$mean$")
             plt.semilogy(np.arange(1, le2d.n_rom_max + 1), max_err, "mx-", label="$max$")
             plt.grid()
             plt.legend()
