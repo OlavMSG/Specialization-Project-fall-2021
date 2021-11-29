@@ -97,7 +97,6 @@ def assemble_a1_a2_f(n, p, tri, f_func):
     # Allows for efficient O(1) access of individual elements
     # load vector
     f_load_lv = np.zeros(n2d, dtype=float)
-    count = 0
     for nk in tri:
         # nk : node-numbers for the k'th triangle
         # the points of the triangle
@@ -117,24 +116,19 @@ def assemble_a1_a2_f(n, p, tri, f_func):
         a1[index] += a1_local
         a2[index] += a2_local
         f_load_lv[expanded_nk] += f_local
-        a = np.array([8, 9])
-        count += 1
-        if count % 10000 == 0:
-            print(f"a1, a2, f computed for element {count} element")
     return a1, a2, f_load_lv
 
 
-def assemble_f_neumann(n, p, neumann_edge, neumann_bc_func):
+def assemble_f_neumann(n, p, neumann_edge, neumann_bc_func, has_homo_neumann):
     n2d = n * n * 2
     # load vector
     f_load_neumann = np.zeros(n2d, dtype=float)
-    count = 0
-    for ek in neumann_edge:
-        # p1 = p[ek[0], :]
-        # p2 = p[ek[1], :]
-        expanded_ek = expand_index(ek)
-        f_load_neumann[expanded_ek] += line_integral_with_basis(*p[ek, :], 4, neumann_bc_func)
-        count += 1
-        if count % 10000 == 0:
-            print(f"f_neumann computed for {count} element")
+    if has_homo_neumann:
+        pass
+    else:
+        for ek in neumann_edge:
+            # p1 = p[ek[0], :]
+            # p2 = p[ek[1], :]
+            expanded_ek = expand_index(ek)
+            f_load_neumann[expanded_ek] += line_integral_with_basis(*p[ek, :], 4, neumann_bc_func)
     return f_load_neumann

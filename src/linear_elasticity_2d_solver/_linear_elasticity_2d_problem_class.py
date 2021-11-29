@@ -36,6 +36,7 @@ class LinearElasticity2DProblem:
         self._dirichlet_bc_func_vec = None
 
         self._has_non_homo_dirichlet = False
+        self._has_homo_neumann = False
         self._has_neumann = False
 
         self._is_assembled_and_free = False
@@ -52,7 +53,7 @@ class LinearElasticity2DProblem:
         self._hf_data.hf_assemble_a1_a2_f(self._f_func_vec)
 
         if self._has_neumann:
-            self._hf_data.hf_assemble_f_neumann(self._neumann_bc_func_vec)
+            self._hf_data.hf_assemble_f_neumann(self._neumann_bc_func_vec, self._has_homo_neumann)
         else:
             self._hf_data.dirichlet_edge = self._hf_data.edge
         # set indexes
@@ -340,8 +341,8 @@ class LinearElasticity2DProblem:
             self._has_non_homo_dirichlet = True
 
     @classmethod
-    def from_functions(cls, n, f_func, neumann_bc_func=None, get_dirichlet_edge_func=None,
-                       dirichlet_bc_func=None, plate_limits=None):
+    def from_functions(cls, n, f_func, dirichlet_bc_func=None, get_dirichlet_edge_func=None,
+                       neumann_bc_func=None, plate_limits=None):
         problem = cls()
         problem._hf_data.n = n
         problem._f_func_non_vec = f_func
@@ -353,6 +354,7 @@ class LinearElasticity2DProblem:
                 return 0, 0
 
             problem._neumann_bc_func_non_vec = default_neumann_bc_func
+            problem._has_homo_neumann = True
 
         problem._hf_data.get_dirichlet_edge_func = get_dirichlet_edge_func
         problem._set_vec_functions()

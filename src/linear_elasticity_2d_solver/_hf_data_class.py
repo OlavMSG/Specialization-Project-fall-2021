@@ -76,11 +76,12 @@ class HighFidelityData:
             if (self.neumann_edge is None) and np.all(self.dirichlet_edge == self.edge):
                 raise EdgesAreIllegalError("get_dirichlet_edge_func gives dirichlet_edge=edge and neumann_edge=None.")
 
-    def hf_assemble_f_neumann(self, neumann_bc_func_vec):
+    def hf_assemble_f_neumann(self, neumann_bc_func_vec, has_homo_neumann):
         self._get_dirichlet_edge()
         self.get_neumann_edge()
         self._are_edges_illegal()
-        self.f_load_neumann_full = assemble_f_neumann(self.n, self.p, self.neumann_edge, neumann_bc_func_vec)
+        self.f_load_neumann_full = assemble_f_neumann(self.n, self.p, self.neumann_edge,
+                                                      neumann_bc_func_vec, has_homo_neumann)
 
     def _set_free_and_dirichlet_edge_index(self):
         if self.dirichlet_edge is None:

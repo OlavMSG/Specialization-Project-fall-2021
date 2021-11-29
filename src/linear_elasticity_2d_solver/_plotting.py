@@ -3,6 +3,7 @@
 @author: Olav M.S. Gran
 """
 
+import matplotlib.colors as colors
 import matplotlib.pyplot as plt
 import numpy as np
 import sympy as sym
@@ -54,23 +55,14 @@ def plot_displacement(uh, p, tri, solve_mode=""):
         title_text = "Displacement in reduced order solution"
     else:
         title_text = "Displacement"
-    """fig, axs = plt.subplots(1, 2, figsize=(16, 7), num=title_text)
-    fig.suptitle(title_text)
-    ax1, ax2 = axs
 
-    ax1.triplot(p[:, 0], p[:, 1], tri)
-    ax1.grid()
-    ax1.set_title("Initial position")
-
-    ax2.triplot(p[:, 0] + uh.x, p[:, 1] + uh.y, tri)
-    ax2.grid()
-    ax2.set_title("Displaced position")
-
-    # adjust
-    plt.subplots_adjust(hspace=0.3, wspace=0.3)"""
     plt.figure(title_text)
     plt.title(title_text)
-    plt.triplot(p[:, 0] + uh.x, p[:, 1] + uh.y, tri)
+    colors1 = np.ones(tri.shape[0])
+    cmap1 = colors.ListedColormap("red")
+    cmap2 = colors.ListedColormap("gray")
+    plt.tripcolor(p[:, 0] + uh.x, p[:, 1] + uh.y, tri, facecolors=colors1, cmap=cmap1)
+    plt.tripcolor(p[:, 0], p[:, 1], tri, facecolors=colors1, cmap=cmap2, alpha=0.5)
     plt.grid()
 
 

@@ -69,7 +69,7 @@ class ReducedOrderData:
         self.a2_free_rom = self.v.T @ hf_data.a2_free @ self.v
         self.f_load_lv_free_rom = self.v.T @ hf_data.f_load_lv_free
         if has_neumann:
-            self.f_load_neumann_free_rom = self.v @ hf_data.f_load_neumann_free
+            self.f_load_neumann_free_rom = self.v.T @ hf_data.f_load_neumann_free
         if has_non_homo_dirichlet:
             self.a1_dirichlet_rom = self.v.T @ hf_data.a1_dirichlet
             self.a2_dirichlet_rom = self.v.T @ hf_data.a2_dirichlet
