@@ -317,7 +317,7 @@ class LinearElasticity2DProblem:
             raise DirectoryDoesNotExistsError(f"Directory {directory_path} does not exist")
 
         problem = cls()
-        problem._hf_data.n = n
+        problem._hf_data.n = n + 1
 
         start_time = perf_counter()
         problem._has_neumann, problem._has_non_homo_dirichlet = hf_from_files(problem._hf_data, directory_path)
@@ -345,7 +345,7 @@ class LinearElasticity2DProblem:
     def from_functions(cls, n, f_func, dirichlet_bc_func=None, get_dirichlet_edge_func=None,
                        neumann_bc_func=None, plate_limits=None):
         problem = cls()
-        problem._hf_data.n = n
+        problem._hf_data.n = n + 1
         problem._f_func_non_vec = f_func
         problem._neumann_bc_func_non_vec = neumann_bc_func
         problem._dirichlet_bc_func_non_vec = dirichlet_bc_func
@@ -467,7 +467,7 @@ class LinearElasticity2DProblem:
     def n(self):
         if not self._is_assembled_and_free:
             raise IsNotAssembledError("Matrices and vectors are not assembled.")
-        return self._hf_data.n
+        return self._hf_data.n - 1
 
     @property
     def n_full(self):

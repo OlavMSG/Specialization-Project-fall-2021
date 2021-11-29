@@ -25,6 +25,8 @@ def plot_singular_values(sigma2_vec):
     sigma_vec = np.sqrt(sigma2_vec[arg0])
     rel_sigma_vec = sigma_vec / sigma_vec[0]
     plt.semilogy(np.arange(len(rel_sigma_vec)) + 1, rel_sigma_vec, "mD-", label="Singular Values, $\\sigma_i$.")
+    plt.xlabel("$i$")
+    plt.ylabel("$\\sigma_i$")
     plt.grid()
     plt.legend()
 
@@ -37,13 +39,15 @@ def plot_relative_information_content(sigma2_vec, n=None):
     plt.plot(np.arange(len(i_n)) + 1, i_n, "gD-")
     if n is not None:
         plt.plot(n, i_n[n - 1], "bo", label="$(N_{rom}, I(N_{rom}))$")
+    plt.xlabel("$N$")
+    plt.ylabel("$I(N)$")
     plt.grid()
     plt.legend()
 
 
 def plot_mesh(n, p, tri):
     plt.figure("Mesh plot", figsize=(7, 7))
-    plt.title(f"Mesh for n={n}")
+    plt.title(f"Mesh for n={n - 1}x{n-1}")
     plt.triplot(p[:, 0], p[:, 1], tri)
     plt.grid()
 

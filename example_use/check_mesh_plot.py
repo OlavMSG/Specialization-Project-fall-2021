@@ -17,7 +17,7 @@ def dirichlet_bc_func(x, y):
 
 
 def main():
-    n = 3
+    n = 1
     print(n)
     e_mean = 160e3
     nu_mean = 0.2
