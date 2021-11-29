@@ -7,26 +7,32 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from linear_elasticity_2d_solver import LinearElasticity2DProblem
+from linear_elasticity_2d_solver.default_constants import default_tol
 
 rho_steal = 8e3  # kg/m^3
 
 
 # Here just example used
 def f(x, y):
-    alpha = 5e3  # Newton/m^2...?
-    return -alpha, 0
+    alpha = 8e3 * 9.81  # Newton/m^2...?
+    return alpha, 0
 
 
 def dirichlet_bc_func(x, y):
     return 0, 0
 
 
+def clamped_bc(x, y):
+    return abs(x) <= default_tol
+
+
 def main():
-    n = 80
+    n = 5
     save = True
     save_dict = r"reduced_order_error_check_plots" + f"/n{n}"
     # define problem
-    le2d = LinearElasticity2DProblem.from_functions(n, f, dirichlet_bc_func=dirichlet_bc_func)
+    le2d = LinearElasticity2DProblem.from_functions(n, f,
+                                                    get_dirichlet_edge_func=clamped_bc)
     for mode in ("uniform", "gauss lobatto"):
         for grid in (5, 11):
             print("-" * 20)
@@ -39,7 +45,8 @@ def main():
             if save:
                 plt.savefig(save_dict + f"/relative_information_content_mode_{mode}_grid_{grid}_n{n}.pdf")
             print(f"Chosen n_rom={le2d.n_rom}, max use is n_rom_max={le2d.n_rom_max}, "
-                  f"grid size is ns_rom={le2d.ns_rom}, Number of node on one axis is n={n}")
+                  f"grid size is ns_rom={le2d.ns_rom}, Number of node on one axis is n={n}, "
+                  f"Solution matrix rank: {le2d.solution_matrix_rank}")
             print("Singular values:")
             print(le2d.singular_values_pod)
             max_err = np.zeros(le2d.n_rom_max)
@@ -54,8 +61,8 @@ def main():
 
             plt.figure("relative_information_content_{mode}_{grid}", figsize=(12, 7))
             plt.title("Reduced order errors v. $n_{rom}$")
-            plt.semilogy(np.arange(1, le2d.n_rom_max + 1), mean_err, "cx-", label="$mean$")
-            plt.semilogy(np.arange(1, le2d.n_rom_max + 1), max_err, "mx-", label="$max$")
+            plt.semilogy(np.arange(1, le2d.n_rom_max + 1), mean_err, "cD-", label="$mean$")
+            plt.semilogy(np.arange(1, le2d.n_rom_max + 1), max_err, "mD-", label="$max$")
             plt.grid()
             plt.legend()
             if save:

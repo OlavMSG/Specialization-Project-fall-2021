@@ -21,7 +21,8 @@ from ._solution_function_class import SolutionFunctionValues2D
 from ._stress_recovery import von_mises_yield
 from .default_constants import file_names_dict, eps_pod, e_young_range, nu_poisson_range, rb_grid, pod_mode, n_rom_cut
 from .exceptions import IsNotAssembledError, PodNotComputedError, CanNotForceNromError, DirectoryDoesNotExistsError, \
-    MissingInputFunctionPointerError, LinearElasticity2DProblemNotSolved, PlateLimitsNotFoundError
+    MissingInputFunctionPointerError, LinearElasticity2DProblemNotSolved, PlateLimitsNotFoundError, \
+    CanNotComputeSolutionMatrixRankError
 
 
 class LinearElasticity2DProblem:
@@ -553,3 +554,10 @@ class LinearElasticity2DProblem:
         if not self._is_pod_computed:
             warnings.warn("Pod is not computed. Returning default value.")
         return self._rb_data.sigma2_vec
+
+    @property
+    def solution_matrix_rank(self):
+        if self._rb_data.s_mat is None:
+            raise CanNotComputeSolutionMatrixRankError("Solution matrix is not computed, can not compute its rank.")
+        else:
+            return self._rb_data.solution_matrix_rank()

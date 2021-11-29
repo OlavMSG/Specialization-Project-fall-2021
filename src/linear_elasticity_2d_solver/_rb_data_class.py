@@ -79,4 +79,10 @@ class ReducedOrderData:
         self._compute_rom_matrices_and_vectors(hf_data, has_neumann, has_non_homo_dirichlet)
 
     def set_n_rom_max(self):
-        self.n_rom_max = np.max(np.argwhere(self.sigma2_vec > self.n_rom_cut)) + 1
+        if self.n_rom_cut == "rank":
+            self.n_rom_max = self.solution_matrix_rank()
+        else:
+            self.n_rom_max = np.max(np.argwhere(self.sigma2_vec > self.n_rom_cut)) + 1
+
+    def solution_matrix_rank(self):
+        return np.linalg.matrix_rank(self.s_mat)

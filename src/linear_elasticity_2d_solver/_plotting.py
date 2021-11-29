@@ -24,7 +24,7 @@ def plot_singular_values(sigma2_vec):
     arg0 = np.argwhere(sigma2_vec >= 0)
     sigma_vec = np.sqrt(sigma2_vec[arg0])
     rel_sigma_vec = sigma_vec / sigma_vec[0]
-    plt.semilogy(np.arange(len(rel_sigma_vec)) + 1, rel_sigma_vec, "mx--", label="Singular Values, $\\sigma_i$.")
+    plt.semilogy(np.arange(len(rel_sigma_vec)) + 1, rel_sigma_vec, "mD-", label="Singular Values, $\\sigma_i$.")
     plt.grid()
     plt.legend()
 
@@ -33,10 +33,10 @@ def plot_relative_information_content(sigma2_vec, n=None):
     arg0 = np.argwhere(sigma2_vec >= 0)
     i_n = np.cumsum(sigma2_vec[arg0]) / np.sum(sigma2_vec[arg0])
     plt.figure("Relative information content")
-    plt.title("Relative information content")
-    plt.plot(np.arange(len(i_n)) + 1, i_n, "mx--", label="$I(n)$")
+    plt.title("Relative information content, $I(N)$")
+    plt.plot(np.arange(len(i_n)) + 1, i_n, "gD-")
     if n is not None:
-        plt.plot(n, i_n[n - 1], "bo", label="$(n_{rom}, I(n_{rom}))$")
+        plt.plot(n, i_n[n - 1], "bo", label="$(N_{rom}, I(N_{rom}))$")
     plt.grid()
     plt.legend()
 

@@ -35,5 +35,9 @@ class DirectoryDoesNotExistsError(Exception):
 class FileDoesNotExistError(Exception):
     pass
 
+
 class EdgesAreIllegalError(Exception):
+    pass
+
+class CanNotComputeSolutionMatrixRankError(Exception):
     pass

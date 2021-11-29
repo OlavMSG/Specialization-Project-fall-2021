@@ -18,7 +18,7 @@ nu_poisson_range = (0, 0.4)
 # epsilon for pod
 eps_pod = 1e-2
 # max cut value for n_rom
-n_rom_cut = 1e-12
+n_rom_cut = "rank"  # = 1e-12
 # default names for saved files
 file_names_dict = {"a1": "a1_mat.npz",
                    "a2": "a2_mat.npz",
