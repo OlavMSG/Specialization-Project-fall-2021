@@ -137,6 +137,7 @@ old_code
 example_use/reduced_order_error_check_plots
 example_use/saved_data
 example_use/other_plots
+example_use/reduced_order_plots
 
 # not included files
 find_derivatives_xy.py

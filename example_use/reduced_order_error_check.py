@@ -5,9 +5,19 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+import sympy as sym
 
 from linear_elasticity_2d_solver import LinearElasticity2DProblem
 from linear_elasticity_2d_solver.default_constants import default_tol
+
+"""for nice representation of plots"""
+
+sym.init_printing()
+fontsize = 20
+new_params = {'axes.titlesize': fontsize, 'axes.labelsize': fontsize, 'figure.figsize': (12, 7),
+              'lines.linewidth': 2, 'lines.markersize': 7, 'ytick.labelsize': fontsize, 'figure.titlesize': fontsize,
+              'xtick.labelsize': fontsize, 'legend.fontsize': fontsize, 'legend.handlelength': 1.5}
+plt.rcParams.update(new_params)
 
 rho_steal = 8e3  # kg/m^3
 
@@ -27,8 +37,8 @@ def clamped_bc(x, y):
 
 
 def main():
-    n = 5
-    save = True
+    n = 3
+    save = False
     save_dict = r"reduced_order_error_check_plots" + f"/n{n}"
     # define problem
     le2d = LinearElasticity2DProblem.from_functions(n, f,
@@ -47,8 +57,8 @@ def main():
             print(f"Chosen n_rom={le2d.n_rom}, max use is n_rom_max={le2d.n_rom_max}, "
                   f"grid size is ns_rom={le2d.ns_rom}, Number of node on one axis is n={n}, "
                   f"Solution matrix rank: {le2d.solution_matrix_rank}")
-            print("Singular values:")
-            print(le2d.singular_values_pod)
+            print("Singular values squared:")
+            print(le2d.singular_values_squared_pod)
             max_err = np.zeros(le2d.n_rom_max)
             mean_err = np.zeros(le2d.n_rom_max)
             for n_rom in range(1, le2d.n_rom_max + 1):

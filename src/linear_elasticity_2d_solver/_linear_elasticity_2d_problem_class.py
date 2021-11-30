@@ -550,10 +550,17 @@ class LinearElasticity2DProblem:
         return self._rb_data.n_rom_max
 
     @property
-    def singular_values_pod(self):
+    def singular_values_squared_pod(self):
         if not self._is_pod_computed:
             warnings.warn("Pod is not computed. Returning default value.")
         return self._rb_data.sigma2_vec
+
+    @property
+    def singular_values_pod(self):
+        if not self._is_pod_computed:
+            warnings.warn("Pod is not computed. Returning default value.")
+        arg0 = np.argwhere(self._rb_data.sigma2_vec >= 0)
+        return np.sqrt(self._rb_data.sigma2_vec[arg0])
 
     @property
     def solution_matrix_rank(self):
