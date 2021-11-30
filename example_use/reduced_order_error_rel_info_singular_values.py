@@ -36,7 +36,7 @@ def clamped_bc(x, y):
     return abs(x) <= default_tol
 
 
-def main(n, save):
+def main(n, save, do_errors=True):
     save_dict = r"reduced_order_plots" + f"/n{n}"
     # define problem
     le2d = LinearElasticity2DProblem.from_functions(n, f,
@@ -63,18 +63,18 @@ def main(n, save):
 
             print("Singular values squared:")
             print(le2d.singular_values_squared_pod)
-
-            max_err = np.zeros(le2d.n_rom_max)
-            mean_err = np.zeros(le2d.n_rom_max)
-            for n_rom in range(1, le2d.n_rom_max + 1):
-                errs = np.zeros(le2d.ns_rom)
-                for i, (e_young, nu_poisson) in enumerate(le2d.e_young_nu_poisson_mat):
-                    # print(i, e_young, nu_poisson)
-                    errs[i] = le2d.error_a_rb(e_young, nu_poisson, n_rom=n_rom)
-                max_err[n_rom - 1] = np.max(errs)
-                mean_err[n_rom - 1] = np.mean(errs)
-            mean_err_dict[mode][grid] = mean_err
-            max_err_dict[mode][grid] = max_err
+            if do_errors:
+                max_err = np.zeros(le2d.n_rom_max)
+                mean_err = np.zeros(le2d.n_rom_max)
+                for n_rom in range(1, le2d.n_rom_max + 1):
+                    errs = np.zeros(le2d.ns_rom)
+                    for i, (e_young, nu_poisson) in enumerate(le2d.e_young_nu_poisson_mat):
+                        # print(i, e_young, nu_poisson)
+                        errs[i] = le2d.error_a_rb(e_young, nu_poisson, n_rom=n_rom)
+                    max_err[n_rom - 1] = np.max(errs)
+                    mean_err[n_rom - 1] = np.mean(errs)
+                mean_err_dict[mode][grid] = mean_err
+                max_err_dict[mode][grid] = max_err
 
     # make singular values plot
     plt.figure("Singular values")
@@ -86,7 +86,7 @@ def main(n, save):
             sigma_vec = np.sqrt(sigma2_vec[arg0])
             rel_sigma_vec = sigma_vec / sigma_vec[0]
             plt.semilogy(np.arange(len(rel_sigma_vec)) + 1, rel_sigma_vec, "D-",
-                         label=f"{mode} ${grid}\\times{grid}$", alpha=.7)
+                         label=f"{mode} ${grid}\\times{grid}$", alpha=.8)
     plt.xlabel("$i$")
     plt.ylabel("$\\sigma_i$")
     plt.grid()
@@ -104,40 +104,70 @@ def main(n, save):
             sigma2_vec = sigma2_dict[mode][grid]
             arg0 = np.argwhere(sigma2_vec >= 0)
             i_n = np.cumsum(sigma2_vec[arg0]) / np.sum(sigma2_vec[arg0])
-            plt.plot(np.arange(len(i_n)) + 1, i_n, "D-", label=f"{mode} ${grid}\\times{grid}$", alpha=.7)
+            plt.plot(np.arange(len(i_n)) + 1, i_n, "D-", label=f"{mode} ${grid}\\times{grid}$", alpha=.8)
             plt.plot(n_rom, i_n[n_rom - 1], "bo", alpha=.7)
     plt.xlabel("$N$")
     plt.ylabel("$I(N)$")
     plt.ylim(0.9996, 1.00005)
     plt.grid()
+    plt.legend()
     if save:
         plt.savefig(save_dict + f"/relative_information_content_mode_n{n}.pdf")
     plt.show()
 
-    # make error plots
-    fig, ax = plt.subplots(1, 1, num="Reduced order errors v. $n_{rom}$" + f", $n={n}$", figsize=(12, 7))
-    fig.suptitle("Reduced order errors v. $n_{rom}$" + f", $n={n}$")
-    for grid in (11, 5):
+    if do_errors:
+        # make error plots
+        fig, ax = plt.subplots(1, 1, num="Reduced order errors v. $n_{rom}$5" + f", $n={n}$", figsize=(12, 7))
+        fig.suptitle("Reduced order errors v. $n_{rom}$" + f", $n={n}$")
+        grid = 5
         for mode in ("gauss lobatto", "uniform"):
             mean_err = mean_err_dict[mode][grid]
             ax.semilogy(np.arange(len(mean_err)) + 1, mean_err, "D-",
-                        label=f"mean: {mode} ${grid}\\times{grid}$", alpha=.7)
-    for grid in (11, 5):
+                        label=f"mean: {mode} ${grid}\\times{grid}$", alpha=.8)
         for mode in ("gauss lobatto", "uniform"):
             max_err = max_err_dict[mode][grid]
             ax.semilogy(np.arange(len(max_err)) + 1, max_err, "D-",
-                        label=f"max: {mode} ${grid}\\times{grid}$", alpha=.7)
-    ax.set_xlabel("$n_{rom}$")
-    ax.set_ylabel("$\\|\\|u_h(\\mu) - Vu_N(\\mu)\\|\\|_a$")
-    ax.grid()
-    # adjust
-    ax.legend(loc=9, bbox_to_anchor=(0.5, -0.13), ncol=2)
-    if save:
-        plt.savefig(save_dict + f"/reduced_order_errors_mode_n{n}.pdf", bbox_inches='tight')
-    plt.show()
+                        label=f"max: {mode} ${grid}\\times{grid}$", alpha=.8)
+        ax.set_xlabel("$n_{rom}$")
+        ax.set_ylabel("$\\|\\|u_h(\\mu) - Vu_N(\\mu)\\|\\|_a$")
+        ax.grid()
+        # adjust
+        ax.legend(loc=9, bbox_to_anchor=(0.5, -0.13), ncol=2)
+        if save:
+            plt.savefig(save_dict + f"/reduced_order_errors_mode_grid{grid}_n{n}.pdf", bbox_inches='tight')
+        plt.show()
+
+        # make error plots
+        fig, ax = plt.subplots(1, 1, num="Reduced order errors v. $n_{rom}$11" + f", $n={n}$", figsize=(12, 7))
+        fig.suptitle("Reduced order errors v. $n_{rom}$" + f", $n={n}$")
+        grid = 11
+        for mode in ("gauss lobatto", "uniform"):
+            mean_err = mean_err_dict[mode][grid]
+            ax.semilogy(np.arange(len(mean_err)) + 1, mean_err, "D-",
+                        label=f"mean: {mode} ${grid}\\times{grid}$", alpha=.8)
+        for mode in ("gauss lobatto", "uniform"):
+            max_err = max_err_dict[mode][grid]
+            ax.semilogy(np.arange(len(max_err)) + 1, max_err, "D-",
+                        label=f"max: {mode} ${grid}\\times{grid}$", alpha=.8)
+        ax.set_xlabel("$n_{rom}$")
+        ax.set_ylabel("$\\|\\|u_h(\\mu) - Vu_N(\\mu)\\|\\|_a$")
+        ax.grid()
+        # adjust
+        ax.legend(loc=9, bbox_to_anchor=(0.5, -0.13), ncol=2)
+        if save:
+            plt.savefig(save_dict + f"/reduced_order_errors_mode_grid{grid}_n{n}.pdf", bbox_inches='tight')
+        plt.show()
 
 
 if __name__ == '__main__':
-    n = 20
-    save = True
-    main(n, save)
+    from datetime import datetime
+    # takes some time!!!! (20: 12 min, 40: 40 min, 80: 2 hours 42 min)
+    for n in (20, 40, 80):
+        now1 = datetime.now().time()  # time object
+        print("start time =", now1)
+        save = True
+        print(n, save)
+        main(n, save)
+        print(n, save)
+        now2 = datetime.now().time()  # time object
+        print("end time =", now2)

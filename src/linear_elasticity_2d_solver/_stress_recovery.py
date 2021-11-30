@@ -5,7 +5,7 @@
 import numpy as np
 
 from ._assembly import get_basis_coef, epsilon, nabla_div
-from ._helpers import get_mu_lambda, inv_index_map
+from .helpers import get_mu_lambda, inv_index_map
 
 
 def sigma(e_young, nu_poisson, ck, i, d):

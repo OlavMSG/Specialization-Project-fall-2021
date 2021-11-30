@@ -5,10 +5,10 @@
 import numpy as np
 
 from ._assembly import assemble_a1_a2_f, assemble_f_neumann
-from ._getplate import getPlatev3
-from ._helpers import expand_index, FunctionValues2D
 from .default_constants import plate_limits
 from .exceptions import EdgesAreIllegalError
+from .get_plate import getPlatev3
+from .helpers import expand_index, FunctionValues2D
 
 
 class HighFidelityData:

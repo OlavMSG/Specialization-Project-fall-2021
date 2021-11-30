@@ -5,17 +5,13 @@
 
 import numpy as np
 
-from linear_elasticity_2d_solver import LinearElasticity2DProblem, get_u_exact, get_mu_lambda, e_young_range, \
-    nu_poisson_range
+from linear_elasticity_2d_solver import LinearElasticity2DProblem
+from linear_elasticity_2d_solver.default_constants import e_young_range, nu_poisson_range
+from linear_elasticity_2d_solver.helpers import get_u_exact, get_mu_lambda
 
 
 def get_mean(range_):
     return 0.5 * (range_[0] + range_[1])
-
-
-e_mean = get_mean(e_young_range)
-nu_mean = get_mean(nu_poisson_range)
-mu, lam = get_mu_lambda(e_mean, nu_mean)
 
 
 def default_f(x, y):
@@ -25,6 +21,9 @@ def default_f(x, y):
 def base(dirichlet_bc_func, u_exact_func, f=None):
     if f is None:
         f = default_f
+
+    e_mean = get_mean(e_young_range)
+    nu_mean = get_mean(nu_poisson_range)
 
     le2d = LinearElasticity2DProblem.from_functions(n, f, dirichlet_bc_func=dirichlet_bc_func)
 
@@ -99,6 +98,10 @@ def test_case_5():
     def dirichlet_bc_func(x, y):
         return u_exact_func(x, y)
 
+    e_mean = get_mean(e_young_range)
+    nu_mean = get_mean(nu_poisson_range)
+    mu, lam = get_mu_lambda(e_mean, nu_mean)
+
     def f(x, y):
         return 0., - mu - lam
 
@@ -113,6 +116,10 @@ def test_case_6():
 
     def dirichlet_bc_func(x, y):
         return u_exact_func(x, y)
+
+    e_mean = get_mean(e_young_range)
+    nu_mean = get_mean(nu_poisson_range)
+    mu, lam = get_mu_lambda(e_mean, nu_mean)
 
     def f(x, y):
         return - mu - lam, 0.
@@ -130,8 +137,7 @@ def main():
     test_case_6()
 
 
-n = 4
+n = 2
 tol = 1e-14
-
 if __name__ == '__main__':
     main()

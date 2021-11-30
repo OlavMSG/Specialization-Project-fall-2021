@@ -133,29 +133,3 @@ class FunctionValues2D:
     @property
     def shape(self):
         return self._values.shape
-
-
-if __name__ == "__main__":
-    def f(x, y):
-        xval, yval = x * y, x - x
-        return xval, yval
-
-
-    x = np.array([i for i in range(4)])
-    y = np.array([i + 4 for i in range(4)])
-    print(x, y)
-    print(f(x, y))
-
-    f_vec = VectorizedFunction2D(f)
-    print(f_vec)
-
-    values = np.arange(4).reshape((2, 2))
-    print(values)
-
-    val = FunctionValues2D.from_nx2(values)
-    print(val)
-    print(val.flatt_values)
-
-    val2 = FunctionValues2D.from_1xn2(val.flatt_values)
-    print(val2)
-    print(val2.flatt_values)

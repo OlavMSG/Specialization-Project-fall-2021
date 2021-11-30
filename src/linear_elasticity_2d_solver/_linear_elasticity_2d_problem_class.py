@@ -10,11 +10,10 @@ from time import perf_counter
 import numpy as np
 from scipy.sparse.linalg import spsolve
 
-from ._helpers import compute_a, VectorizedFunction2D
 from ._hf_data_class import HighFidelityData
 from ._plotting import plot_singular_values, plot_relative_information_content, plot_mesh, plot_displacement, \
     plot_von_mises
-from ._pod import pod, get_e_young_nu_poisson_mat
+from ._pod import pod_with_enery_norm, get_e_young_nu_poisson_mat
 from ._rb_data_class import ReducedOrderData
 from ._save_and_load import hf_save, rb_save, rb_from_files, hf_from_files
 from ._solution_function_class import SolutionFunctionValues2D
@@ -23,12 +22,16 @@ from .default_constants import file_names_dict, eps_pod, e_young_range, nu_poiss
 from .exceptions import IsNotAssembledError, PodNotComputedError, CanNotForceNromError, DirectoryDoesNotExistsError, \
     MissingInputFunctionPointerError, LinearElasticity2DProblemNotSolved, PlateLimitsNotFoundError, \
     CanNotComputeSolutionMatrixRankError
+from .helpers import compute_a, VectorizedFunction2D
 
 
 class LinearElasticity2DProblem:
     DEFAULT_FILE_NAMES_DICT = file_names_dict
 
     def __init__(self):
+        """
+        Initial constructor.
+        """
         self._f_func_non_vec = None
         self._neumann_bc_func_non_vec = None
         self._dirichlet_bc_func_non_vec = None
@@ -103,6 +106,7 @@ class LinearElasticity2DProblem:
     def compute_f_load_rom(self, e_young=None, nu_poisson=None):
         if not self._is_pod_computed:
             raise PodNotComputedError("Pod is not computed. Can not solve.")
+        # compute the load f for the rb solution
         f_load_rom = self._rb_data.f_load_lv_free_rom.copy()
         if self._has_neumann:
             f_load_rom += self._rb_data.f_load_neumann_free_rom
@@ -112,23 +116,6 @@ class LinearElasticity2DProblem:
             f_load_rom -= self._compute_a_dirichlet_rom(e_young, nu_poisson) @ self._hf_data.rg
         return f_load_rom
 
-    def build_rb_model(self, grid=rb_grid, mode=pod_mode, e_young_range=e_young_range,
-                       nu_poisson_range=nu_poisson_range, eps_pod=eps_pod, n_rom_cut=n_rom_cut):
-
-        self._rb_data.set_rb_model_params(grid, e_young_range, nu_poisson_range, eps_pod, mode, n_rom_cut)
-
-        start_time = perf_counter()
-        pod(self, self._rb_data)
-        # do not allow computation of v for larger n_rom
-        self._rb_data.compute_rb_matrices_and_vectors(self._rb_data.n_rom, self._hf_data, self._has_neumann,
-                                                      self._has_non_homo_dirichlet)
-        self._rb_data.last_n_rom = self._rb_data.n_rom
-        self._rb_data.set_n_rom_max()
-        print("Built reduced order model in {:.6f} sec".format(perf_counter() - start_time))
-        # reset uh
-        self._uh = self._uh = SolutionFunctionValues2D()
-        self._is_pod_computed = True
-
     def hfsolve(self, e_young, nu_poisson, print_info=True):
         # compute a and convert to csr
         a = self.compute_a_free(e_young, nu_poisson).tocsr()
@@ -136,12 +123,13 @@ class LinearElasticity2DProblem:
         # initialize uh
         uh = np.zeros(self._hf_data.n_full)
         start_time = perf_counter()
+        # solve system
         uh[self._hf_data.expanded_free_index] = spsolve(a, f_load)
         if print_info:
             print("Solved a @ uh = f_load in {:.6f} sec".format(perf_counter() - start_time))
         if self._has_non_homo_dirichlet:
             uh[self._hf_data.expanded_dirichlet_edge_index] = self._hf_data.rg
-        # set uh
+        # set uh, and save it in a nice way.
         self._uh = SolutionFunctionValues2D.from_1xn2(uh)
         self._uh.set_e_young_and_nu_poisson(e_young, nu_poisson)
         if print_info:
@@ -169,17 +157,38 @@ class LinearElasticity2DProblem:
         # initialize uh
         uh_rom = np.zeros(self._hf_data.n_full)
         start_time = perf_counter()
+        # solve and project rb solution
         uh_rom[self._hf_data.expanded_free_index] = self._rb_data.v @ np.linalg.solve(a_rom, f_load_rom)
         if print_info:
             print("Solved a_rom @ uh_rom = f_load_rom in {:.6f} sec".format(perf_counter() - start_time))
         if self._has_non_homo_dirichlet:
+            # lifting function
             uh_rom[self._hf_data.expanded_dirichlet_edge_index] = self._hf_data.rg
-        # set uh
+        # set uh_rom, save it in a nice way.
         self._uh_rom = SolutionFunctionValues2D.from_1xn2(uh_rom)
         self._uh_rom.set_e_young_and_nu_poisson(e_young, nu_poisson)
         if print_info:
             print("Get solution by the property uh_rom, uh_rom_free or uh_rom_full of the class.\n" +
                   "The property uh_rom, extra properties values, x and y are available.")
+
+    def build_rb_model(self, grid=rb_grid, mode=pod_mode, e_young_range=e_young_range,
+                       nu_poisson_range=nu_poisson_range, eps_pod=eps_pod, n_rom_cut=n_rom_cut):
+        # set the parameters for building the reduce model
+        self._rb_data.set_rb_model_params(grid, e_young_range, nu_poisson_range, eps_pod, mode, n_rom_cut)
+        start_time = perf_counter()
+        # compute a reduced model by the POD algorithm using the energy norm.
+        pod_with_enery_norm(self, self._rb_data)
+        # compute the rb matrices and vectors
+        self._rb_data.compute_rb_matrices_and_vectors(self._rb_data.n_rom, self._hf_data, self._has_neumann,
+                                                      self._has_non_homo_dirichlet)
+        # save the last n_rom
+        self._rb_data.last_n_rom = self._rb_data.n_rom
+        # do not allow computation of v for larger n_rom
+        self._rb_data.set_n_rom_max()
+        print("Built reduced order model in {:.6f} sec".format(perf_counter() - start_time))
+        # reset uh
+        self._uh = self._uh = SolutionFunctionValues2D()
+        self._is_pod_computed = True
 
     def error_a_rb(self, e_young, nu_poisson, n_rom=None, compute_again=False, print_info=False):
         if self._is_from_files and n_rom is not None:

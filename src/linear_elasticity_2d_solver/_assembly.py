@@ -7,10 +7,30 @@ import numpy as np
 import scipy.sparse as sparse
 
 from ._gauss_quadrature import quadrature2D, line_integral_with_basis, get_area_triangle
-from ._helpers import inv_index_map, expand_index
+from .helpers import inv_index_map, expand_index
 
 
 def phi(x, y, ck, i):
+    """
+    The linear basis functions
+
+    Parameters
+    ----------
+    x : numpy.ndarray
+        x-values.
+    y : numpy.ndarry
+        y-values.
+    ck : numpy.ndarray
+        basis function coef. matrix.
+    i : int
+        which basis function to use.
+
+    Returns
+    -------
+    numpy.ndarry
+        basis function in the points (x,y).
+
+    """
     # Ck = [[ck_1,  ck_2,  ck_3 ],  1  row index 0
     #       [ckx_1, ckx_2, ckx_3],  x  row index 1
     #       [cky_1, cky_2, cky_3]]  y  row index 2
@@ -22,7 +42,24 @@ def phi(x, y, ck, i):
 
 
 def get_basis_coef(p1, p2, p3):
-    # calculate basis functions.
+    """
+    Calculate the basis function coef. matrix.
+
+    Parameters
+    ----------
+    p1 : numpy.ndarry
+        first vertex of the triangle element.
+    p1 : numpy.ndarry
+        second vertex of the triangle element.
+    p1 : numpy.ndarry
+        third vertex of the triangle element.
+
+    Returns
+    -------
+    ck : numpy.ndarray
+        basis function coef. matrix.
+
+    """
     # row_k: [1, x_k, y_k]
     mk = np.array([[1, p1[0], p1[1]],
                    [1, p2[0], p2[1]],
@@ -32,6 +69,24 @@ def get_basis_coef(p1, p2, p3):
 
 
 def nabla_grad(ckx, cky, d):
+    """
+    
+
+    Parameters
+    ----------
+    ckx : float
+        x-componet from basis function coef. matrix.
+    cky : TYPE
+        y-component from basis function coef. matrix.
+    d : int
+        which dimension.
+
+    Returns
+    -------
+    numpy.ndarry
+        gradient.
+
+    """
     if d == 0:
         # case y-part equal 0 of basisfunc
         return np.array([[ckx, 0.],
@@ -43,11 +98,48 @@ def nabla_grad(ckx, cky, d):
 
 
 def epsilon(ck, i, d):
+    """
+    Calculate the symetric part of the gradient
+
+    Parameters
+    ----------
+    ck : numpy.ndarray
+        basis function coef. matrix.
+    i : int
+        which basis function to use.
+    d : int
+        which dimension.
+
+    Returns
+    -------
+    numpy.ndarry
+        symetric part of the gradient.
+
+    """
+    
     nabla_grad_ck = nabla_grad(ck[1, i], ck[2, i], d)
     return 0.5 * (nabla_grad_ck + nabla_grad_ck.T)
 
 
 def nabla_div(ck, i, d):
+    """
+    Calculate the divergence
+
+    Parameters
+    ----------
+    ck : numpy.ndarray
+        basis function coef. matrix.
+    i : int
+        which basis function to use.
+    d : int
+        which dimension.
+
+    Returns
+    -------
+    float
+        divergence.
+
+    """
     # d = 0
     # case y-part 0 of basisfunc
     # d = 1
@@ -56,9 +148,29 @@ def nabla_div(ck, i, d):
 
 
 def assemble_a1_a2_local(area, ck):
+    """
+    Aseemble the local contributions to a1 and a2 on an element.
+
+    Parameters
+    ----------
+    area : float
+        area of the triangle element.
+    ck : numpy.ndarray
+        basis function coef. matrix.
+
+    Returns
+    -------
+    a1_local : numpy.ndarray
+        local contribution to matrix a1.
+    a2_local : numpy.ndarray
+        local contribution to matrix a2.
+
+    """
     a1_local = np.zeros((6, 6), dtype=float)
     a2_local = np.zeros((6, 6), dtype=float)
-
+    
+    # easier to loop thourgh k and use the inverse index-map
+    # matrices are symetric by construction, so only compute on part.
     for ki in range(6):
         i, di = inv_index_map(ki)
         for kj in range(ki + 1):
@@ -68,6 +180,7 @@ def assemble_a1_a2_local(area, ck):
             div_i_div_j = area * nabla_div(ck, i, di) * nabla_div(ck, j, dj)
             a1_local[ki, kj] = eps_i_double_dot_eps_j
             a2_local[ki, kj] = div_i_div_j
+            # set symmetric part
             if ki != kj:
                 a1_local[kj, ki] = eps_i_double_dot_eps_j
                 a2_local[kj, ki] = div_i_div_j
@@ -75,6 +188,28 @@ def assemble_a1_a2_local(area, ck):
 
 
 def assemble_f_local(ck, f_func, p1, p2, p3):
+    """
+    assemble the local contribution to the f_load_lv for the element
+
+    Parameters
+    ----------
+    ck : numpy.ndarray
+        basis function coef. matrix.
+    f_func : function
+        load function.
+    p1 : numpy.ndarry
+        first vertex of the triangle element.
+    p1 : numpy.ndarry
+        second vertex of the triangle element.
+    p1 : numpy.ndarry
+        third vertex of the triangle element.
+
+    Returns
+    -------
+    numpy.ndarry
+        local contribution to f_load_lv.
+
+    """
     f_local = np.zeros(6, dtype=float)
 
     for ki in range(6):
@@ -88,6 +223,30 @@ def assemble_f_local(ck, f_func, p1, p2, p3):
 
 
 def assemble_a1_a2_f(n, p, tri, f_func):
+    """
+    Assemble the matricies a1 and a2, and the load vector f_load_lv
+
+    Parameters
+    ----------
+    n : int
+        number of node along one axis.
+    p : numpy.ndarry
+        list of points.
+    tri : numpy.ndarry
+        triangulation of the points in p.
+    f_func : function
+        load function.
+
+    Returns
+    -------
+    a1 : numpy.ndarray
+        matrix a1 for first bilinear form.
+    a2 : numpy.ndarray
+        matrix a2 fro second bilinear form.
+    f_load_lv : numpy.ndarry
+        load vector for linear form.
+
+    """
     n2d = n * n * 2
     # Stiffness matrix
     a1 = sparse.dok_matrix((n2d, n2d), dtype=float)
@@ -108,11 +267,13 @@ def assemble_a1_a2_f(n, p, tri, f_func):
         # and basis functions coef. or Jacobin inverse
         ck = get_basis_coef(*p[nk, :])
         area = get_area_triangle(*p[nk, :])
+        # assemble local contributions
         a1_local, a2_local = assemble_a1_a2_local(area, ck)
         f_local = assemble_f_local(ck, f_func, *p[nk, :])
-
+        # expand the index
         expanded_nk = expand_index(nk)
         index = np.ix_(expanded_nk, expanded_nk)
+        # add local contributions
         a1[index] += a1_local
         a2[index] += a2_local
         f_load_lv[expanded_nk] += f_local
@@ -120,6 +281,28 @@ def assemble_a1_a2_f(n, p, tri, f_func):
 
 
 def assemble_f_neumann(n, p, neumann_edge, neumann_bc_func, has_homo_neumann):
+    """
+    Assemble the neumann load vector
+
+    Parameters
+    ----------
+    n : int
+        number of node along one axis.
+    p : numpy.ndarry
+        list of points.
+    neumann_edge : numpy.ndarry
+        arry of the edges of the triangulation.
+    neumann_bc_func : function
+        the neumann boundary condition function.
+    has_homo_neumann : bool
+        do we have homogenues neumann conditions.
+
+    Returns
+    -------
+    f_load_neumann : numpy.ndarry
+        load vector for neumann.
+
+    """
     n2d = n * n * 2
     # load vector
     f_load_neumann = np.zeros(n2d, dtype=float)
@@ -129,6 +312,8 @@ def assemble_f_neumann(n, p, neumann_edge, neumann_bc_func, has_homo_neumann):
         for ek in neumann_edge:
             # p1 = p[ek[0], :]
             # p2 = p[ek[1], :]
+            # expand the index
             expanded_ek = expand_index(ek)
+            # add local contribution
             f_load_neumann[expanded_ek] += line_integral_with_basis(*p[ek, :], 4, neumann_bc_func)
     return f_load_neumann

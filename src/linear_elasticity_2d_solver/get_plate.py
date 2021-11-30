@@ -22,7 +22,6 @@ import scipy.spatial as spsa
 
 
 def getPlatev2(n, a=0, b=1):
-    # By: Olav Milian
     # Defining auxiliary variables.
     l = np.linspace(a, b, n)
     y, x = np.meshgrid(l, l)
@@ -51,7 +50,6 @@ def getPlatev2(n, a=0, b=1):
 
 
 def getPlatev3(n, a=0, b=1):
-    # By: Olav Milian
     # Defining auxiliary variables.
     l = np.linspace(a, b, n)
     y, x = np.meshgrid(l, l)

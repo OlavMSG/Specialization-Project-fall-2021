@@ -5,7 +5,8 @@
 
 import matplotlib.pyplot as plt
 
-from linear_elasticity_2d_solver import LinearElasticity2DProblem, get_mu_lambda
+from linear_elasticity_2d_solver import LinearElasticity2DProblem
+from linear_elasticity_2d_solver.helpers import get_mu_lambda
 
 e_mean = 160e3
 nu_mean = 0.2

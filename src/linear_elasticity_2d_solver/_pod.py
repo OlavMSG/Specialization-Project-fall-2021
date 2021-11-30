@@ -2,14 +2,15 @@
 """
 @author: Olav M.S. Gran
 """
-import numpy as np
-
 from itertools import product
+
+import numpy as np
 from scipy.linalg import eigh
 
+
 # le2d is a LinearElasticity2dProblem, not imported due to circular import
-# from ._linear_elasticity_2d_problem_class import LinearElasticity2DProblem
 # rb_data is ReducedOrderData, not imported due to circular import
+# from ._linear_elasticity_2d_problem_class import LinearElasticity2DProblem
 # from ._rb_data_class import ReducedOrderData
 
 
@@ -40,7 +41,7 @@ def make_solution_matrix(e_young_vec, nu_poisson_vec, le2d):
     return s_mat
 
 
-def pod(le2d, rb_data):
+def pod_with_enery_norm(le2d, rb_data):
     e_young_vec = get_vec_from_range(rb_data.e_young_range, rb_data.rb_grid[0], rb_data.pod_mode)
     nu_poisson_vec = get_vec_from_range(rb_data.nu_poisson_range, rb_data.rb_grid[1], rb_data.pod_mode)
     e_mean = get_mean(rb_data.e_young_range)

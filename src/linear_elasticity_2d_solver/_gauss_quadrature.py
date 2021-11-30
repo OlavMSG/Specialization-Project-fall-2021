@@ -64,16 +64,6 @@ def quadrature2D(p1, p2, p3, nq, g):
     return area * np.sum(rho * g(*xy))
 
 
-def quadrature2D_area_coor(p1, p2, p3, nq, g):
-    # Weights and gaussian quadrature points
-    z, rho = get_points_and_weights_quad_2D(nq)
-    # calculate the area of the triangle
-    area = get_area_triangle(p1, p2, p3)
-
-    # Calculating the Gaussian quadrature summation formula
-    return area * np.sum(rho * g(z))
-
-
 def get_points_and_weights_quad_2D(nq):
     # Weights and gaussian quadrature points
     if nq == 1:
@@ -99,7 +89,7 @@ def get_points_and_weights_quad_2D(nq):
 
     return z, rho
 
+
 def get_area_triangle(p1, p2, p3):
     det_jac = (p1[0] - p3[0]) * (p2[1] - p3[1]) - (p2[0] - p3[0]) * (p1[1] - p3[1])
     return 0.5 * abs(det_jac)
-

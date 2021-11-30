@@ -4,15 +4,18 @@
 """
 import numpy as np
 
-from linear_elasticity_2d_solver import LinearElasticity2DProblem, default_tol
+from linear_elasticity_2d_solver import LinearElasticity2DProblem
+from linear_elasticity_2d_solver.default_constants import default_tol
 from linear_elasticity_2d_solver.exceptions import EdgesAreIllegalError
 
 
 def f(x, y):
     return 1e5, 1e5
 
+
 def dirichlet_bc_func(x, y):
     return 0, 0
+
 
 def neumann_bc_func(x, y):
     return 0, 0
@@ -88,6 +91,8 @@ def test5():
 
 
 """expect fail from here"""
+
+
 def test6():
     n = 3
 
@@ -97,12 +102,11 @@ def test6():
     test_res = False
     try:
         le2d = LinearElasticity2DProblem.from_functions(n, f, neumann_bc_func=neumann_bc_func,
-                                                    dirichlet_bc_func=dirichlet_bc_func,
-                                                    get_dirichlet_edge_func=get_dirichlet_bc_func)
+                                                        dirichlet_bc_func=dirichlet_bc_func,
+                                                        get_dirichlet_edge_func=get_dirichlet_bc_func)
     except EdgesAreIllegalError:
         test_res = True
     assert test_res
-
 
 
 def test7():
@@ -114,12 +118,11 @@ def test7():
     test_res = False
     try:
         le2d = LinearElasticity2DProblem.from_functions(n, f, neumann_bc_func=neumann_bc_func,
-                                                    dirichlet_bc_func=dirichlet_bc_func,
-                                                    get_dirichlet_edge_func=get_dirichlet_bc_func)
+                                                        dirichlet_bc_func=dirichlet_bc_func,
+                                                        get_dirichlet_edge_func=get_dirichlet_bc_func)
     except EdgesAreIllegalError:
         test_res = True
     assert test_res
-
 
 
 def test8():
@@ -131,7 +134,7 @@ def test8():
     test_res = False
     try:
         le2d = LinearElasticity2DProblem.from_functions(n, f, dirichlet_bc_func=dirichlet_bc_func,
-                                                    get_dirichlet_edge_func=get_dirichlet_bc_func)
+                                                        get_dirichlet_edge_func=get_dirichlet_bc_func)
     except EdgesAreIllegalError:
         test_res = True
     assert test_res
@@ -146,7 +149,7 @@ def test9():
     test_res = False
     try:
         le2d = LinearElasticity2DProblem.from_functions(n, f, neumann_bc_func=neumann_bc_func,
-                                                    get_dirichlet_edge_func=get_dirichlet_bc_func)
+                                                        get_dirichlet_edge_func=get_dirichlet_bc_func)
     except EdgesAreIllegalError:
         test_res = True
     assert test_res

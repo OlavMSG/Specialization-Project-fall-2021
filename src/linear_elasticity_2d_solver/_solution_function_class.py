@@ -3,8 +3,8 @@
 @author: Olav M.S. Gran
 """
 
-from ._helpers import FunctionValues2D
 from .default_constants import default_tol
+from .helpers import FunctionValues2D
 
 
 class SolutionFunctionValues2D(FunctionValues2D):
