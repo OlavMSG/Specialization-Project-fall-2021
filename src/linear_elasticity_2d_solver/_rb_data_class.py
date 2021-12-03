@@ -20,7 +20,6 @@ class ReducedOrderData:
         self.nu_poisson_range = nu_poisson_range
         self.rb_grid = rb_grid
         self.ns_rom = rb_grid[0] * rb_grid[1]
-        self.nh_rom = None
         self.eps_pod = eps_pod
         self.pod_mode = pod_mode
 
@@ -61,10 +60,10 @@ class ReducedOrderData:
         if n_rom_cut is not None:
             self.n_rom_cut = n_rom_cut
 
-    def _compute_v(self, n_rom):
+    def _compute_v(self, n_rom, n_free):
         if n_rom > self.n_rom_max:
             raise ValueError(f"n_rom={n_rom} is larger than maximum reduced order dept: {self.n_rom_max}")
-        compute_v(n_rom, self)
+        compute_v(n_rom, n_free, self)
 
     def _compute_rom_matrices_and_vectors(self, hf_data, has_neumann, has_non_homo_dirichlet):
         self.a1_free_rom = self.v.T @ hf_data.a1_free @ self.v
@@ -77,7 +76,7 @@ class ReducedOrderData:
             self.a2_dirichlet_rom = self.v.T @ hf_data.a2_dirichlet
 
     def compute_rb_matrices_and_vectors(self, n_rom, hf_data, has_neumann, has_non_homo_dirichlet):
-        self._compute_v(n_rom)
+        self._compute_v(n_rom, hf_data.n_free)
         self._compute_rom_matrices_and_vectors(hf_data, has_neumann, has_non_homo_dirichlet)
 
     def set_n_rom_max(self):

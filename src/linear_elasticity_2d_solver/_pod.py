@@ -48,10 +48,8 @@ def pod_with_energy_norm(le2d, rb_data):
     nu_mean = get_mean(rb_data.nu_poisson_range)
 
     rb_data.s_mat = make_solution_matrix(rb_data.ns_rom, e_young_vec, nu_poisson_vec, le2d)
-    rb_data.nh_rom = rb_data.s_mat.shape[0]
     a_free = le2d.compute_a_free(e_mean, nu_mean)
-
-    if rb_data.ns_rom <= rb_data.nh_rom:
+    if rb_data.ns_rom <= le2d.n_free:
         # build correlation matrix
         corr_mat = rb_data.s_mat.T @ a_free @ rb_data.s_mat
         # find the eigenvalues and eigenvectors of it
@@ -74,8 +72,8 @@ def pod_with_energy_norm(le2d, rb_data):
     rb_data.n_rom = np.min(np.argwhere(i_n >= 1 - rb_data.eps_pod ** 2)) + 1
 
 
-def compute_v(n, rb_data):
-    if rb_data.ns_rom <= rb_data.nh_rom:
+def compute_v(n, n_free, rb_data):
+    if rb_data.ns_rom <= n_free:
         rb_data.v = rb_data.s_mat @ rb_data.z_mat[:, :n] / np.sqrt(rb_data.sigma2_vec[:n])
     else:
         rb_data.v = np.linalg.solve(rb_data.x05, rb_data.z_mat[:, :n])

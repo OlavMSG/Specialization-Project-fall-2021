@@ -40,12 +40,12 @@ def neumannn_bc(x, y):
 
 
 def main():
-    n = 2
+    n = 3
     save = False
     print(n)
 
-    le2d = LinearElasticity2DProblem.from_functions(n, f,
-                                                    get_dirichlet_edge_func=clamped_bc)
+    le2d = LinearElasticity2DProblem.from_functions(n, f)
+                                                    #get_dirichlet_edge_func=clamped_bc)
     le2d.hfsolve(e_mean, nu_mean)
     le2d.hf_plot_displacement()
     le2d.hf_plot_von_mises()

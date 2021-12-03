@@ -23,16 +23,6 @@ def neumann_bc_func(x, y):
 
 def test1():
     n = 3
-    test_res = False
-    try:
-        le2d = LinearElasticity2DProblem.from_functions(n, f, neumann_bc_func=neumann_bc_func)
-    except EdgesAreIllegalError:
-        test_res = True
-    assert test_res
-
-
-def test2():
-    n = 3
     le2d = LinearElasticity2DProblem.from_functions(n, f, dirichlet_bc_func=dirichlet_bc_func)
 
     dirichlet_edge = np.array([[0, 1], [1, 2], [2, 5], [5, 8], [8, 7], [7, 6], [6, 3], [3, 0]])
@@ -41,7 +31,7 @@ def test2():
     assert test_res
 
 
-def test3():
+def test2():
     n = 3
 
     def get_dirichlet_bc_func(x, y):
@@ -58,7 +48,7 @@ def test3():
     assert test_res
 
 
-def test4():
+def test3():
     n = 3
 
     def get_dirichlet_bc_func(x, y):
@@ -74,7 +64,7 @@ def test4():
     assert test_res
 
 
-def test5():
+def test4():
     n = 3
 
     def get_dirichlet_bc_func(x, y):
@@ -91,6 +81,16 @@ def test5():
 
 
 """expect fail from here"""
+
+
+def test5():
+    n = 3
+    test_res = False
+    try:
+        le2d = LinearElasticity2DProblem.from_functions(n, f, neumann_bc_func=neumann_bc_func)
+    except EdgesAreIllegalError:
+        test_res = True
+    assert test_res
 
 
 def test6():
