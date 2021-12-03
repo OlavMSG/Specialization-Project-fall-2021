@@ -10,16 +10,55 @@ from .helpers import FunctionValues2D
 class SolutionFunctionValues2D(FunctionValues2D):
 
     def __init__(self):
+        """
+        Setup
+
+        Returns
+        -------
+        None.
+
+        """
         super().__init__()
         self._e_young = None
         self._nu_poisson = None
         self._von_mises = None
 
     def set_e_young_and_nu_poisson(self, e_young, nu_poisson):
+        """
+        set which young's module and poisson ratio that was uses
+
+        Parameters
+        ----------
+        e_young : float
+            young's module.
+        nu_poisson : float
+            poisson ratio.
+
+        Returns
+        -------
+        None.
+
+        """
         self._e_young = e_young
         self._nu_poisson = nu_poisson
 
     def check_e_young_and_nu_poisson(self, e_young, nu_poisson):
+        """
+        Check if input young's module and poisson ratio is what was used
+
+        Parameters
+        ----------
+        e_young : float
+            young's module.
+        nu_poisson : float
+            poisson ratio.
+
+        Returns
+        -------
+        bool
+            True if input young's module and poisson ratio is what was used.
+
+        """
         if self._values is None:
             return False
         elif abs(self._e_young - e_young) <= default_tol and abs(self._nu_poisson - nu_poisson) <= default_tol:
@@ -28,6 +67,19 @@ class SolutionFunctionValues2D(FunctionValues2D):
             return False
 
     def set_von_mises(self, von_mises):
+        """
+        set the von mises yield property of the class
+
+        Parameters
+        ----------
+        von_mises : np.array
+            von mises yield.
+
+        Returns
+        -------
+        None.
+
+        """
         self._von_mises = von_mises
 
     @property

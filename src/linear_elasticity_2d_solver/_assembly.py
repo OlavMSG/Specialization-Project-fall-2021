@@ -16,18 +16,18 @@ def phi(x, y, ck, i):
 
     Parameters
     ----------
-    x : numpy.ndarray
+    x : np.array
         x-values.
-    y : numpy.ndarry
+    y : np.array
         y-values.
-    ck : numpy.ndarray
+    ck : np.array
         basis function coef. matrix.
     i : int
         which basis function to use.
 
     Returns
     -------
-    numpy.ndarry
+    numpy.array
         basis function in the points (x,y).
 
     """
@@ -47,16 +47,16 @@ def get_basis_coef(p1, p2, p3):
 
     Parameters
     ----------
-    p1 : numpy.ndarry
+    p1 : np.array
         first vertex of the triangle element.
-    p1 : numpy.ndarry
+    p1 : np.array
         second vertex of the triangle element.
-    p1 : numpy.ndarry
+    p1 : np.array
         third vertex of the triangle element.
 
     Returns
     -------
-    ck : numpy.ndarray
+    ck : np.array
         basis function coef. matrix.
 
     """
@@ -75,7 +75,7 @@ def nabla_grad(ckx, cky, d):
     Parameters
     ----------
     ckx : float
-        x-componet from basis function coef. matrix.
+        x-component from basis function coef. matrix.
     cky : TYPE
         y-component from basis function coef. matrix.
     d : int
@@ -83,7 +83,7 @@ def nabla_grad(ckx, cky, d):
 
     Returns
     -------
-    numpy.ndarry
+    np.array
         gradient.
 
     """
@@ -99,11 +99,11 @@ def nabla_grad(ckx, cky, d):
 
 def epsilon(ck, i, d):
     """
-    Calculate the symetric part of the gradient
+    Calculate the symmetric part of the gradient
 
     Parameters
     ----------
-    ck : numpy.ndarray
+    ck : np.array
         basis function coef. matrix.
     i : int
         which basis function to use.
@@ -112,8 +112,8 @@ def epsilon(ck, i, d):
 
     Returns
     -------
-    numpy.ndarry
-        symetric part of the gradient.
+    numpy.array
+        symmetric part of the gradient.
 
     """
     
@@ -127,7 +127,7 @@ def nabla_div(ck, i, d):
 
     Parameters
     ----------
-    ck : numpy.ndarray
+    ck : np.array
         basis function coef. matrix.
     i : int
         which basis function to use.
@@ -149,20 +149,20 @@ def nabla_div(ck, i, d):
 
 def assemble_a1_a2_local(area, ck):
     """
-    Aseemble the local contributions to a1 and a2 on an element.
+    Assemble the local contributions to a1 and a2 on an element.
 
     Parameters
     ----------
     area : float
         area of the triangle element.
-    ck : numpy.ndarray
+    ck : np.array
         basis function coef. matrix.
 
     Returns
     -------
-    a1_local : numpy.ndarray
+    a1_local : np.array
         local contribution to matrix a1.
-    a2_local : numpy.ndarray
+    a2_local : np.array
         local contribution to matrix a2.
 
     """
@@ -189,24 +189,24 @@ def assemble_a1_a2_local(area, ck):
 
 def assemble_f_local(ck, f_func, p1, p2, p3):
     """
-    assemble the local contribution to the f_load_lv for the element
+    Assemble the local contribution to the f_load_lv for the element
 
     Parameters
     ----------
-    ck : numpy.ndarray
+    ck : np.array
         basis function coef. matrix.
     f_func : function
         load function.
-    p1 : numpy.ndarry
+    p1 : np.array
         first vertex of the triangle element.
-    p1 : numpy.ndarry
+    p1 : np.array
         second vertex of the triangle element.
-    p1 : numpy.ndarry
+    p1 : np.array
         third vertex of the triangle element.
 
     Returns
     -------
-    numpy.ndarry
+    np.array
         local contribution to f_load_lv.
 
     """
@@ -224,26 +224,26 @@ def assemble_f_local(ck, f_func, p1, p2, p3):
 
 def assemble_a1_a2_f(n, p, tri, f_func):
     """
-    Assemble the matricies a1 and a2, and the load vector f_load_lv
+    Assemble the matrices a1 and a2, and the load vector f_load_lv
 
     Parameters
     ----------
     n : int
         number of node along one axis.
-    p : numpy.ndarry
+    p : np.array
         list of points.
-    tri : numpy.ndarry
+    tri : np.array
         triangulation of the points in p.
     f_func : function
         load function.
 
     Returns
     -------
-    a1 : numpy.ndarray
+    a1 : sparse.dok_matrix
         matrix a1 for first bilinear form.
-    a2 : numpy.ndarray
+    a2 : sparse.dok_matrix
         matrix a2 fro second bilinear form.
-    f_load_lv : numpy.ndarry
+    f_load_lv : np.array
         load vector for linear form.
 
     """
@@ -288,18 +288,18 @@ def assemble_f_neumann(n, p, neumann_edge, neumann_bc_func, has_homo_neumann):
     ----------
     n : int
         number of node along one axis.
-    p : numpy.ndarry
+    p : np.array
         list of points.
-    neumann_edge : numpy.ndarry
-        arry of the edges of the triangulation.
+    neumann_edge : np.array
+        array of the edges of the triangulation.
     neumann_bc_func : function
         the neumann boundary condition function.
     has_homo_neumann : bool
-        do we have homogenues neumann conditions.
+        do we have homogeneous neumann conditions.
 
     Returns
     -------
-    f_load_neumann : numpy.ndarry
+    f_load_neumann : np.array
         load vector for neumann.
 
     """

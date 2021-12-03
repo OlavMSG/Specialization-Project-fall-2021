@@ -166,7 +166,7 @@ def rb_from_files(n, rb_data, directory_path, warn=True, default_file_names_dict
         elif a2_dir_rom_isfile and a2_dir_rom_isfile:
             rb_data.a1_dirichlet_rom = np.load(a1_dir_rom_file_path, allow_pickle=False)
             rb_data.a2_dirichlet_rom = np.load(a2_dir_rom_file_path, allow_pickle=False)
-            has_non_homo_dirichlet = True
+            # has_non_homo_dirichlet = True
 
         v_mat_file_path = os.path.join(rb_folder_path, default_file_names_dict["v"])
         rb_data.v = np.load(v_mat_file_path, allow_pickle=False)

@@ -9,11 +9,52 @@ from .helpers import get_mu_lambda, inv_index_map
 
 
 def sigma(e_young, nu_poisson, ck, i, d):
+    """
+    Compute the stress tensor
+
+    Parameters
+    ----------
+    e_young : float
+        young's module.
+    nu_poisson : float
+        poisson ratio.
+    ck : np.array
+        basis function coef. matrix.
+    i : int
+        which basis function to use.
+    d : int
+        which dimension.
+
+    Returns
+    -------
+    np.array
+        the stress tensor.
+
+    """
+    # get Lambert's coeffs.
     mu, lam = get_mu_lambda(e_young, nu_poisson)
     return 2 * mu * epsilon(ck, i, d) + lam * nabla_div(ck, i, d) * np.identity(2)
 
 
 def get_element_stress(uh, p, tri):
+    """
+    Recover the element stress
+
+    Parameters
+    ----------
+    uh : SolutionFunctionValues2D
+        numerical solution.
+    p : np.array
+        Nodal points, (x,y)-coordinates for point i given in row i.
+    tri : np.array
+        Elements. Index to the three corners of element i given in row i.
+
+    Returns
+    -------
+    element_stress : np.array
+        recovered element stress.
+
+    """
     n_el = tri.shape[0]
     element_stress = np.zeros((n_el, 2, 2))
     for el_nr, nk in enumerate(tri):
@@ -33,20 +74,74 @@ def get_element_stress(uh, p, tri):
 
 
 def get_node_neighbour_elements(node_nr, tri):
+    """
+    get an array of the index for neighbour elements of a node
+
+    Parameters
+    ----------
+    node_nr : int
+        index of the node in tri.
+    tri : np.array
+        Elements. Index to the three corners of element i given in row i.
+
+    Returns
+    -------
+    np.array
+        array of the index for neighbour elements of a node.
+
+    """
     return np.argwhere(tri == node_nr)[:, 0]
 
 
 def get_nodal_stress(uh, p, tri):
+    """
+    Recover the nodal stress
+
+    Parameters
+    ----------
+    uh : SolutionFunctionValues2D
+        numerical solution.
+    p : np.array
+        Nodal points, (x,y)-coordinates for point i given in row i.
+    tri : np.array
+        Elements. Index to the three corners of element i given in row i.
+
+    Returns
+    -------
+    nodal_stress : np.array
+        recovered nodal stress.
+
+    """
     n_nodes = p.shape[0]
+    # recover the element stress
     element_stress = get_element_stress(uh, p, tri)
     nodal_stress = np.zeros((n_nodes, 2, 2))
     for node_nr in np.unique(tri):
+        # get index of the neighbour elements
         node_n_el = get_node_neighbour_elements(node_nr, tri)
+        # recovery, calciulate the mean value.
         nodal_stress[node_nr, :, :] = np.mean(element_stress[node_n_el, :, :], axis=0)
     return nodal_stress
 
 
 def von_mises_yield(uh, p, tri):
+    """
+    Calculate the von mises yield, using the stress recovery process above.
+
+    Parameters
+    ----------
+    uh : SolutionFunctionValues2D
+        nummerical solution.
+    p : np.array
+        Nodal points, (x,y)-coordinates for point i given in row i.
+    tri : np.array
+        Elements. Index to the three corners of element i given in row i.
+
+    Returns
+    -------
+    None.
+
+    """
     nodal_stress = get_nodal_stress(uh, p, tri)
     n_nodes = nodal_stress.shape[0]
     von_mises = np.zeros(n_nodes)

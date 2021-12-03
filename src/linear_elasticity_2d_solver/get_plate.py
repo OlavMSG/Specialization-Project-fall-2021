@@ -12,13 +12,27 @@
 #   tri   	Elements. Index to the three corners of element i given in row i.
 #   edge  	Index list of all nodal points on the outer _edge.
 #
-#   Author: Olav M. S. Gran
+#   Written by Olav M. S. Gran using the
 #   Boiler code by: Kjetil a. Johannessen, Abdullah Abdulhaque (October 2019)
-#   Last edit: October 2021
+#   from https://wiki.math.ntnu.no/tma4220/2020h/project : getplate.py
 
 
 import numpy as np
 import scipy.spatial as spsa
+
+
+def _make_edge(n):
+    n2 = n * n
+    # Generating nodal points on outer _edge.
+    south_edge = np.array([np.arange(1, n), np.arange(2, n + 1)]).T
+    east_edge = np.array([np.arange(n, n2 - n + 1, n), np.arange(2 * n, n2 + 1, n)]).T
+    north_edge = np.array([np.arange(n2, n2 - n + 1, -1), np.arange(n2 - 1, n2 - n, -1)]).T
+    west_edge = np.array([np.arange(n2 - n + 1, n - 1, -n), np.arange(n2 - 2 * n + 1, 0, -n)]).T
+    edge = np.vstack((south_edge, east_edge, north_edge, west_edge))
+
+    # Added this to get this script too work.
+    edge -= 1
+    return edge
 
 
 def getPlatev2(n, a=0, b=1):
@@ -35,17 +49,7 @@ def getPlatev2(n, a=0, b=1):
     # Generating delaunay elements.
     mesh = spsa.Delaunay(p)
     tri = mesh.simplices
-
-    # Generating nodal points on outer _edge.
-    south_edge = np.array([np.arange(1, n), np.arange(2, n + 1)]).T
-    east_edge = np.array([np.arange(n, n2 - n + 1, n), np.arange(2 * n, n2 + 1, n)]).T
-    north_edge = np.array([np.arange(n2, n2 - n + 1, -1), np.arange(n2 - 1, n2 - n, -1)]).T
-    west_edge = np.array([np.arange(n2 - n + 1, n - 1, -n), np.arange(n2 - 2 * n + 1, 0, -n)]).T
-    edge = np.vstack((south_edge, east_edge, north_edge, west_edge))
-
-    # Added this to get this script too work.
-    edge -= 1
-
+    edge = _make_edge(n)
     return p, tri, edge
 
 
@@ -82,15 +86,5 @@ def getPlatev3(n, a=0, b=1):
 
     arg = np.argsort(tri[:, 0])
     tri = tri[arg]
-
-    # Generating nodal points on outer _edge.
-    south_edge = np.array([np.arange(1, n), np.arange(2, n + 1)]).T
-    east_edge = np.array([np.arange(n, n2 - n + 1, n), np.arange(2 * n, n2 + 1, n)]).T
-    north_edge = np.array([np.arange(n2, n2 - n + 1, -1), np.arange(n2 - 1, n2 - n, -1)]).T
-    west_edge = np.array([np.arange(n2 - n + 1, n - 1, -n), np.arange(n2 - 2 * n + 1, 0, -n)]).T
-    edge = np.vstack((south_edge, east_edge, north_edge, west_edge))
-
-    # Added this to get this script too work.
-    edge -= 1
-
+    edge = _make_edge(n)
     return p, tri, edge
