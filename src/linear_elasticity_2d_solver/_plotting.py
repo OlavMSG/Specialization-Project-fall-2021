@@ -47,7 +47,7 @@ def plot_relative_information_content(sigma2_vec, n=None):
 
 def plot_mesh(n, p, tri):
     plt.figure("Mesh plot", figsize=(7, 7))
-    plt.title(f"Mesh for n={n - 1}x{n-1}")
+    plt.title(f"Mesh for n={n - 1}x{n - 1}")
     plt.triplot(p[:, 0], p[:, 1], tri)
     plt.grid()
 
@@ -85,3 +85,6 @@ def plot_von_mises(uh, p, tri, solve_mode=""):
                     cmap=plt.cm.get_cmap("jet"))
     plt.colorbar()
     plt.grid()
+
+    plt.xlim(np.min(p[:, 0] + uh.x) - 0.05, np.max(p[:, 0] + uh.x) + 0.05)
+    plt.ylim(np.min(p[:, 1] + uh.y) - 0.05, np.max(p[:, 1] + uh.y) + 0.05)

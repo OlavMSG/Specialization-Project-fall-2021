@@ -20,6 +20,7 @@ class ReducedOrderData:
         self.nu_poisson_range = nu_poisson_range
         self.rb_grid = rb_grid
         self.ns_rom = rb_grid[0] * rb_grid[1]
+        self.nh_rom = None
         self.eps_pod = eps_pod
         self.pod_mode = pod_mode
 
@@ -28,6 +29,7 @@ class ReducedOrderData:
         self.s_mat = None
         self.z_mat = None
         self.sigma2_vec = None
+        self.x05 = None
 
         self.a1_free_rom = None
         self.a2_free_rom = None

@@ -13,7 +13,7 @@ from scipy.sparse.linalg import spsolve
 from ._hf_data_class import HighFidelityData
 from ._plotting import plot_singular_values, plot_relative_information_content, plot_mesh, plot_displacement, \
     plot_von_mises
-from ._pod import pod_with_enery_norm, get_e_young_nu_poisson_mat
+from ._pod import pod_with_energy_norm, get_e_young_nu_poisson_mat
 from ._rb_data_class import ReducedOrderData
 from ._save_and_load import hf_save, rb_save, rb_from_files, hf_from_files
 from ._solution_function_class import SolutionFunctionValues2D
@@ -177,7 +177,7 @@ class LinearElasticity2DProblem:
         self._rb_data.set_rb_model_params(grid, e_young_range, nu_poisson_range, eps_pod, mode, n_rom_cut)
         start_time = perf_counter()
         # compute a reduced model by the POD algorithm using the energy norm.
-        pod_with_enery_norm(self, self._rb_data)
+        pod_with_energy_norm(self, self._rb_data)
         # compute the rb matrices and vectors
         self._rb_data.compute_rb_matrices_and_vectors(self._rb_data.n_rom, self._hf_data, self._has_neumann,
                                                       self._has_non_homo_dirichlet)
