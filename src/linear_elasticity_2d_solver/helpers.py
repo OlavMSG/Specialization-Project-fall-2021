@@ -18,7 +18,7 @@ def index_map(i, d):
 
     Returns
     -------
-    int np.array
+    int, np.array
         1D index.
 
     """
@@ -73,9 +73,9 @@ def get_mu_lambda(e_young, nu_poisson):
 
     Parameters
     ----------
-    e_young : float
+    e_young : float, np.float
         young's module.
-    nu_poisson : float
+    nu_poisson : float, np.float
         poisson ratio.
 
     Returns
@@ -98,9 +98,9 @@ def get_e_young_nu_poisson(mu, lam):
 
     Parameters
     ----------
-    mu : float
+    mu : float, np.float
         Lambert's coefficients mu.
-    lam : float
+    lam : float, np.float
         Lambert's coefficients lambda.
 
     Returns
@@ -125,9 +125,9 @@ def compute_a(e_young, nu_poisson, a1, a2):
 
     Parameters
     ----------
-    e_young : float
+    e_young : float, np.float
         young's module.
-    nu_poisson : float
+    nu_poisson : float, np.float
         poisson ratio.
     a1 : scipy.sparse.dox_matrix, np.array
         bilinar form matrix a1.

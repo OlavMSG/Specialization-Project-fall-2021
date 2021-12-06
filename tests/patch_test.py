@@ -10,10 +10,6 @@ from linear_elasticity_2d_solver.default_constants import e_young_range, nu_pois
 from linear_elasticity_2d_solver.helpers import get_u_exact, get_mu_lambda
 
 
-def get_mean(range_):
-    return 0.5 * (range_[0] + range_[1])
-
-
 def default_f(x, y):
     return 0, 0
 
@@ -22,8 +18,8 @@ def base(dirichlet_bc_func, u_exact_func, f=None):
     if f is None:
         f = default_f
 
-    e_mean = get_mean(e_young_range)
-    nu_mean = get_mean(nu_poisson_range)
+    e_mean = np.mean(e_young_range)
+    nu_mean = np.mean(nu_poisson_range)
 
     le2d = LinearElasticity2DProblem.from_functions(n, f, dirichlet_bc_func=dirichlet_bc_func)
 
@@ -31,7 +27,31 @@ def base(dirichlet_bc_func, u_exact_func, f=None):
     u_exact = get_u_exact(le2d.p, u_exact_func)
     # print(np.round(uh, 3))
     # print(u_exact)
+    """from matplotlib.tri import LinearTriInterpolator, Triangulation
+    # linearly interpolate uh on the triangulation
+    tri = Triangulation(le2d.x, le2d.y)
+    uh_x = LinearTriInterpolator(tri, le2d.uh.x)
+    uh_y = LinearTriInterpolator(tri, le2d.uh.y)
+    # p, tri, edge = getPlatev3(100)
+    # tri2 = Triangulation(p[:, 0], p[:, 1])
+    u2 = FunctionValues2D.from_1xn2(get_u_exact(le2d.p, u_exact_func))
+    u_x = LinearTriInterpolator(tri, u2.x)
+    u_y = LinearTriInterpolator(tri, u2.y)
+    def err2(x):
+        x, y = x
+        print(np.round(u_y(x, y), 3))
+        print(np.round(uh_y(x, y), 3))
+        x_comp = u_x(x, y) - uh_x(x, y)
+        x_comp[np.abs(x_comp) <= 1e-14] = 0
+        y_comp = u_y(x, y) - uh_y(x, y)
+        y_comp[np.abs(y_comp) <= 1e-14] = 0
+        return x_comp ** 2 + y_comp ** 2
 
+    from quadpy import c2
+    sq = np.array([[[0.0, 0.0], [1.0, 0.0]], [[0.0, 1.0], [1.0, 1.0]]])
+    scheme = c2.get_good_scheme(6)
+    norm_l2 = np.sqrt(scheme.integrate(err2, sq))"""
+    # print("norm_l2 {}".format(norm_l2))
     test_res = np.all(np.abs(le2d.uh_full - u_exact) < tol)
     print("max norm {}".format(np.max(np.abs(le2d.uh_full - u_exact))))
     print("tolerance {}".format(tol))
@@ -98,8 +118,8 @@ def test_case_5():
     def dirichlet_bc_func(x, y):
         return u_exact_func(x, y)
 
-    e_mean = get_mean(e_young_range)
-    nu_mean = get_mean(nu_poisson_range)
+    e_mean = np.mean(e_young_range)
+    nu_mean = np.mean(nu_poisson_range)
     mu, lam = get_mu_lambda(e_mean, nu_mean)
 
     def f(x, y):
@@ -117,8 +137,8 @@ def test_case_6():
     def dirichlet_bc_func(x, y):
         return u_exact_func(x, y)
 
-    e_mean = get_mean(e_young_range)
-    nu_mean = get_mean(nu_poisson_range)
+    e_mean = np.mean(e_young_range)
+    nu_mean = np.mean(nu_poisson_range)
     mu, lam = get_mu_lambda(e_mean, nu_mean)
 
     def f(x, y):

@@ -16,7 +16,7 @@ mu, lam = get_mu_lambda(e_mean, nu_mean)
 
 def f(x, y):
     alpha = 8e3 * 9.81  # Newton/m^2...?
-    return alpha*np.sin(np.pi*y), 0
+    return alpha*np.sin(20*np.pi*x), 0
 
 
 def dirichlet_bc_func(x, y):
@@ -62,8 +62,8 @@ def main():
     if save:
         plt.savefig(f"other_plots/rb_displacement_e_nu_mean_n{n}.pdf")
     plt.show()
-    le2d.plot_pod_singular_values()
-    plt.show()
+    # le2d.plot_pod_singular_values()
+    # plt.show()
 
 
 if __name__ == '__main__':

@@ -26,10 +26,6 @@ def get_vec_from_range(range_, m, mode):
             f"Mode {mode} is not implemented. The implemented modes are uniform and gauss lobatto")
 
 
-def get_mean(range_):
-    return 0.5 * (range_[1] + range_[0])
-
-
 def make_solution_matrix(ns, e_young_vec, nu_poisson_vec, le2d):
     s_mat = np.zeros((le2d.n_free, ns))
     i = 0
@@ -44,8 +40,8 @@ def pod_with_energy_norm(le2d, rb_data):
     e_young_vec = get_vec_from_range(rb_data.e_young_range, rb_data.rb_grid[0], rb_data.pod_mode)
     nu_poisson_vec = get_vec_from_range(rb_data.nu_poisson_range, rb_data.rb_grid[1], rb_data.pod_mode)
 
-    e_mean = get_mean(rb_data.e_young_range)
-    nu_mean = get_mean(rb_data.nu_poisson_range)
+    e_mean = np.mean(rb_data.e_young_range)
+    nu_mean = np.mean(rb_data.nu_poisson_range)
 
     rb_data.s_mat = make_solution_matrix(rb_data.ns_rom, e_young_vec, nu_poisson_vec, le2d)
     a_free = le2d.compute_a_free(e_mean, nu_mean)

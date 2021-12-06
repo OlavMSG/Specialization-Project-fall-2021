@@ -23,18 +23,24 @@ def phi(n, i):
 
 
 def main():
-    n = 10
+    n = 1
     save = True
     plt.figure("1D Linear Lagrange basis")
     plt.title("1D Linear Lagrange basis")
     x_vec = np.linspace(0, 1, n + 1)
     for i in range(n + 1):
         plt.plot(x_vec, phi(n, i), "-")
-        plt.annotate("$\\varphi_{" + str(i) + "}(x)$", (x_vec[i], 1), fontsize=20,
+        if i % 2 == 0:
+            y = 1.02
+        else:
+            y = 1.12
+        if n == 1:
+            y = 1.02
+        plt.annotate("$\\varphi_{" + str(i) + "}(x)$", (x_vec[i], y), fontsize=30,
                      ha='center')
     plt.grid()
-    plt.xlim(-0.05, 1.06)
-    plt.ylim(-0.05, 1.1)
+    plt.xlim(-0.08, 1.08)
+    plt.ylim(-0.05, 1.22)
 
     if save:
         plt.savefig(f"other_plots/1D_linear_lagrange_basis_n{n}.pdf")
