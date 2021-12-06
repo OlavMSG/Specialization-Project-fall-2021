@@ -6,6 +6,7 @@
 from linear_elasticity_2d_solver import LinearElasticity2DProblem
 from linear_elasticity_2d_solver.default_constants import default_tol
 
+
 # Here just example
 def get_dirichlet_edge(x, y):
     return abs(x) < default_tol
