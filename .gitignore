@@ -134,10 +134,11 @@ dmypy.json
 # old code
 old_code
 # folders for saved data and plots
-code_use_for_rapport/reduced_order_error_check_plots
-code_use_for_rapport/saved_data
+code_note_used_in_rapport/reduced_order_error_check_plots
+code_note_used_in_rapport/saved_data
 code_use_for_rapport/other_plots
 code_use_for_rapport/reduced_order_plots
+code_use_for_rapport/patch_plots
 
 # not included files
 find_derivatives_xy.py

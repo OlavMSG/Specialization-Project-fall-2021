@@ -56,7 +56,7 @@ def main(mode="energy norm"):
     else:
         # set the exact solution as the solution on the grid n = max(n_vec) * 4
         le2d = LinearElasticity2DProblem.from_functions(np.max(n_vec) * 4, f, dirichlet_bc_func=u_exact_func)
-        u_exact = get_u_exact(le2d.p, u_exact_func)
+        u_exact = get_u_exact(le2d.p, u_exact_func).flatt_values
         norm_u_exact = np.sqrt(u_exact.T @ le2d.compute_a_full(e_mean, nu_mean) @ u_exact)
 
     # get exact solution and compute the hf error
@@ -82,7 +82,7 @@ def main(mode="energy norm"):
             norm2_u_exact = scheme.integrate(err2, sq)
             norm_err_vec[i] = np.sqrt(norm2_u_exact)
         else:
-            u_exact = get_u_exact(le2d.p, u_exact_func)
+            u_exact = get_u_exact(le2d.p, u_exact_func).flatt_values
             err = u_exact - le2d.uh_full
             # compute the norm
             norm_err_vec[i] = np.sqrt(err.T @ le2d.compute_a_full(e_mean, nu_mean) @ err)

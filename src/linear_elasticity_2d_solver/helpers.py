@@ -69,7 +69,7 @@ def expand_index(index):
 
 def get_mu_lambda(e_young, nu_poisson):
     """
-    Get Lambert's coefficients mu and lambda from the young's module and the poisson ratio
+    Get Lame coefficients mu and lambda from the young's module and the poisson ratio
 
     Parameters
     ----------
@@ -81,9 +81,9 @@ def get_mu_lambda(e_young, nu_poisson):
     Returns
     -------
     mu : float
-        Lambert's coefficient mu.
+        Lame coefficient mu.
     lam : float
-        Lambert's coefficient lambda.
+        Lame coefficient lambda.
 
     """
     nu_p1 = nu_poisson + 1
@@ -94,14 +94,14 @@ def get_mu_lambda(e_young, nu_poisson):
 
 def get_e_young_nu_poisson(mu, lam):
     """
-    Get the young's module and the poisson ratio from Lambert's coefficients mu and lambda from
+    Get the young's module and the poisson ratio from Lame coefficients mu and lambda from
 
     Parameters
     ----------
     mu : float, np.float
-        Lambert's coefficients mu.
+        Lame coefficients mu.
     lam : float, np.float
-        Lambert's coefficients lambda.
+        Lame coefficients lambda.
 
     Returns
     -------
@@ -140,7 +140,7 @@ def compute_a(e_young, nu_poisson, a1, a2):
         bilinar form matrix a depending on the young's module and the poisson ratio.
 
     """
-    # get the Lamberts coeffichents
+    # get the Lame coeffichents
     mu, lam = get_mu_lambda(e_young, nu_poisson)
     # compute a
     return 2 * mu * a1 + lam * a2
@@ -148,7 +148,7 @@ def compute_a(e_young, nu_poisson, a1, a2):
 
 def get_u_exact(p, u_exact_func):
     """
-    Get a vector representation of the exact solution
+    Get a FunctionValues2D representation of the exact solution
 
     Parameters
     ----------
@@ -160,13 +160,13 @@ def get_u_exact(p, u_exact_func):
     Returns
     -------
     np.array
-        the flatt representation of the exact solution, form [x1, y1, x2, y2, ...].
+        the FunctionValues2D representation of the exact solution, form [x1, y1, x2, y2, ...].
 
     """
     x_vec = p[:, 0]
     y_vec = p[:, 1]
     u_exact = FunctionValues2D.from_nx2(VectorizedFunction2D(u_exact_func)(x_vec, y_vec))
-    return u_exact.flatt_values
+    return u_exact
 
 
 # class to vectorized input functions

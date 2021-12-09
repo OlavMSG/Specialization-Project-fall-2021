@@ -443,6 +443,18 @@ class LinearElasticity2DProblem:
         return self._hf_data.neumann_edge
 
     @property
+    def free_index(self):
+        if not self._is_assembled_and_free:
+            raise IsNotAssembledError("Matrices and vectors are not assembled.")
+        return self._hf_data.expanded_free_index
+
+    @property
+    def dirichlet_edge_index(self):
+        if not self._is_assembled_and_free:
+            raise IsNotAssembledError("Matrices and vectors are not assembled.")
+        return self._hf_data.expanded_dirichlet_edge_index
+
+    @property
     def p(self):
         if not self._is_assembled_and_free:
             raise IsNotAssembledError("Matrices and vectors are not assembled.")

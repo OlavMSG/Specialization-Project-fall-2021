@@ -14,7 +14,9 @@ rb_grid = (5, 5)
 pod_mode = "uniform"
 # Ranges for parameters
 e_young_range = (10e3, 310e3)  # MPa
+e_young_unit = "MPa"
 nu_poisson_range = (0, 0.4)
+nu_poisson_unit = "1"
 # epsilon for pod
 eps_pod = 1e-2
 # max cut value for n_rom

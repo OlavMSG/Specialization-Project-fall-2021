@@ -17,13 +17,15 @@ def dirichlet_bc_func(x, y):
 
 
 def main():
-    n = 1
+    n = 20
     print(n)
+    save = True
     e_mean = 160e3
     nu_mean = 0.2
     le2d = LinearElasticity2DProblem.from_functions(n, f, dirichlet_bc_func=dirichlet_bc_func)
     le2d.plot_mesh()
-    # plt.savefig("other_plots/test_plot.pdf")
+    if save:
+        plt.savefig(f"other_plots/mesh_plot_n{n}.pdf")
     plt.show()
 
 

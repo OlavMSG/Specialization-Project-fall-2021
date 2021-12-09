@@ -14,7 +14,7 @@ def default_f(x, y):
     return 0, 0
 
 
-def base(dirichlet_bc_func, u_exact_func, f=None):
+def base(dirichlet_bc_func, u_exact_func, f=None, print_l2=False, print_free_node_values=False):
     if f is None:
         f = default_f
 
@@ -25,43 +25,42 @@ def base(dirichlet_bc_func, u_exact_func, f=None):
 
     le2d.solve(e_mean, nu_mean, print_info=False)
     u_exact = get_u_exact(le2d.p, u_exact_func)
-    # print(np.round(uh, 3))
-    # print(u_exact)
-    """from matplotlib.tri import LinearTriInterpolator, Triangulation
-    # linearly interpolate uh on the triangulation
-    tri = Triangulation(le2d.x, le2d.y)
-    uh_x = LinearTriInterpolator(tri, le2d.uh.x)
-    uh_y = LinearTriInterpolator(tri, le2d.uh.y)
-    # p, tri, edge = getPlatev3(100)
-    # tri2 = Triangulation(p[:, 0], p[:, 1])
-    u2 = FunctionValues2D.from_1xn2(get_u_exact(le2d.p, u_exact_func))
-    u_x = LinearTriInterpolator(tri, u2.x)
-    u_y = LinearTriInterpolator(tri, u2.y)
-    def err2(x):
-        x, y = x
-        print(np.round(u_y(x, y), 3))
-        print(np.round(uh_y(x, y), 3))
-        x_comp = u_x(x, y) - uh_x(x, y)
-        x_comp[np.abs(x_comp) <= 1e-14] = 0
-        y_comp = u_y(x, y) - uh_y(x, y)
-        y_comp[np.abs(y_comp) <= 1e-14] = 0
-        return x_comp ** 2 + y_comp ** 2
+    if print_l2:
+        from matplotlib.tri import LinearTriInterpolator, Triangulation
+        # linearly interpolate uh on the triangulation
+        tri = Triangulation(le2d.x, le2d.y)
+        uh_x = LinearTriInterpolator(tri, le2d.uh.x)
+        uh_y = LinearTriInterpolator(tri, le2d.uh.y)
 
-    from quadpy import c2
-    sq = np.array([[[0.0, 0.0], [1.0, 0.0]], [[0.0, 1.0], [1.0, 1.0]]])
-    scheme = c2.get_good_scheme(6)
-    norm_l2 = np.sqrt(scheme.integrate(err2, sq))"""
-    # print("norm_l2 {}".format(norm_l2))
-    test_res = np.all(np.abs(le2d.uh_full - u_exact) < tol)
-    print("max norm {}".format(np.max(np.abs(le2d.uh_full - u_exact))))
+        def err2(x):
+            x, y = x
+            u_ex = u_exact_func(x, y)
+            return (u_ex[0] - uh_x(x, y)) ** 2 + (u_ex[1] - uh_y(x, y)) ** 2
+
+        from quadpy import c2
+        sq = np.array([[[0.0, 0.0], [1.0, 0.0]], [[0.0, 1.0], [1.0, 1.0]]])
+        scheme = c2.get_good_scheme(20)
+        l2norm = np.sqrt(scheme.integrate(err2, sq))
+        print("L2 norm {}".format(l2norm))
+
+    # discrete max norm, holds if u_exact is linear (Terms 1, x, y)
+    test_res = np.all(np.abs(le2d.uh_full - u_exact.flatt_values) < tol)
+    print("max norm {}".format(np.max(np.abs(le2d.uh_full - u_exact.flatt_values))))
     print("tolerance {}".format(tol))
     print("plate limits {}".format(le2d.plate_limits))
     print("test {} for n_rom={}".format(test_res, n))
 
+    if print_free_node_values:
+        print("Free node values (from [x1, y1, x2, y2, ...]):")
+        print("uh: ", le2d.uh_free)
+        print("u_ex: ", u_exact.flatt_values[le2d.free_index])
+
+    print("-"*10)
+
     assert test_res
 
 
-def test_case_1():
+def test_case_1(print_l2=False, print_free_node_values=False):
     print("Case 1: (x, 0)")
 
     def u_exact_func(x, y):
@@ -70,10 +69,10 @@ def test_case_1():
     def dirichlet_bc_func(x, y):
         return u_exact_func(x, y)
 
-    base(dirichlet_bc_func, u_exact_func)
+    base(dirichlet_bc_func, u_exact_func, print_l2=print_l2, print_free_node_values=print_free_node_values)
 
 
-def test_case_2():
+def test_case_2(print_l2=False, print_free_node_values=False):
     print("Case 2: (0, y)")
 
     def u_exact_func(x, y):
@@ -82,10 +81,10 @@ def test_case_2():
     def dirichlet_bc_func(x, y):
         return u_exact_func(x, y)
 
-    base(dirichlet_bc_func, u_exact_func)
+    base(dirichlet_bc_func, u_exact_func, print_l2=print_l2, print_free_node_values=print_free_node_values)
 
 
-def test_case_3():
+def test_case_3(print_l2=False, print_free_node_values=False):
     print("Case 3: (y, 0)")
 
     def u_exact_func(x, y):
@@ -94,10 +93,10 @@ def test_case_3():
     def dirichlet_bc_func(x, y):
         return u_exact_func(x, y)
 
-    base(dirichlet_bc_func, u_exact_func)
+    base(dirichlet_bc_func, u_exact_func, print_l2=print_l2, print_free_node_values=print_free_node_values)
 
 
-def test_case_4():
+def test_case_4(print_l2=False, print_free_node_values=False):
     print("Case 4: (0, x)")
 
     def u_exact_func(x, y):
@@ -106,11 +105,12 @@ def test_case_4():
     def dirichlet_bc_func(x, y):
         return u_exact_func(x, y)
 
-    base(dirichlet_bc_func, u_exact_func)
+    base(dirichlet_bc_func, u_exact_func, print_l2=print_l2, print_free_node_values=print_free_node_values)
 
-
-def test_case_5():
+# passes, but test does not hold since u_exact is not linear, see l2 norm
+def case_5(print_l2=False, print_free_node_values=False):
     print("Case 5: (xy, 0)")
+    print("Passes, but test does not hold since u_exact is not linear, see l2 norm")
 
     def u_exact_func(x, y):
         return x * y, 0.
@@ -125,11 +125,13 @@ def test_case_5():
     def f(x, y):
         return 0., - mu - lam
 
-    base(dirichlet_bc_func, u_exact_func, f)
+    base(dirichlet_bc_func, u_exact_func, f, print_l2=print_l2, print_free_node_values=print_free_node_values)
 
 
-def test_case_6():
+# passes, but test does not hold since u_exact is not linear, see l2 norm
+def case_6(print_l2=False, print_free_node_values=False):
     print("Case 6: (0, xy)")
+    print("Passes, but test does not hold since u_exact is not linear, see l2 norm")
 
     def u_exact_func(x, y):
         return 0., x * y
@@ -144,17 +146,19 @@ def test_case_6():
     def f(x, y):
         return - mu - lam, 0.
 
-    base(dirichlet_bc_func, u_exact_func, f)
+    base(dirichlet_bc_func, u_exact_func, f, print_l2=print_l2, print_free_node_values=print_free_node_values)
 
 
 def main():
+    print_l2 = True
+    print_free_node_values = True
     # make_and_save_matrices()
-    test_case_1()
-    test_case_2()
-    test_case_3()
-    test_case_4()
-    test_case_5()
-    test_case_6()
+    test_case_1(print_l2, print_free_node_values)
+    test_case_2(print_l2, print_free_node_values)
+    test_case_3(print_l2, print_free_node_values)
+    test_case_4(print_l2, print_free_node_values)
+    case_5(print_l2, print_free_node_values)
+    case_6(print_l2, print_free_node_values)
 
 
 n = 2
