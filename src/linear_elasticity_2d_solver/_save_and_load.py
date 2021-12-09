@@ -22,7 +22,8 @@ def _check_and_make_folder(n, folder_path):
     return folder_path
 
 
-def hf_save(hf_data, directory_path, has_neumann, has_non_homo_dirichlet, default_file_names_dict=file_names_dict):
+def hf_save(hf_data, directory_path, has_neumann, has_non_homo_dirichlet, has_non_homo_neumann,
+            default_file_names_dict=file_names_dict):
 
     hf_folder_path = os.path.join(directory_path, "high_fidelity")
     hf_folder_path = _check_and_make_folder(hf_data.n, hf_folder_path)
@@ -44,7 +45,10 @@ def hf_save(hf_data, directory_path, has_neumann, has_non_homo_dirichlet, defaul
 
     if has_neumann:
         f_load_neumann_file_path = os.path.join(hf_folder_path, default_file_names_dict["f_load_neumann"])
-        np.save(f_load_neumann_file_path, hf_data.f_load_neumann_full, allow_pickle=False)
+        if has_non_homo_neumann:
+            np.save(f_load_neumann_file_path, hf_data.f_load_neumann_full, allow_pickle=False)
+        else:
+            np.save(f_load_neumann_file_path, np.array(["has homo neumann"]), allow_pickle=False)
     if has_non_homo_dirichlet:
         rg_lifting_func_file_path = os.path.join(hf_folder_path, default_file_names_dict["rg"])
         np.save(rg_lifting_func_file_path, hf_data.rg, allow_pickle=False)
@@ -52,7 +56,8 @@ def hf_save(hf_data, directory_path, has_neumann, has_non_homo_dirichlet, defaul
     print(f"Saved the high fidelity data in {hf_folder_path}")
 
 
-def rb_save(n, rb_data, directory_path, has_neumann, has_non_homo_dirichlet, default_file_names_dict=file_names_dict):
+def rb_save(n, rb_data, directory_path, has_neumann, has_non_homo_dirichlet, has_non_homo_neumann,
+            default_file_names_dict=file_names_dict):
 
     rb_folder_path = os.path.join(directory_path, "reduced_order")
     rb_folder_path = _check_and_make_folder(n, rb_folder_path)
@@ -67,12 +72,13 @@ def rb_save(n, rb_data, directory_path, has_neumann, has_non_homo_dirichlet, def
 
     if has_neumann:
         f_load_neumann_rom_file_path = os.path.join(rb_folder_path, default_file_names_dict["f_load_neumann_rom"])
-        np.save(f_load_neumann_rom_file_path, rb_data.f_load_neumann_free_rom, allow_pickle=False)
+        if has_non_homo_neumann:
+            np.save(f_load_neumann_rom_file_path, rb_data.f_load_neumann_free_rom, allow_pickle=False)
     if has_non_homo_dirichlet:
-        a1_dir_rom_file_path = os.path.join(rb_folder_path, default_file_names_dict["a1_dir_rom"])
-        a2_dir_rom_file_path = os.path.join(rb_folder_path, default_file_names_dict["a2_dir_rom"])
-        np.save(a1_dir_rom_file_path, rb_data.a1_free_rom, allow_pickle=False)
-        np.save(a2_dir_rom_file_path, rb_data.a2_free_rom, allow_pickle=False)
+        f1_dir_rom_file_path = os.path.join(rb_folder_path, default_file_names_dict["f1_dir_rom"])
+        f2_dir_rom_file_path = os.path.join(rb_folder_path, default_file_names_dict["f2_dir_rom"])
+        np.save(f1_dir_rom_file_path, rb_data.f1_dirichlet_rom, allow_pickle=False)
+        np.save(f2_dir_rom_file_path, rb_data.f2_dirichlet_rom, allow_pickle=False)
 
     v_mat_file_path = os.path.join(rb_folder_path, default_file_names_dict["v"])
     np.save(v_mat_file_path, rb_data.v, allow_pickle=False)
@@ -92,7 +98,6 @@ def rb_save(n, rb_data, directory_path, has_neumann, has_non_homo_dirichlet, def
 
 
 def hf_from_files(hf_data, directory_path, default_file_names_dict=file_names_dict):
-
     hf_folder_path = os.path.join(directory_path, "high_fidelity", f"n{hf_data.n}")
     if not os.path.isdir(hf_folder_path):
         text = f"Directory {hf_folder_path} does not exist, can not load the high_fidelity data."
@@ -117,11 +122,16 @@ def hf_from_files(hf_data, directory_path, default_file_names_dict=file_names_di
 
     f_load_neumann_file_path = os.path.join(hf_folder_path, default_file_names_dict["f_load_neumann"])
     has_neumann = os.path.isfile(f_load_neumann_file_path)
+    has_non_homo_neumann = True
     if has_neumann:
         hf_data.f_load_neumann_full = np.load(f_load_neumann_file_path, allow_pickle=False)
+        print(hf_data.f_load_neumann_full)
+        if hf_data.f_load_neumann_full[0] == "has homo neumann":
+            hf_data.f_load_neumann_full = None
+            has_non_homo_neumann = False
 
     hf_data.get_neumann_edge()
-    hf_data.compute_free_and_expanded_edges(has_neumann)
+    hf_data.compute_free_and_expanded_edges(has_neumann, has_non_homo_neumann)
     hf_data.plate_limits = (np.min(hf_data.p), np.max(hf_data.p))
 
     rg_lifting_func_file_path = os.path.join(hf_folder_path, default_file_names_dict["rg"])
@@ -129,12 +139,12 @@ def hf_from_files(hf_data, directory_path, default_file_names_dict=file_names_di
     if has_non_homo_dirichlet:
         hf_data.rg = np.load(rg_lifting_func_file_path, allow_pickle=False)
 
-    return has_neumann, has_non_homo_dirichlet
+    return has_neumann, has_non_homo_dirichlet, has_non_homo_neumann
 
 
 def rb_from_files(n, rb_data, directory_path, warn=True, default_file_names_dict=file_names_dict):
     rb_folder_path = os.path.join(directory_path, "reduced_order", f"n{n}")
-
+    is_pod_computed = True
     if not os.path.isdir(rb_folder_path):
         # assume the data does not exist.
         if warn:
@@ -142,6 +152,7 @@ def rb_from_files(n, rb_data, directory_path, warn=True, default_file_names_dict
                            + " does not exist, can not load the reduced order data." \
                            + "\nBuild it with build_rb_model of the class."
             warnings.warn(warning_text)
+        is_pod_computed = False
     else:
         a1_rom_file_path = os.path.join(rb_folder_path, default_file_names_dict["a1_rom"])
         a2_rom_file_path = os.path.join(rb_folder_path, default_file_names_dict["a2_rom"])
@@ -154,18 +165,20 @@ def rb_from_files(n, rb_data, directory_path, warn=True, default_file_names_dict
         f_load_neumann_rom_file_path = os.path.join(rb_folder_path, default_file_names_dict["f_load_neumann_rom"])
         if os.path.isfile(f_load_neumann_rom_file_path):
             rb_data.f_load_neumann_free_rom = np.load(f_load_neumann_rom_file_path, allow_pickle=False)
+            if rb_data.f_load_neumann_free_rom[0] == "has homo neumann":
+                rb_data.f_load_neumann_free_rom = None
 
-        a1_dir_rom_file_path = os.path.join(rb_folder_path, default_file_names_dict["a1_dir_rom"])
-        a2_dir_rom_file_path = os.path.join(rb_folder_path, default_file_names_dict["a2_dir_rom"])
+        a1_dir_rom_file_path = os.path.join(rb_folder_path, default_file_names_dict["f1_dir_rom"])
+        a2_dir_rom_file_path = os.path.join(rb_folder_path, default_file_names_dict["f2_dir_rom"])
         a1_dir_rom_isfile = os.path.isfile(a1_dir_rom_file_path)
         a2_dir_rom_isfile = os.path.isfile(a2_dir_rom_file_path)
         if (a1_dir_rom_isfile and not a2_dir_rom_isfile) or (not a1_dir_rom_isfile and a2_dir_rom_isfile):
-            text = "One of the files {}".format(default_file_names_dict["a1_dir_rom"]) \
-                   + " and {} does not exist.".format(default_file_names_dict["a2_dir_rom"])
+            text = "One of the files {}".format(default_file_names_dict["f1_dir_rom"]) \
+                   + " and {} does not exist.".format(default_file_names_dict["f2_dir_rom"])
             raise FileDoesNotExistError(text)
         elif a2_dir_rom_isfile and a2_dir_rom_isfile:
-            rb_data.a1_dirichlet_rom = np.load(a1_dir_rom_file_path, allow_pickle=False)
-            rb_data.a2_dirichlet_rom = np.load(a2_dir_rom_file_path, allow_pickle=False)
+            rb_data.f1_dirichlet_rom = np.load(a1_dir_rom_file_path, allow_pickle=False)
+            rb_data.f2_dirichlet_rom = np.load(a2_dir_rom_file_path, allow_pickle=False)
             # has_non_homo_dirichlet = True
 
         v_mat_file_path = os.path.join(rb_folder_path, default_file_names_dict["v"])
@@ -183,4 +196,11 @@ def rb_from_files(n, rb_data, directory_path, warn=True, default_file_names_dict
         rb_data.eps_pod = pod_parameters[3, 0].astype(float)
         rb_data.pod_mode = pod_parameters[3, 1].astype(str)
         rb_data.n_rom_max = pod_parameters[4, 0].astype(int)
-        rb_data.n_rom_cut = pod_parameters[4, 1].astype(float)
+        rb_data.n_rom_cut = pod_parameters[4, 1]
+        if rb_data.n_rom_cut != "rank":
+            rb_data.n_rom_cut.astype(float)
+
+
+    return is_pod_computed
+
+

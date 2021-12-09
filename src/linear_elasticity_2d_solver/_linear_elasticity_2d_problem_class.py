@@ -40,7 +40,7 @@ class LinearElasticity2DProblem:
         self._dirichlet_bc_func_vec = None
 
         self._has_non_homo_dirichlet = False
-        self._has_homo_neumann = False
+        self._has_non_homo_neumann = True
         self._has_neumann = False
 
         self._is_assembled_and_free = False
@@ -57,11 +57,13 @@ class LinearElasticity2DProblem:
         self._hf_data.hf_assemble_a1_a2_f(self._f_func_vec)
 
         if self._has_neumann:
-            self._hf_data.hf_assemble_f_neumann(self._neumann_bc_func_vec, self._has_homo_neumann)
+            self._hf_data.hf_neumann_edge()
+            if self._has_non_homo_neumann:
+                self._hf_data.hf_assemble_f_neumann(self._neumann_bc_func_vec)
         else:
             self._hf_data.dirichlet_edge = self._hf_data.edge
         # set indexes
-        self._hf_data.compute_free_and_expanded_edges(self._has_neumann)
+        self._hf_data.compute_free_and_expanded_edges(self._has_neumann, self._has_non_homo_neumann)
 
         if self._has_non_homo_dirichlet:
             self._hf_data.compute_lifting_function_on_edge(self._dirichlet_bc_func_vec)
@@ -85,7 +87,7 @@ class LinearElasticity2DProblem:
 
     def compute_f_load_free(self, e_young=None, nu_poisson=None):
         f_load = self._hf_data.f_load_lv_free.copy()
-        if self._has_neumann:
+        if self._has_neumann and self._has_non_homo_neumann:
             f_load += self._hf_data.f_load_neumann_free
         if self._has_non_homo_dirichlet:
             if e_young is None or nu_poisson is None:
@@ -101,19 +103,19 @@ class LinearElasticity2DProblem:
     def _compute_a_dirichlet_rom(self, e_young, nu_poisson):
         if not self._is_pod_computed:
             raise PodNotComputedError("Pod is not computed. Can not solve.")
-        return compute_a(e_young, nu_poisson, self._rb_data.a1_dirichlet_rom, self._rb_data.a2_dirichlet_rom)
+        return compute_a(e_young, nu_poisson, self._rb_data.f1_dirichlet_rom, self._rb_data.f2_dirichlet_rom)
 
     def compute_f_load_rom(self, e_young=None, nu_poisson=None):
         if not self._is_pod_computed:
             raise PodNotComputedError("Pod is not computed. Can not solve.")
         # compute the load f for the rb solution
         f_load_rom = self._rb_data.f_load_lv_free_rom.copy()
-        if self._has_neumann:
+        if self._has_neumann and self._has_non_homo_neumann:
             f_load_rom += self._rb_data.f_load_neumann_free_rom
         if self._has_non_homo_dirichlet:
             if e_young is None or nu_poisson is None:
                 raise ValueError("e_young and/or nu_poisson are not given, needed for non homo. dirichlet conditions.")
-            f_load_rom -= self._compute_a_dirichlet_rom(e_young, nu_poisson) @ self._hf_data.rg
+            f_load_rom -= self._compute_a_dirichlet_rom(e_young, nu_poisson)
         return f_load_rom
 
     def hfsolve(self, e_young, nu_poisson, print_info=True):
@@ -150,7 +152,7 @@ class LinearElasticity2DProblem:
             n_rom = self._rb_data.n_rom
         if n_rom != self._rb_data.last_n_rom and not self._is_from_files:
             self._rb_data.compute_rb_matrices_and_vectors(n_rom, self._hf_data, self._has_neumann,
-                                                          self._has_non_homo_dirichlet)
+                                                          self._has_non_homo_dirichlet, self._has_non_homo_neumann)
         self._rb_data.last_n_rom = self._rb_data.n_rom
         a_rom = self.compute_a_free_rom(e_young, nu_poisson)
         f_load_rom = self.compute_f_load_rom(e_young, nu_poisson)  # e_young, nu_poisson needed if non homo. dirichlet
@@ -172,7 +174,8 @@ class LinearElasticity2DProblem:
                   "The property uh_rom, extra properties values, x and y are available.")
 
     def build_rb_model(self, grid=rb_grid, mode=pod_mode, e_young_range=e_young_range,
-                       nu_poisson_range=nu_poisson_range, eps_pod=eps_pod, n_rom_cut=n_rom_cut):
+                       nu_poisson_range=nu_poisson_range, eps_pod=eps_pod, n_rom_cut=n_rom_cut,
+                       print_info=True):
         # set the parameters for building the reduce model
         self._rb_data.set_rb_model_params(grid, e_young_range, nu_poisson_range, eps_pod, mode, n_rom_cut)
         start_time = perf_counter()
@@ -180,12 +183,13 @@ class LinearElasticity2DProblem:
         pod_with_energy_norm(self, self._rb_data)
         # compute the rb matrices and vectors
         self._rb_data.compute_rb_matrices_and_vectors(self._rb_data.n_rom, self._hf_data, self._has_neumann,
-                                                      self._has_non_homo_dirichlet)
+                                                      self._has_non_homo_dirichlet, self._has_non_homo_neumann)
         # save the last n_rom
         self._rb_data.last_n_rom = self._rb_data.n_rom
         # do not allow computation of v for larger n_rom
         self._rb_data.set_n_rom_max()
-        print("Built reduced order model in {:.6f} sec".format(perf_counter() - start_time))
+        if print_info:
+            print("Built reduced order model in {:.6f} sec".format(perf_counter() - start_time))
         # reset uh
         self._uh = self._uh = SolutionFunctionValues2D()
         self._is_pod_computed = True
@@ -310,17 +314,17 @@ class LinearElasticity2DProblem:
             raise DirectoryDoesNotExistsError(f"Directory {directory_path} does not exist")
 
         hf_save(self._hf_data, directory_path, self._has_neumann, self._has_non_homo_dirichlet,
-                default_file_names_dict=self.DEFAULT_FILE_NAMES_DICT)
+                self._has_non_homo_neumann, default_file_names_dict=self.DEFAULT_FILE_NAMES_DICT)
 
         if self._is_pod_computed:
             if self._rb_data.last_n_rom != self._rb_data.n_rom:
                 self._rb_data.compute_rb_matrices_and_vectors(self._rb_data.n_rom, self._hf_data, self._has_neumann,
-                                                              self._has_non_homo_dirichlet)
+                                                              self._has_non_homo_dirichlet, self._has_non_homo_neumann)
             rb_save(self._hf_data.n, self._rb_data, directory_path, self._has_neumann, self._has_non_homo_dirichlet,
-                    default_file_names_dict=self.DEFAULT_FILE_NAMES_DICT)
+                    self._has_non_homo_neumann, default_file_names_dict=self.DEFAULT_FILE_NAMES_DICT)
 
     @classmethod
-    def from_saves(cls, n, directory_path, rb_warnings=True):
+    def from_saves(cls, n, directory_path, rb_warnings=True, print_info=True):
 
         if not os.path.isdir(directory_path):
             raise DirectoryDoesNotExistsError(f"Directory {directory_path} does not exist")
@@ -329,15 +333,17 @@ class LinearElasticity2DProblem:
         problem._hf_data.n = n + 1
 
         start_time = perf_counter()
-        problem._has_neumann, problem._has_non_homo_dirichlet = hf_from_files(problem._hf_data, directory_path)
-        print("Loaded the high fidelity data in {:.6f} sec".format(perf_counter() - start_time))
+        problem._has_neumann, problem._has_non_homo_dirichlet, problem._has_non_homo_neumann \
+            = hf_from_files(problem._hf_data, directory_path)
+        if print_info:
+            print("Loaded the high fidelity data in {:.6f} sec".format(perf_counter() - start_time))
         problem._is_assembled_and_free = True
 
         start_time = perf_counter()
-        rb_from_files(problem._hf_data.n, problem._rb_data, directory_path, rb_warnings)
+        problem._is_pod_computed = rb_from_files(problem._hf_data.n, problem._rb_data, directory_path, rb_warnings)
         if problem._is_pod_computed:
-            print("Loaded the reduced order data in {:.6f} sec".format(perf_counter() - start_time))
-            problem._is_pod_computed = True
+            if print_info:
+                print("Loaded the reduced order data in {:.6f} sec".format(perf_counter() - start_time))
         problem._is_from_files = True
         return problem
 
@@ -352,7 +358,7 @@ class LinearElasticity2DProblem:
 
     @classmethod
     def from_functions(cls, n, f_func, dirichlet_bc_func=None, get_dirichlet_edge_func=None,
-                       neumann_bc_func=None, plate_limits=None):
+                       neumann_bc_func=None, plate_limits=None, print_info=True):
         problem = cls()
         problem._hf_data.n = n + 1
         problem._f_func_non_vec = f_func
@@ -364,7 +370,7 @@ class LinearElasticity2DProblem:
                 return 0, 0
 
             problem._neumann_bc_func_non_vec = default_neumann_bc_func
-            problem._has_homo_neumann = True
+            problem._has_non_homo_neumann = False
 
         problem._hf_data.get_dirichlet_edge_func = get_dirichlet_edge_func
         problem._set_vec_functions()
@@ -380,7 +386,8 @@ class LinearElasticity2DProblem:
 
         start_time = perf_counter()
         problem._hf_assemble()
-        print("Assembled matrices and load-vectors in {:.6f} sec".format(perf_counter() - start_time))
+        if print_info:
+            print("Assembled matrices and load-vectors in {:.6f} sec".format(perf_counter() - start_time))
 
         return problem
 

@@ -280,7 +280,7 @@ def assemble_a1_a2_f(n, p, tri, f_func):
     return a1, a2, f_load_lv
 
 
-def assemble_f_neumann(n, p, neumann_edge, neumann_bc_func, has_homo_neumann):
+def assemble_f_neumann(n, p, neumann_edge, neumann_bc_func):
     """
     Assemble the neumann load vector
 
@@ -294,8 +294,6 @@ def assemble_f_neumann(n, p, neumann_edge, neumann_bc_func, has_homo_neumann):
         array of the edges of the triangulation.
     neumann_bc_func : function
         the neumann boundary condition function.
-    has_homo_neumann : bool
-        do we have homogeneous neumann conditions.
 
     Returns
     -------
@@ -306,14 +304,11 @@ def assemble_f_neumann(n, p, neumann_edge, neumann_bc_func, has_homo_neumann):
     n2d = n * n * 2
     # load vector
     f_load_neumann = np.zeros(n2d, dtype=float)
-    if has_homo_neumann:
-        pass
-    else:
-        for ek in neumann_edge:
-            # p1 = p[ek[0], :]
-            # p2 = p[ek[1], :]
-            # expand the index
-            expanded_ek = expand_index(ek)
-            # add local contribution
-            f_load_neumann[expanded_ek] += line_integral_with_basis(*p[ek, :], 4, neumann_bc_func)
+    for ek in neumann_edge:
+        # p1 = p[ek[0], :]
+        # p2 = p[ek[1], :]
+        # expand the index
+        expanded_ek = expand_index(ek)
+        # add local contribution
+        f_load_neumann[expanded_ek] += line_integral_with_basis(*p[ek, :], 4, neumann_bc_func)
     return f_load_neumann

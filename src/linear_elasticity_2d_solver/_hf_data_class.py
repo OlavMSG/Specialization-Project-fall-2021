@@ -76,12 +76,13 @@ class HighFidelityData:
             if (self.neumann_edge is None) and np.all(self.dirichlet_edge == self.edge):
                 raise EdgesAreIllegalError("get_dirichlet_edge_func gives dirichlet_edge=edge and neumann_edge=None.")
 
-    def hf_assemble_f_neumann(self, neumann_bc_func_vec, has_homo_neumann):
+    def hf_neumann_edge(self):
         self._get_dirichlet_edge()
         self.get_neumann_edge()
         self._are_edges_illegal()
-        self.f_load_neumann_full = assemble_f_neumann(self.n, self.p, self.neumann_edge,
-                                                      neumann_bc_func_vec, has_homo_neumann)
+
+    def hf_assemble_f_neumann(self, neumann_bc_func_vec):
+        self.f_load_neumann_full = assemble_f_neumann(self.n, self.p, self.neumann_edge, neumann_bc_func_vec)
 
     def _set_free_and_dirichlet_edge_index(self):
         if self.dirichlet_edge is None:
@@ -102,15 +103,15 @@ class HighFidelityData:
         self.a1_dirichlet = self.a1_full[dirichlet_xy_index]
         self.a2_dirichlet = self.a2_full[dirichlet_xy_index]
 
-    def _set_a1_a2_and_f_free(self, has_neumann):
+    def _set_a1_a2_and_f_free(self, has_neumann, has_non_homo_neumann):
         free_xy_index = np.ix_(self.expanded_free_index, self.expanded_free_index)
         self.a1_free = self.a1_full[free_xy_index]
         self.a2_free = self.a2_full[free_xy_index]
         self.f_load_lv_free = self.f_load_lv_full[self.expanded_free_index]
-        if has_neumann:
+        if has_neumann and has_non_homo_neumann:
             self.f_load_neumann_free = self.f_load_neumann_full[self.expanded_free_index]
 
-    def compute_free_and_expanded_edges(self, has_neumann):
+    def compute_free_and_expanded_edges(self, has_neumann, has_non_homo_neumann):
         # set self.p, self.tri, self.edge
         # self.a1_full, self.a2_full
         # self.f_load_lv_full , self.dirichlet_edge
@@ -120,7 +121,7 @@ class HighFidelityData:
         self.n_full = self.a1_full.shape[0]
         self._set_free_and_dirichlet_edge_index()
         self._set_expanded_free_and_dirichlet_edge_index()
-        self._set_a1_a2_and_f_free(has_neumann)
+        self._set_a1_a2_and_f_free(has_neumann, has_non_homo_neumann)
         self._set_a1_a2_dirichlet()
         self.n_free = self.a1_free.shape[0]
 

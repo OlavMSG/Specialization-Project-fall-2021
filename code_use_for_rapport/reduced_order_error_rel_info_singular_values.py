@@ -117,57 +117,40 @@ def main(n, save, do_errors=True):
 
     if do_errors:
         # make error plots
-        fig, ax = plt.subplots(1, 1, num="Reduced order errors v. $n_{rom}$5" + f", $n={n}$", figsize=(12, 7))
-        fig.suptitle("Reduced order errors v. $n_{rom}$" + f", $n={n}$")
-        grid = 5
-        for mode in ("gauss lobatto", "uniform"):
-            mean_err = mean_err_dict[mode][grid]
-            ax.semilogy(np.arange(len(mean_err)) + 1, mean_err, "D-",
-                        label=f"mean: {mode} ${grid}\\times{grid}$", alpha=.8)
-        for mode in ("gauss lobatto", "uniform"):
-            max_err = max_err_dict[mode][grid]
-            ax.semilogy(np.arange(len(max_err)) + 1, max_err, "D-",
-                        label=f"max: {mode} ${grid}\\times{grid}$", alpha=.8)
-        ax.set_xlabel("$n_{rom}$")
-        ax.set_ylabel("$\\|\\|u_h(\\mu) - Vu_N(\\mu)\\|\\|_a$")
-        ax.grid()
-        # adjust
-        ax.legend(loc=9, bbox_to_anchor=(0.5, -0.13), ncol=2)
-        if save:
-            plt.savefig(save_dict + f"/reduced_order_errors_mode_grid{grid}_n{n}.pdf", bbox_inches='tight')
-        plt.show()
-
-        # make error plots
-        fig, ax = plt.subplots(1, 1, num="Reduced order errors v. $n_{rom}$11" + f", $n={n}$", figsize=(12, 7))
-        fig.suptitle("Reduced order errors v. $n_{rom}$" + f", $n={n}$")
-        grid = 11
-        for mode in ("gauss lobatto", "uniform"):
-            mean_err = mean_err_dict[mode][grid]
-            ax.semilogy(np.arange(len(mean_err)) + 1, mean_err, "D-",
-                        label=f"mean: {mode} ${grid}\\times{grid}$", alpha=.8)
-        for mode in ("gauss lobatto", "uniform"):
-            max_err = max_err_dict[mode][grid]
-            ax.semilogy(np.arange(len(max_err)) + 1, max_err, "D-",
-                        label=f"max: {mode} ${grid}\\times{grid}$", alpha=.8)
-        ax.set_xlabel("$n_{rom}$")
-        ax.set_ylabel("$\\|\\|u_h(\\mu) - Vu_N(\\mu)\\|\\|_a$")
-        ax.grid()
-        # adjust
-        ax.legend(loc=9, bbox_to_anchor=(0.5, -0.13), ncol=2)
-        if save:
-            plt.savefig(save_dict + f"/reduced_order_errors_mode_grid{grid}_n{n}.pdf", bbox_inches='tight')
-        plt.show()
+        for grid in (5, 11):
+            fig, ax = plt.subplots(1, 1, num="Reduced order errors v. $n_{rom}$" + f"{grid}, $n={n}$", figsize=(12, 7))
+            fig.suptitle("Reduced order errors v. $n_{rom}$" + f", $n={n}$")
+            for mode in ("gauss lobatto", "uniform"):
+                mean_err = mean_err_dict[mode][grid]
+                ax.semilogy(np.arange(len(mean_err)) + 1, mean_err, "D-",
+                            label=f"mean: {mode} ${grid}\\times{grid}$", alpha=.8)
+            for mode in ("gauss lobatto", "uniform"):
+                max_err = max_err_dict[mode][grid]
+                ax.semilogy(np.arange(len(max_err)) + 1, max_err, "D-",
+                            label=f"max: {mode} ${grid}\\times{grid}$", alpha=.8)
+            ax.set_xlabel("$n_{rom}$")
+            ax.set_ylabel("$\\|\\|u_h(\\mu) - Vu_N(\\mu)\\|\\|_a$")
+            ax.grid()
+            # adjust
+            ax.legend(loc=9, bbox_to_anchor=(0.5, -0.13), ncol=2)
+            if save:
+                plt.savefig(save_dict + f"/reduced_order_errors_mode_grid{grid}_n{n}.pdf", bbox_inches='tight')
+            plt.show()
 
 
 if __name__ == '__main__':
     from datetime import datetime
     # takes some time!!!! (20: 12 min, 40: 40 min, 80: 2 hours 42 min)
-    for n in (20, 40, 80):
-        now1 = datetime.now().time()  # time object
-        print("start time =", now1)
-        save = True
-        print(n, save)
-        main(n, save)
-        print(n, save)
-        now2 = datetime.now().time()  # time object
-        print("end time =", now2)
+    import sys
+
+    with open(f"reduced_order_plots/time_log.txt", "w") as time_code_log:
+        sys.stdout = time_code_log
+        for n in (20, 40, 80):
+            now1 = datetime.now().time()  # time object
+            print("start time =", now1)
+            save = True
+            print(n, save)
+            main(n, save)
+            print(n, save)
+            now2 = datetime.now().time()  # time object
+            print("end time =", now2)

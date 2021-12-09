@@ -6,12 +6,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from linear_elasticity_2d_solver import LinearElasticity2DProblem
-from linear_elasticity_2d_solver.default_constants import default_tol
-from linear_elasticity_2d_solver.helpers import get_mu_lambda
+from linear_elasticity_2d_solver.default_constants import default_tol, e_young_range, nu_poisson_range
 
-e_mean = 160e3
-nu_mean = 0.2
-mu, lam = get_mu_lambda(e_mean, nu_mean)
+e_mean = np.mean(e_young_range)
+nu_mean = np.mean(nu_poisson_range)
 
 
 def f(x, y):

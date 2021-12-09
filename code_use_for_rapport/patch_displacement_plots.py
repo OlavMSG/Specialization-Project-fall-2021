@@ -3,12 +3,14 @@
 @author: Olav M.S. Gran
 """
 import matplotlib.pyplot as plt
+import numpy as np
 
 from linear_elasticity_2d_solver import LinearElasticity2DProblem
+from linear_elasticity_2d_solver.default_constants import nu_poisson_range, e_young_range
 from linear_elasticity_2d_solver.helpers import get_mu_lambda
 
-e_mean = 160e3
-nu_mean = 0.2
+e_mean = np.mean(e_young_range)
+nu_mean = np.mean(nu_poisson_range)
 mu, lam = get_mu_lambda(e_mean, nu_mean)
 
 """

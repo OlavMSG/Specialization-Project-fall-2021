@@ -34,8 +34,8 @@ class ReducedOrderData:
         self.a2_free_rom = None
         self.f_load_lv_free_rom = None
         self.f_load_neumann_free_rom = None
-        self.a1_dirichlet_rom = None
-        self.a2_dirichlet_rom = None
+        self.f1_dirichlet_rom = None
+        self.f2_dirichlet_rom = None
 
     def set_rb_model_params(self, grid=None, e_young_range=None, nu_poisson_range=None, eps_pod=None,
                             mode=None, n_rom_cut=None):
@@ -65,19 +65,20 @@ class ReducedOrderData:
             raise ValueError(f"n_rom={n_rom} is larger than maximum reduced order dept: {self.n_rom_max}")
         compute_v(n_rom, n_free, self)
 
-    def _compute_rom_matrices_and_vectors(self, hf_data, has_neumann, has_non_homo_dirichlet):
+    def _compute_rom_matrices_and_vectors(self, hf_data, has_neumann, has_non_homo_dirichlet, has_non_homo_neumann):
         self.a1_free_rom = self.v.T @ hf_data.a1_free @ self.v
         self.a2_free_rom = self.v.T @ hf_data.a2_free @ self.v
         self.f_load_lv_free_rom = self.v.T @ hf_data.f_load_lv_free
-        if has_neumann:
+        if has_neumann and has_non_homo_neumann:
             self.f_load_neumann_free_rom = self.v.T @ hf_data.f_load_neumann_free
         if has_non_homo_dirichlet:
-            self.a1_dirichlet_rom = self.v.T @ hf_data.a1_dirichlet
-            self.a2_dirichlet_rom = self.v.T @ hf_data.a2_dirichlet
+            self.f1_dirichlet_rom = self.v.T @ hf_data.a1_dirichlet @ hf_data.rg
+            self.f2_dirichlet_rom = self.v.T @ hf_data.a2_dirichlet @ hf_data.rg
 
-    def compute_rb_matrices_and_vectors(self, n_rom, hf_data, has_neumann, has_non_homo_dirichlet):
+    def compute_rb_matrices_and_vectors(self, n_rom, hf_data, has_neumann,
+                                        has_non_homo_dirichlet, has_non_homo_neumann):
         self._compute_v(n_rom, hf_data.n_free)
-        self._compute_rom_matrices_and_vectors(hf_data, has_neumann, has_non_homo_dirichlet)
+        self._compute_rom_matrices_and_vectors(hf_data, has_neumann, has_non_homo_dirichlet, has_non_homo_neumann)
 
     def set_n_rom_max(self):
         if self.n_rom_cut == "rank":

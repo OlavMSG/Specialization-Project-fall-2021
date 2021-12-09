@@ -139,6 +139,7 @@ code_note_used_in_rapport/saved_data
 code_use_for_rapport/other_plots
 code_use_for_rapport/reduced_order_plots
 code_use_for_rapport/patch_plots
+code_use_for_rapport/time_code_logs
 
 # not included files
 find_derivatives_xy.py
