@@ -41,14 +41,14 @@ class HighFidelityData:
         self.expanded_free_index = None
         self.expanded_dirichlet_edge_index = None
 
-    def hf_assemble_a1_a2_f(self, f_func_vec):
+    def hf_assemble_a1_a2_f(self, f_func_vec, f_func_is_not_zero):
         self.p, self.tri, self.edge = getPlatev3(self.n, *self.plate_limits)
         #   p		Nodal points, (x,y)-coordinates for point i given in row i.
         #   tri   	Elements. Index to the three corners of element i given in row i.
         #   edge  	Edge lines. Index list to the two corners of _edge line i given in row i.
 
         self.a1_full, self.a2_full, self.f_load_lv_full = \
-            assemble_a1_a2_f(self.n, self.p, self.tri, f_func_vec)
+            assemble_a1_a2_f(self.n, self.p, self.tri, f_func_vec, f_func_is_not_zero)
 
     def _get_dirichlet_edge(self):
         if self.get_dirichlet_edge_func is not None:

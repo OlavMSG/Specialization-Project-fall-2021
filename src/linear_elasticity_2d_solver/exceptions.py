@@ -39,5 +39,10 @@ class FileDoesNotExistError(Exception):
 class EdgesAreIllegalError(Exception):
     pass
 
+
 class CanNotComputeSolutionMatrixRankError(Exception):
+    pass
+
+
+class SolutionMatrixIsZeroCanNotComputePODError(Exception):
     pass

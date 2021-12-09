@@ -36,6 +36,7 @@ class LinearElasticity2DProblem:
         self._neumann_bc_func_non_vec = None
         self._dirichlet_bc_func_non_vec = None
         self._f_func_vec = None
+        self._f_func_is_not_zeros = True
         self._neumann_bc_func_vec = None
         self._dirichlet_bc_func_vec = None
 
@@ -54,7 +55,7 @@ class LinearElasticity2DProblem:
         self._is_from_files = False
 
     def _hf_assemble(self):
-        self._hf_data.hf_assemble_a1_a2_f(self._f_func_vec)
+        self._hf_data.hf_assemble_a1_a2_f(self._f_func_vec, self._f_func_is_not_zeros)
 
         if self._has_neumann:
             self._hf_data.hf_neumann_edge()
@@ -359,17 +360,22 @@ class LinearElasticity2DProblem:
     @classmethod
     def from_functions(cls, n, f_func, dirichlet_bc_func=None, get_dirichlet_edge_func=None,
                        neumann_bc_func=None, plate_limits=None, print_info=True):
+
+        def default_func(x, y):
+            return 0, 0
+
         problem = cls()
         problem._hf_data.n = n + 1
         problem._f_func_non_vec = f_func
         problem._neumann_bc_func_non_vec = neumann_bc_func
         problem._dirichlet_bc_func_non_vec = dirichlet_bc_func
 
-        if get_dirichlet_edge_func is not None and neumann_bc_func is None:
-            def default_neumann_bc_func(x, y):
-                return 0, 0
+        if f_func == 0:
+            problem._f_func_non_vec = default_func
+            problem._f_func_is_not_zeros = False
 
-            problem._neumann_bc_func_non_vec = default_neumann_bc_func
+        if get_dirichlet_edge_func is not None and neumann_bc_func is None:
+            problem._neumann_bc_func_non_vec = default_func
             problem._has_non_homo_neumann = False
 
         problem._hf_data.get_dirichlet_edge_func = get_dirichlet_edge_func

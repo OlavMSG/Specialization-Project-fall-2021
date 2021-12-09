@@ -7,6 +7,8 @@ from itertools import product
 import numpy as np
 from scipy.linalg import eigh, fractional_matrix_power
 
+from .exceptions import SolutionMatrixIsZeroCanNotComputePODError
+
 
 # le2d is a LinearElasticity2dProblem, not imported due to circular import
 # rb_data is ReducedOrderData, not imported due to circular import
@@ -23,7 +25,7 @@ def get_vec_from_range(range_, m, mode):
         return 0.5 * ((range_[1] - range_[0]) * gauss_lobatto(m).points + (range_[1] + range_[0]))
     else:
         raise NotImplementedError(
-            f"Mode {mode} is not implemented. The implemented modes are uniform and gauss lobatto")
+            f"Mode {mode} is not implemented. The implemented modes are uniform and gauss lobatto.")
 
 
 def make_solution_matrix(ns, e_young_vec, nu_poisson_vec, le2d):
@@ -33,6 +35,11 @@ def make_solution_matrix(ns, e_young_vec, nu_poisson_vec, le2d):
         le2d.hfsolve(e_young, nu_poisson, print_info=False)
         s_mat[:, i] = le2d.uh_free
         i += 1
+    if (s_mat == 0).all():
+        error_text = "Solution matrix is zero, can not compute POD for building a reduced model. " \
+                     + "The most likely cause is f_func=0, dirichlet_bc_func=0 and neumann_bc_func=0, " \
+                      + "where two last may be None."
+        raise SolutionMatrixIsZeroCanNotComputePODError(error_text)
     return s_mat
 
 
@@ -62,7 +69,6 @@ def pod_with_energy_norm(le2d, rb_data):
         # reverse arrays because they are in ascending order
         rb_data.sigma2_vec = sigma2_vec[::-1]
         rb_data.z_mat = z_mat[:, ::-1]
-
     # compute n_rom from relative information content
     i_n = np.cumsum(rb_data.sigma2_vec) / np.sum(rb_data.sigma2_vec)
     rb_data.n_rom = np.min(np.argwhere(i_n >= 1 - rb_data.eps_pod ** 2)) + 1

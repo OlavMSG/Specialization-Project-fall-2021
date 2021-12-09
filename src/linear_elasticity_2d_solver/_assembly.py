@@ -187,6 +187,66 @@ def assemble_a1_a2_local(area, ck):
     return a1_local, a2_local
 
 
+def assemble_a1_a2_f(n, p, tri, f_func, f_func_is_not_zero):
+    """
+    Assemble the matrices a1 and a2, and the load vector f_load_lv
+
+    Parameters
+    ----------
+    n : int
+        number of node along one axis.
+    p : np.array
+        list of points.
+    tri : np.array
+        triangulation of the points in p.
+    f_func : function
+        load function.
+    f_func_is_not_zero : bool
+        True if f_func does not return (0,0) for all (x,y)
+
+    Returns
+    -------
+    a1 : sparse.dok_matrix
+        matrix a1 for the first bilinear form.
+    a2 : sparse.dok_matrix
+        matrix a2 for the second bilinear form.
+    f_load_lv : np.array
+        load vector for the linear form.
+
+    """
+    n2d = n * n * 2
+    # Stiffness matrix
+    a1 = sparse.dok_matrix((n2d, n2d), dtype=float)
+    a2 = sparse.dok_matrix((n2d, n2d), dtype=float)
+    # dok_matrix
+    # Allows for efficient O(1) access of individual elements
+    # load vector
+    f_load_lv = np.zeros(n2d, dtype=float)
+    for nk in tri:
+        # nk : node-numbers for the k'th triangle
+        # the points of the triangle
+        # p1 = p[nk[0], :]
+        # p2 = p[nk[1], :]
+        # p3 = p[nk[2], :]
+        # using indexmap k = 2 * i + d, d=0 for x, 1 for y, i is the node number
+        # calculate the area of the triangle
+        # and basis functions coef. or Jacobin inverse
+        ck = get_basis_coef(*p[nk, :])
+        area = get_area_triangle(*p[nk, :])
+        # assemble local contributions
+        a1_local, a2_local = assemble_a1_a2_local(area, ck)
+        # expand the index
+        expanded_nk = expand_index(nk)
+        index = np.ix_(expanded_nk, expanded_nk)
+        # add local contributions
+        a1[index] += a1_local
+        a2[index] += a2_local
+        if f_func_is_not_zero:
+            f_local = assemble_f_local(ck, f_func, *p[nk, :])
+            f_load_lv[expanded_nk] += f_local
+    return a1, a2, f_load_lv
+
+
 def assemble_f_local(ck, f_func, p1, p2, p3):
     """
     Assemble the local contribution to the f_load_lv for the element
@@ -220,64 +280,6 @@ def assemble_f_local(ck, f_func, p1, p2, p3):
 
         f_local[ki] = quadrature2D(p1, p2, p3, 4, f_phi)
     return f_local
-
-
-def assemble_a1_a2_f(n, p, tri, f_func):
-    """
-    Assemble the matrices a1 and a2, and the load vector f_load_lv
-
-    Parameters
-    ----------
-    n : int
-        number of node along one axis.
-    p : np.array
-        list of points.
-    tri : np.array
-        triangulation of the points in p.
-    f_func : function
-        load function.
-
-    Returns
-    -------
-    a1 : sparse.dok_matrix
-        matrix a1 for first bilinear form.
-    a2 : sparse.dok_matrix
-        matrix a2 fro second bilinear form.
-    f_load_lv : np.array
-        load vector for linear form.
-
-    """
-    n2d = n * n * 2
-    # Stiffness matrix
-    a1 = sparse.dok_matrix((n2d, n2d), dtype=float)
-    a2 = sparse.dok_matrix((n2d, n2d), dtype=float)
-
-    # dok_matrix
-    # Allows for efficient O(1) access of individual elements
-    # load vector
-    f_load_lv = np.zeros(n2d, dtype=float)
-    for nk in tri:
-        # nk : node-numbers for the k'th triangle
-        # the points of the triangle
-        # p1 = p[nk[0], :]
-        # p2 = p[nk[1], :]
-        # p3 = p[nk[2], :]
-        # using indexmap k = 2 * i + d, d=0 for x, 1 for y, i is the node number
-        # calculate the area of the triangle
-        # and basis functions coef. or Jacobin inverse
-        ck = get_basis_coef(*p[nk, :])
-        area = get_area_triangle(*p[nk, :])
-        # assemble local contributions
-        a1_local, a2_local = assemble_a1_a2_local(area, ck)
-        f_local = assemble_f_local(ck, f_func, *p[nk, :])
-        # expand the index
-        expanded_nk = expand_index(nk)
-        index = np.ix_(expanded_nk, expanded_nk)
-        # add local contributions
-        a1[index] += a1_local
-        a2[index] += a2_local
-        f_load_lv[expanded_nk] += f_local
-    return a1, a2, f_load_lv
 
 
 def assemble_f_neumann(n, p, neumann_edge, neumann_bc_func):

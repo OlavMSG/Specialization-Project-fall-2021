@@ -13,10 +13,6 @@ e_mean = np.mean(e_young_range)
 nu_mean = np.mean(nu_poisson_range)
 mu, lam = get_mu_lambda(e_mean, nu_mean)
 
-"""
-Patch test is found in tests folder.
-"""
-
 def f(x, y):
     return 0, 0
 

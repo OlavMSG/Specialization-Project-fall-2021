@@ -19,6 +19,7 @@ def f(x, y):
 def clamped_bc(x, y):
     return abs(x) <= default_tol
 
+
 def main():
     n_vec = [2]
     for n in n_vec:
@@ -40,6 +41,7 @@ def main():
         le2d = LinearElasticity2DProblem.from_saves(n, directory_path)
         le2d.hfsolve(e_mean, nu_mean)
         le2d.rbsolve(e_mean, nu_mean)
+
 
 if __name__ == '__main__':
     main()

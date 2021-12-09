@@ -125,7 +125,6 @@ def hf_from_files(hf_data, directory_path, default_file_names_dict=file_names_di
     has_non_homo_neumann = True
     if has_neumann:
         hf_data.f_load_neumann_full = np.load(f_load_neumann_file_path, allow_pickle=False)
-        print(hf_data.f_load_neumann_full)
         if hf_data.f_load_neumann_full[0] == "has homo neumann":
             hf_data.f_load_neumann_full = None
             has_non_homo_neumann = False
