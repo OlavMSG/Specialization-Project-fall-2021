@@ -120,8 +120,6 @@ def get_nodal_stress(uh, p, tri):
         node_n_el = get_node_neighbour_elements(node_nr, tri)
         # recovery, calciulate the mean value.
         nodal_stress[node_nr, :, :] = np.mean(element_stress[node_n_el, :, :], axis=0)
-        #print(nodal_stress[node_nr, :, :])
-        #print(p[node_nr, :])
     uh.set_nodal_stress(nodal_stress)
 
 

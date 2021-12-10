@@ -300,7 +300,7 @@ class FunctionValues2D:
         self._values = np.asarray(values, dtype=float)
         self._n = self._values.shape[0]
 
-    def _set_from_1xn2(self, values):
+    def _set_from_1x2n(self, values):
         """
         set from values of shape (1, k=2n)
 
@@ -321,7 +321,7 @@ class FunctionValues2D:
         """
         m = values.shape[0]
         if m % 2 != 0:
-            raise ValueError("Shape of values must be (1, 2k), where k is an integer")
+            raise ValueError("Shape of values must be (1, k=2n), where n is an integer.")
         self._n = m // 2
         self._values = np.zeros((self.n, 2))
         self._values[:, 0] = values[np.arange(0, m, 2)]
@@ -348,9 +348,9 @@ class FunctionValues2D:
         return out
 
     @classmethod
-    def from_1xn2(cls, values):
+    def from_1x2n(cls, values):
         """
-        Make FunctionValues2D from values of shape (1, 2n)
+        Make FunctionValues2D from values of shape (1, k=2n)
 
         Parameters
         ----------
@@ -360,11 +360,11 @@ class FunctionValues2D:
         Returns
         -------
         out : FunctionValues2D
-            FunctionValues2D from values of shape (1, 2n).
+            FunctionValues2D from values of shape (1, k=2n).
 
         """
         out = cls()
-        out._set_from_1xn2(values)
+        out._set_from_1x2n(values)
         return out
 
     @property

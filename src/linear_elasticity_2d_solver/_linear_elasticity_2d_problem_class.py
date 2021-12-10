@@ -133,7 +133,7 @@ class LinearElasticity2DProblem:
         if self._has_non_homo_dirichlet:
             uh[self._hf_data.expanded_dirichlet_edge_index] = self._hf_data.rg
         # set uh, and save it in a nice way.
-        self._uh = SolutionFunctionValues2D.from_1xn2(uh)
+        self._uh = SolutionFunctionValues2D.from_1x2n(uh)
         self._uh.set_e_young_and_nu_poisson(e_young, nu_poisson)
         if print_info:
             print("Get solution by the property uh, uh_free or uh_full of the class.\n" +
@@ -168,7 +168,7 @@ class LinearElasticity2DProblem:
             # lifting function
             uh_rom[self._hf_data.expanded_dirichlet_edge_index] = self._hf_data.rg
         # set uh_rom, save it in a nice way.
-        self._uh_rom = SolutionFunctionValues2D.from_1xn2(uh_rom)
+        self._uh_rom = SolutionFunctionValues2D.from_1x2n(uh_rom)
         self._uh_rom.set_e_young_and_nu_poisson(e_young, nu_poisson)
         if print_info:
             print("Get solution by the property uh_rom, uh_rom_free or uh_rom_full of the class.\n" +
@@ -220,7 +220,7 @@ class LinearElasticity2DProblem:
                     if self._has_non_homo_dirichlet:
                         uh[self._hf_data.expanded_dirichlet_edge_index] = self._hf_data.rg
                     # set uh
-                    self._uh = SolutionFunctionValues2D.from_1xn2(uh)
+                    self._uh = SolutionFunctionValues2D.from_1x2n(uh)
                     self._uh.set_e_young_and_nu_poisson(e_young, nu_poisson)
                     if print_info:
                         print("Loaded a @ uh = f_load from s_mat in {:.6f} sec".format(perf_counter() - start_time))
