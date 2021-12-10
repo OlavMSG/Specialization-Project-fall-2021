@@ -10,23 +10,15 @@ import scipy.sparse as sparse
 
 from .default_constants import file_names_dict
 from .exceptions import DirectoryDoesNotExistsError, FileDoesNotExistError
-
-
-def _check_and_make_folder(n, folder_path):
-    if not os.path.isdir(folder_path):
-        os.mkdir(folder_path)
-    folder_path = os.path.join(folder_path, f"n{n - 1}")
-    if not os.path.isdir(folder_path):
-        os.mkdir(folder_path)
-    print(f"Saving in directory {folder_path}")
-    return folder_path
+from .helpers import check_and_make_folder
 
 
 def hf_save(hf_data, directory_path, has_neumann, has_non_homo_dirichlet, has_non_homo_neumann,
             default_file_names_dict=file_names_dict):
 
     hf_folder_path = os.path.join(directory_path, "high_fidelity")
-    hf_folder_path = _check_and_make_folder(hf_data.n, hf_folder_path)
+    hf_folder_path = check_and_make_folder(hf_data.n, hf_folder_path)
+    print(f"Saving in directory {hf_folder_path}")
 
     a1_file_path = os.path.join(hf_folder_path, default_file_names_dict["a1"])
     a2_file_path = os.path.join(hf_folder_path, default_file_names_dict["a2"])
@@ -60,7 +52,8 @@ def rb_save(n, rb_data, directory_path, has_neumann, has_non_homo_dirichlet, has
             default_file_names_dict=file_names_dict):
 
     rb_folder_path = os.path.join(directory_path, "reduced_order")
-    rb_folder_path = _check_and_make_folder(n, rb_folder_path)
+    rb_folder_path = check_and_make_folder(n, rb_folder_path)
+    print(f"Saving in directory {rb_folder_path}")
 
     a1_rom_file_path = os.path.join(rb_folder_path, default_file_names_dict["a1_rom"])
     a2_rom_file_path = os.path.join(rb_folder_path, default_file_names_dict["a2_rom"])

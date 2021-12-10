@@ -2,6 +2,8 @@
 """
 @author: Olav M.S. Gran
 """
+import os
+
 import numpy as np
 
 
@@ -167,6 +169,31 @@ def get_u_exact(p, u_exact_func):
     y_vec = p[:, 1]
     u_exact = FunctionValues2D.from_nx2(VectorizedFunction2D(u_exact_func)(x_vec, y_vec))
     return u_exact
+
+
+def check_and_make_folder(n, folder_path):
+    """
+    Check if the folder/directory and its sub-folder exists, if not make it.
+    Check both the folders 'folder_path' and 'folder_path/n{n}'
+
+    Parameters
+    ----------
+    n : int
+        Discretization number
+    folder_path : str
+        the path to the folder to check and make, form 'folder_path/n{n}'.
+
+    Returns
+    -------
+    str
+        the folder name .
+    """
+    if not os.path.isdir(folder_path):
+        os.mkdir(folder_path)
+    folder_path = os.path.join(folder_path, f"n{n - 1}")
+    if not os.path.isdir(folder_path):
+        os.mkdir(folder_path)
+    return folder_path
 
 
 # class to vectorized input functions

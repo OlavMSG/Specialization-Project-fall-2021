@@ -9,6 +9,7 @@ import sympy as sym
 
 from linear_elasticity_2d_solver import LinearElasticity2DProblem
 from linear_elasticity_2d_solver.default_constants import default_tol
+from linear_elasticity_2d_solver.helpers import check_and_make_folder
 
 """for nice representation of plots"""
 
@@ -39,7 +40,8 @@ def clamped_bc(x, y):
 def main():
     n = 3
     save = False
-    save_dict = r"old_reduced_order_error_check_plots" + f"/n{n}"
+    save_dict = r"old_reduced_order_error_check_plots"
+    save_dict = check_and_make_folder(n, save_dict)
     # define problem
     le2d = LinearElasticity2DProblem.from_functions(n, f,
                                                     get_dirichlet_edge_func=clamped_bc)

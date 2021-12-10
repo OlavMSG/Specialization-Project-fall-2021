@@ -114,4 +114,3 @@ class SolutionFunctionValues2D(FunctionValues2D):
     @property
     def von_mises(self):
         return self._von_mises
-

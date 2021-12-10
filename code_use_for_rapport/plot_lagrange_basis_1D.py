@@ -25,6 +25,7 @@ def phi(n, i):
 def main():
     n = 1
     save = True
+    save_dict = r"other_plots"
     plt.figure("1D Linear Lagrange basis")
     plt.title("1D Linear Lagrange basis")
     x_vec = np.linspace(0, 1, n + 1)
@@ -43,7 +44,7 @@ def main():
     plt.ylim(-0.05, 1.22)
 
     if save:
-        plt.savefig(f"other_plots/1D_linear_lagrange_basis_n{n}.pdf")
+        plt.savefig(save_dict + f"/1D_linear_lagrange_basis_n{n}.pdf")
     plt.show()
 
 

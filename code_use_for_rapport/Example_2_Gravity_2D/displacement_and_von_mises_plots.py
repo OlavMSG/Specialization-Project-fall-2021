@@ -2,13 +2,13 @@
 """
 @author: Olav M.S. Gran
 """
-import os
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 from linear_elasticity_2d_solver import LinearElasticity2DProblem
 from linear_elasticity_2d_solver.default_constants import default_tol, e_young_range, nu_poisson_range
+from linear_elasticity_2d_solver.helpers import check_and_make_folder
 
 e_mean = np.mean(e_young_range)
 nu_mean = np.mean(nu_poisson_range)
@@ -38,15 +38,6 @@ def neumannn_bc(x, y):
         return 0, val
     else:
         return 0, 0
-
-
-def check_and_make_folder(n, folder_path):
-    if not os.path.isdir(folder_path):
-        os.mkdir(folder_path)
-    folder_path = os.path.join(folder_path, f"n{n}")
-    if not os.path.isdir(folder_path):
-        os.mkdir(folder_path)
-    return folder_path
 
 
 def main():

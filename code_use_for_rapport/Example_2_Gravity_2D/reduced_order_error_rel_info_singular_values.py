@@ -4,7 +4,6 @@
 """
 import datetime
 import multiprocessing as mp
-import os
 import sys
 from time import perf_counter
 
@@ -14,6 +13,7 @@ import sympy as sym
 
 from linear_elasticity_2d_solver import LinearElasticity2DProblem
 from linear_elasticity_2d_solver.default_constants import default_tol
+from linear_elasticity_2d_solver.helpers import check_and_make_folder
 
 """for nice representation of plots"""
 
@@ -39,15 +39,6 @@ def dirichlet_bc_func(x, y):
 
 def clamped_bc(x, y):
     return abs(x) <= default_tol
-
-
-def check_and_make_folder(n, folder_path):
-    if not os.path.isdir(folder_path):
-        os.mkdir(folder_path)
-    folder_path = os.path.join(folder_path, f"n{n}")
-    if not os.path.isdir(folder_path):
-        os.mkdir(folder_path)
-    return folder_path
 
 
 def make_plots(n, save, q=None, do_errors=True):
