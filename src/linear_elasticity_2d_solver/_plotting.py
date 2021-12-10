@@ -52,13 +52,13 @@ def plot_mesh(n, p, tri):
     plt.grid()
 
 
-def plot_displacement(uh, p, tri, solve_mode=""):
+def plot_displacement(uh, n, p, tri, solve_mode=""):
     if solve_mode == "hf":
-        title_text = "Displacement in high fidelity solution"
+        title_text = f"Displacement in high fidelity solution, $n={n-1}$"
     elif solve_mode == "rb":
-        title_text = "Displacement in reduced order solution"
+        title_text = f"Displacement in reduced order solution, $n={n-1}$"
     else:
-        title_text = "Displacement"
+        title_text = f"Displacement, $n={n-1}$"
 
     plt.figure(title_text)
     plt.title(title_text)
@@ -70,17 +70,18 @@ def plot_displacement(uh, p, tri, solve_mode=""):
     plt.grid()
 
 
-def plot_von_mises(uh, p, tri, solve_mode=""):
+def plot_von_mises(uh, n, p, tri, solve_mode="", levels=None):
     if solve_mode == "hf":
-        title_text = "Stress intensity, von Mises stress, \n in high fidelity solution"
+        title_text = f"Stress intensity, von Mises stress, \n in high fidelity solution, $n={n-1}$"
     elif solve_mode == "rb":
-        title_text = "Stress intensity, von Mises stress, \n in reduced order solution"
+        title_text = f"Stress intensity, von Mises stress, \n in reduced order solution, $n={n-1}$"
     else:
-        title_text = "Stress intensity, von Mises stress"
+        title_text = f"Stress intensity, von Mises stress, $n={n-1}$"
+    if levels is None:
+        levels = np.linspace(0, np.max(uh.von_mises), 25)
     plt.figure(title_text)
     plt.title(title_text)
     plt.gca().set_aspect('equal')
-    levels = np.linspace(np.min(uh.von_mises), np.max(uh.von_mises), 25)
     plt.tricontourf(p[:, 0] + uh.x, p[:, 1] + uh.y, tri, uh.von_mises, extend='both', levels=levels,
                     cmap=plt.cm.get_cmap("jet"))
     plt.colorbar()

@@ -15,7 +15,7 @@ from .exceptions import DirectoryDoesNotExistsError, FileDoesNotExistError
 def _check_and_make_folder(n, folder_path):
     if not os.path.isdir(folder_path):
         os.mkdir(folder_path)
-    folder_path = os.path.join(folder_path, f"n{n}")
+    folder_path = os.path.join(folder_path, f"n{n - 1}")
     if not os.path.isdir(folder_path):
         os.mkdir(folder_path)
     print(f"Saving in directory {folder_path}")
@@ -98,7 +98,7 @@ def rb_save(n, rb_data, directory_path, has_neumann, has_non_homo_dirichlet, has
 
 
 def hf_from_files(hf_data, directory_path, default_file_names_dict=file_names_dict):
-    hf_folder_path = os.path.join(directory_path, "high_fidelity", f"n{hf_data.n}")
+    hf_folder_path = os.path.join(directory_path, "high_fidelity", f"n{hf_data.n - 1}")
     if not os.path.isdir(hf_folder_path):
         text = f"Directory {hf_folder_path} does not exist, can not load the high_fidelity data."
         raise DirectoryDoesNotExistsError(text)
@@ -142,7 +142,7 @@ def hf_from_files(hf_data, directory_path, default_file_names_dict=file_names_di
 
 
 def rb_from_files(n, rb_data, directory_path, warn=True, default_file_names_dict=file_names_dict):
-    rb_folder_path = os.path.join(directory_path, "reduced_order", f"n{n}")
+    rb_folder_path = os.path.join(directory_path, "reduced_order", f"n{n - 1}")
     is_pod_computed = True
     if not os.path.isdir(rb_folder_path):
         # assume the data does not exist.

@@ -108,8 +108,7 @@ def get_nodal_stress(uh, p, tri):
 
     Returns
     -------
-    nodal_stress : np.array
-        recovered nodal stress.
+    None.
 
     """
     n_nodes = p.shape[0]
@@ -121,32 +120,29 @@ def get_nodal_stress(uh, p, tri):
         node_n_el = get_node_neighbour_elements(node_nr, tri)
         # recovery, calciulate the mean value.
         nodal_stress[node_nr, :, :] = np.mean(element_stress[node_n_el, :, :], axis=0)
-    return nodal_stress
+        #print(nodal_stress[node_nr, :, :])
+        #print(p[node_nr, :])
+    uh.set_nodal_stress(nodal_stress)
 
 
-def von_mises_yield(uh, p, tri):
+def get_von_mises_yield(uh):
     """
     Calculate the von mises yield, using the stress recovery process above.
 
     Parameters
     ----------
     uh : SolutionFunctionValues2D
-        nummerical solution.
-    p : np.array
-        Nodal points, (x,y)-coordinates for point i given in row i.
-    tri : np.array
-        Elements. Index to the three corners of element i given in row i.
+        numerical solution.
 
     Returns
     -------
     None.
 
     """
-    nodal_stress = get_nodal_stress(uh, p, tri)
-    n_nodes = nodal_stress.shape[0]
+    n_nodes = uh.nodal_stress.shape[0]
     von_mises = np.zeros(n_nodes)
     for node_nr in range(n_nodes):
         # deviatoric stress
-        s = nodal_stress[node_nr, :, :] - np.trace(nodal_stress[node_nr, :, :]) * np.identity(2) / 3
+        s = uh.nodal_stress[node_nr, :, :] - np.trace(uh.nodal_stress[node_nr, :, :]) * np.identity(2) / 3
         von_mises[node_nr] = np.sqrt(3 / 2 * np.sum(s * s))
     uh.set_von_mises(von_mises)

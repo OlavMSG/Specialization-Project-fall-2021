@@ -21,6 +21,7 @@ class SolutionFunctionValues2D(FunctionValues2D):
         super().__init__()
         self._e_young = None
         self._nu_poisson = None
+        self._nodal_stress = None
         self._von_mises = None
 
     def set_e_young_and_nu_poisson(self, e_young, nu_poisson):
@@ -66,6 +67,22 @@ class SolutionFunctionValues2D(FunctionValues2D):
         else:
             return False
 
+    def set_nodal_stress(self, nodal_stress):
+        """
+        set the nodal stess property of the class
+
+        Parameters
+        ----------
+        nodal_stress : np.array
+            nodal stress.
+
+        Returns
+        -------
+        None.
+
+        """
+        self._nodal_stress = nodal_stress
+
     def set_von_mises(self, von_mises):
         """
         set the von mises yield property of the class
@@ -89,6 +106,10 @@ class SolutionFunctionValues2D(FunctionValues2D):
     @property
     def nu_poisson(self):
         return self._nu_poisson
+
+    @property
+    def nodal_stress(self):
+        return self._nodal_stress
 
     @property
     def von_mises(self):

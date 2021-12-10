@@ -1,0 +1,70 @@
+Case 1: (x, 0)
+Assembled matrices and load-vectors in 0.006683 sec
+L2 norm 5.2177453875058995e-17
+max norm 1.1102230246251565e-16
+tolerance 1e-14
+plate limits (0, 1)
+test True for n_rom=2
+Free node values (from [x1, y1, x2, y2, ...]):
+uh:  [5.00000000e-01 3.13864838e-17]
+u_ex:  [0.5 0. ]
+----------
+Case 2: (0, y)
+Assembled matrices and load-vectors in 0.005019 sec
+L2 norm 0.0
+max norm 0.0
+tolerance 1e-14
+plate limits (0, 1)
+test True for n_rom=2
+Free node values (from [x1, y1, x2, y2, ...]):
+uh:  [0.  0.5]
+u_ex:  [0.  0.5]
+----------
+Case 3: (y, 0)
+Assembled matrices and load-vectors in 0.004956 sec
+L2 norm 0.0
+max norm 0.0
+tolerance 1e-14
+plate limits (0, 1)
+test True for n_rom=2
+Free node values (from [x1, y1, x2, y2, ...]):
+uh:  [0.5 0. ]
+u_ex:  [0.5 0. ]
+----------
+Case 4: (0, x)
+Assembled matrices and load-vectors in 0.004922 sec
+L2 norm 0.0
+max norm 0.0
+tolerance 1e-14
+plate limits (0, 1)
+test True for n_rom=2
+Free node values (from [x1, y1, x2, y2, ...]):
+uh:  [0.  0.5]
+u_ex:  [0.  0.5]
+----------
+Case 5: (xy, 0)
+Passes, but test does not hold since u_exact is not linear, see l2 norm
+Assembled matrices and load-vectors in 0.006904 sec
+L2 norm 0.02812991363393221
+max norm 7.846620956472322e-18
+tolerance 1e-14
+plate limits (0, 1)
+test True for n_rom=2
+Free node values (from [x1, y1, x2, y2, ...]):
+uh:  [ 2.50000000e-01 -7.84662096e-18]
+u_ex:  [0.25 0.  ]
+----------
+Case 6: (0, xy)
+Passes, but test does not hold since u_exact is not linear, see l2 norm
+Assembled matrices and load-vectors in 0.006624 sec
+L2 norm 0.028129913633932215
+max norm 2.7755575615628914e-17
+tolerance 1e-14
+plate limits (0, 1)
+test True for n_rom=2
+Free node values (from [x1, y1, x2, y2, ...]):
+uh:  [-2.08166817e-17  2.50000000e-01]
+u_ex:  [0.   0.25]
+----------
+
+Process finished with exit code 0

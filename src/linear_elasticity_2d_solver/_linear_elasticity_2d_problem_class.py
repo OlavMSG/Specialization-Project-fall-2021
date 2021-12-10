@@ -17,7 +17,7 @@ from ._pod import pod_with_energy_norm, get_e_young_nu_poisson_mat
 from ._rb_data_class import ReducedOrderData
 from ._save_and_load import hf_save, rb_save, rb_from_files, hf_from_files
 from ._solution_function_class import SolutionFunctionValues2D
-from ._stress_recovery import von_mises_yield
+from ._stress_recovery import get_von_mises_yield, get_nodal_stress
 from .default_constants import file_names_dict, eps_pod, e_young_range, nu_poisson_range, rb_grid, pod_mode, n_rom_cut
 from .exceptions import IsNotAssembledError, PodNotComputedError, CanNotForceNromError, DirectoryDoesNotExistsError, \
     MissingInputFunctionPointerError, LinearElasticity2DProblemNotSolved, PlateLimitsNotFoundError, \
@@ -252,10 +252,29 @@ class LinearElasticity2DProblem:
                 "dirichlet_bc_func is not given, set it in the Linear Elasticity 2D Problem first.")
         return self._dirichlet_bc_func_vec(x_vec, y_vec)
 
+    def hf_nodal_stress(self, print_info=True):
+        if self._uh.values is None:
+            raise LinearElasticity2DProblemNotSolved("High fidelity Linear Elasticity 2D Problem has not been solved.")
+        get_nodal_stress(self._uh, self._hf_data.p, self._hf_data.tri)
+        if print_info:
+            print("Get nodal stress by the property uh.nodal_stress of the class.")
+
+    def nodal_stress(self, print_info=True):
+        self.hf_nodal_stress(print_info=print_info)
+
+    def rb_nodal_stress(self, print_info=True):
+        if self._uh_rom.values is None:
+            raise LinearElasticity2DProblemNotSolved("Reduced order Linear Elasticity 2D Problem has not been solved.")
+        get_nodal_stress(self._uh_rom, self._hf_data.p, self._hf_data.tri)
+        if print_info:
+            print("Get nodal stress by the property uh_rom.nodal_stress of the class.")
+
     def hf_von_mises_yield(self, print_info=True):
         if self._uh.values is None:
             raise LinearElasticity2DProblemNotSolved("High fidelity Linear Elasticity 2D Problem has not been solved.")
-        von_mises_yield(self._uh, self._hf_data.p, self._hf_data.tri)
+        if self._uh.nodal_stress is None:
+            self.hf_nodal_stress(print_info=False)
+        get_von_mises_yield(self._uh)
         if print_info:
             print("Get von Mises yield by the property uh.von_mises of the class.")
 
@@ -265,19 +284,21 @@ class LinearElasticity2DProblem:
     def rb_von_mises_yield(self, print_info=True):
         if self._uh_rom.values is None:
             raise LinearElasticity2DProblemNotSolved("Reduced order Linear Elasticity 2D Problem has not been solved.")
-        von_mises_yield(self._uh_rom, self._hf_data.p, self._hf_data.tri)
+        if self._uh_rom.nodal_stress is None:
+            self.rb_nodal_stress(print_info=False)
+        get_von_mises_yield(self._uh_rom)
         if print_info:
             print("Get von Mises yield by the property uh_rom.von_mises of the class.")
 
     def plot_mesh(self):
         if not self._is_assembled_and_free:
-            raise IsNotAssembledError("Matrices and vectors are not assembled.")
+            raise IsNotAssembledError("Matrices and vectors are not assembled, do not have the triangulation data.")
         plot_mesh(self._hf_data.n, self._hf_data.p, self._hf_data.tri)
 
     def hf_plot_displacement(self, _solve_mode="hf"):
         if self._uh.values is None:
             raise LinearElasticity2DProblemNotSolved("High fidelity Linear Elasticity 2D Problem has not been solved.")
-        plot_displacement(self._uh, self._hf_data.p, self._hf_data.tri, solve_mode=_solve_mode)
+        plot_displacement(self._uh, self._hf_data.n, self._hf_data.p, self._hf_data.tri, solve_mode=_solve_mode)
 
     def plot_displacement(self):
         self.hf_plot_displacement(_solve_mode="")
@@ -285,20 +306,22 @@ class LinearElasticity2DProblem:
     def rb_plot_displacement(self, _solve_mode="rb"):
         if self._uh_rom.values is None:
             raise LinearElasticity2DProblemNotSolved("Reduced order Linear Elasticity 2D Problem has not been solved.")
-        plot_displacement(self._uh_rom, self._hf_data.p, self._hf_data.tri, solve_mode=_solve_mode)
+        plot_displacement(self._uh_rom, self._hf_data.n, self._hf_data.p, self._hf_data.tri, solve_mode=_solve_mode)
 
-    def hf_plot_von_mises(self, _solve_mode="hf"):
+    def hf_plot_von_mises(self, _solve_mode="hf", levels=None):
         if self._uh.von_mises is None:
             self.hf_von_mises_yield(print_info=False)
-        plot_von_mises(self._uh, self._hf_data.p, self._hf_data.tri, solve_mode=_solve_mode)
+        plot_von_mises(self._uh, self._hf_data.n, self._hf_data.p, self._hf_data.tri,
+                       solve_mode=_solve_mode, levels=levels)
 
-    def plot_von_mises(self):
-        self.hf_plot_von_mises(_solve_mode="")
+    def plot_von_mises(self, levels=None):
+        self.hf_plot_von_mises(_solve_mode="", levels=levels)
 
-    def rb_plot_von_mises(self, _solve_mode="rb"):
+    def rb_plot_von_mises(self, _solve_mode="rb", levels=None):
         if self._uh_rom.von_mises is None:
             self.rb_von_mises_yield(print_info=False)
-        plot_von_mises(self._uh_rom, self._hf_data.p, self._hf_data.tri, solve_mode=_solve_mode)
+        plot_von_mises(self._uh_rom, self._hf_data.n, self._hf_data.p, self._hf_data.tri,
+                       solve_mode=_solve_mode, levels=levels)
 
     def plot_pod_singular_values(self):
         if not self._is_pod_computed:
