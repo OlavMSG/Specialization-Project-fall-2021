@@ -25,5 +25,3 @@ total : 0.04755299999987983 sec, mean time: 0.00015850999999959944 sec, runs: 30
 --------------------------------------------------
 Offline CPU time: 127.15182868 sec
 Online CPU time: 0.00015850999999959944 sec
-
-CPU max temp 87 C

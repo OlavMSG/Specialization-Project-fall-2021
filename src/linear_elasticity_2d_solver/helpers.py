@@ -69,9 +69,9 @@ def expand_index(index):
     return expanded_index
 
 
-def get_mu_lambda(e_young, nu_poisson):
+def get_lambda_mu(e_young, nu_poisson):
     """
-    Get Lame coefficients mu and lambda from the young's module and the poisson ratio
+    Get 2D plane stress Lame coefficients lambda and mu from the young's module and the poisson ratio
 
     Parameters
     ----------
@@ -84,25 +84,25 @@ def get_mu_lambda(e_young, nu_poisson):
     -------
     mu : float, np.array
         Lame coefficient mu.
-    lam : float, np.array
+    lambda_ : float, np.array
         Lame coefficient lambda.
 
     """
-    nu_p1 = nu_poisson + 1
-    lam = e_young * nu_poisson / (nu_p1 * (1 - 2 * nu_poisson))
-    mu = 0.5 * e_young / nu_p1
-    return mu, lam
+    lambda_ = e_young * nu_poisson / (1 - nu_poisson * nu_poisson)
+    mu = 0.5 * e_young / (nu_poisson + 1)
+    return mu, lambda_
 
 
-def get_e_young_nu_poisson(mu, lam):
+def get_e_young_nu_poisson(mu, lambda_):
     """
-    Get the young's module and the poisson ratio from Lame coefficients mu and lambda from
+    Get the young's module and the poisson ratio from 2D plane stress Lame coefficients lambda and mu
+    (Note: used formulas in get_lambda_mu and solved for e_young and nu_poisson)
 
     Parameters
     ----------
     mu : float, np.float
         Lame coefficients mu.
-    lam : float, np.float
+    lambda_ : float, np.float
         Lame coefficients lambda.
 
     Returns
@@ -113,9 +113,8 @@ def get_e_young_nu_poisson(mu, lam):
         poisson ratio.
 
     """
-    lam_p_mu = lam + mu
-    nu_poisson = 0.5 * lam / lam_p_mu
-    e_young = mu * (3 * lam + 2 * mu) / lam_p_mu
+    nu_poisson = lambda_ / (lambda_ + 2 * mu)
+    e_young = 4 * (lambda_ * mu + mu * mu) / (lambda_ + 2 * mu)
     return e_young, nu_poisson
 
 
@@ -143,9 +142,9 @@ def compute_a(e_young, nu_poisson, a1, a2):
 
     """
     # get the Lame coeffichents
-    mu, lam = get_mu_lambda(e_young, nu_poisson)
+    mu, lambda_ = get_lambda_mu(e_young, nu_poisson)
     # compute a
-    return 2 * mu * a1 + lam * a2
+    return 2 * mu * a1 + lambda_ * a2
 
 
 def get_u_exact(p, u_exact_func):

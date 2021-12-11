@@ -2,12 +2,13 @@
 """
 @author: Olav M.S. Gran
 """
+import sys
 
 import numpy as np
 
 from linear_elasticity_2d_solver import LinearElasticity2DProblem
 from linear_elasticity_2d_solver.default_constants import e_young_range, nu_poisson_range
-from linear_elasticity_2d_solver.helpers import get_u_exact, get_mu_lambda
+from linear_elasticity_2d_solver.helpers import get_u_exact, get_lambda_mu
 
 
 def base(dirichlet_bc_func, u_exact_func, f=None, print_l2=False, print_free_node_values=False):
@@ -116,7 +117,7 @@ def case_5(print_l2=False, print_free_node_values=False):
 
     e_mean = np.mean(e_young_range)
     nu_mean = np.mean(nu_poisson_range)
-    mu, lam = get_mu_lambda(e_mean, nu_mean)
+    mu, lam = get_lambda_mu(e_mean, nu_mean)
 
     def f(x, y):
         return 0., - mu - lam
@@ -137,7 +138,7 @@ def case_6(print_l2=False, print_free_node_values=False):
 
     e_mean = np.mean(e_young_range)
     nu_mean = np.mean(nu_poisson_range)
-    mu, lam = get_mu_lambda(e_mean, nu_mean)
+    mu, lam = get_lambda_mu(e_mean, nu_mean)
 
     def f(x, y):
         return - mu - lam, 0.
@@ -146,18 +147,20 @@ def case_6(print_l2=False, print_free_node_values=False):
 
 
 def main():
+    n = 2
+    tol = 1e-14
     print_l2 = True
     print_free_node_values = True
-    # make_and_save_matrices()
-    case_1(print_l2, print_free_node_values)
-    case_2(print_l2, print_free_node_values)
-    case_3(print_l2, print_free_node_values)
-    case_4(print_l2, print_free_node_values)
-    case_5(print_l2, print_free_node_values)
-    case_6(print_l2, print_free_node_values)
+    output_file = r"patch_test1_run_log.txt"
+    with open(output_file, "w") as time_code_log:
+        sys.stdout = time_code_log
+        case_1(print_l2, print_free_node_values)
+        case_2(print_l2, print_free_node_values)
+        case_3(print_l2, print_free_node_values)
+        case_4(print_l2, print_free_node_values)
+        case_5(print_l2, print_free_node_values)
+        case_6(print_l2, print_free_node_values)
 
 
-n = 2
-tol = 1e-14
 if __name__ == '__main__':
     main()

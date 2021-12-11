@@ -5,7 +5,7 @@
 import numpy as np
 
 from ._assembly import get_basis_coef, epsilon, nabla_div
-from .helpers import get_mu_lambda, inv_index_map
+from .helpers import get_lambda_mu, inv_index_map
 
 
 def sigma(e_young, nu_poisson, ck, i, d):
@@ -32,7 +32,7 @@ def sigma(e_young, nu_poisson, ck, i, d):
 
     """
     # get Lambert's coeffs.
-    mu, lam = get_mu_lambda(e_young, nu_poisson)
+    mu, lam = get_lambda_mu(e_young, nu_poisson)
     return 2 * mu * epsilon(ck, i, d) + lam * nabla_div(ck, i, d) * np.identity(2)
 
 

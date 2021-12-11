@@ -18,7 +18,7 @@ e_young_unit = "MPa"
 nu_poisson_range = (0, 0.4)
 nu_poisson_unit = "1"
 # epsilon for pod
-eps_pod = 1e-2
+eps_pod = 1e-3
 # max cut value for n_rom
 n_rom_cut = "rank"  # = 1e-12
 # default names for saved files

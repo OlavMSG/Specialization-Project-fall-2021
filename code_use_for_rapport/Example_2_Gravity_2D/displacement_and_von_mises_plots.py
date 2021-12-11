@@ -16,7 +16,7 @@ nu_mean = np.mean(nu_poisson_range)
 
 # Example 2: Gravity in 2D
 def f(x, y):
-    alpha = 8e3 * 9.81  # Newton/m^2...?
+    alpha = 8e3 * 100 * 9.81 * 0.01  # N/m^2
     return alpha, 0
 
 
@@ -29,32 +29,35 @@ def clamped_bc(x, y):
 
 
 def main():
-    n = 80
+    n_vec = [20, 40, 80]
     # !!! Set to True to save the plots!!!
     save = False
-    save_dict = r"displacement_and_von_mises_plots"
-    save_dict = check_and_make_folder(n, save_dict)
-    levels = np.linspace(0, 60_000, 25)
+    levels = np.linspace(0, 65_000, 25)
+    for n in n_vec:
+        save_dict = r"displacement_and_von_mises_plots"
+        save_dict = check_and_make_folder(n, save_dict)
+        print(save_dict)
 
-    le2d = LinearElasticity2DProblem.from_functions(n, f, get_dirichlet_edge_func=clamped_bc)
-    le2d.hf_plot_displacement()
-    if save:
-        plt.savefig(save_dict + f"hf_displacement_e_nu_mean_n{n}.pdf")
-    le2d.hf_plot_von_mises(levels=levels)
-    if save:
-        plt.savefig(save_dict + f"hf_von_mises_e_nu_mean_n{n}.pdf")
-    plt.show()
+        le2d = LinearElasticity2DProblem.from_functions(n, f, get_dirichlet_edge_func=clamped_bc)
+        le2d.hfsolve(e_mean, nu_mean)
+        le2d.hf_plot_displacement()
+        if save:
+            plt.savefig(save_dict + f"/hf_displacement_e_nu_mean_n{n}.pdf")
+        le2d.hf_plot_von_mises(levels=levels)
+        if save:
+            plt.savefig(save_dict + f"/hf_von_mises_e_nu_mean_n{n}.pdf")
+        plt.show()
 
-    le2d.build_rb_model()
-    le2d.rbsolve(e_mean, nu_mean, n_rom=1)  # note n_rom = 1
-    le2d.rb_plot_displacement()
-    if save:
-        plt.savefig(save_dict + f"rb_displacement_e_nu_mean_n{n}.pdf")
-    le2d.rb_plot_von_mises(levels=levels)
-    if save:
-        plt.savefig(save_dict + f"rb_von_mises_e_nu_mean_n{n}.pdf")
-    plt.show()
-    print(f"True n_rom={le2d.n_rom}")
+        le2d.build_rb_model()
+        le2d.rbsolve(e_mean, nu_mean, n_rom=1)  # note n_rom = 1
+        le2d.rb_plot_displacement()
+        if save:
+            plt.savefig(save_dict + f"/rb_displacement_e_nu_mean_n{n}.pdf")
+        le2d.rb_plot_von_mises(levels=levels)
+        if save:
+            plt.savefig(save_dict + f"/rb_von_mises_e_nu_mean_n{n}.pdf")
+        plt.show()
+        print(f"True n_rom={le2d.n_rom}")
 
 
 if __name__ == '__main__':

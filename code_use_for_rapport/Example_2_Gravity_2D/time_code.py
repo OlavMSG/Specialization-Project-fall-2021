@@ -16,7 +16,7 @@ nu_mean = np.mean(nu_poisson_range)
 
 # Example 2: Gravity in 2D
 def f(x, y):
-    alpha = 8e3 * 9.81  # Newton/m^2...?
+    alpha = 8e3 * 100 * 9.81 * 0.01  # N/m^2
     return alpha, 0
 
 

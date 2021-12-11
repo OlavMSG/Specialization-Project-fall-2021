@@ -8,11 +8,11 @@ import numpy as np
 
 from linear_elasticity_2d_solver import LinearElasticity2DProblem
 from linear_elasticity_2d_solver.default_constants import nu_poisson_range, e_young_range
-from linear_elasticity_2d_solver.helpers import get_mu_lambda
+from linear_elasticity_2d_solver.helpers import get_lambda_mu
 
 e_mean = np.mean(e_young_range)
 nu_mean = np.mean(nu_poisson_range)
-mu, lam = get_mu_lambda(e_mean, nu_mean)
+mu, lam = get_lambda_mu(e_mean, nu_mean)
 
 
 def f(x, y):

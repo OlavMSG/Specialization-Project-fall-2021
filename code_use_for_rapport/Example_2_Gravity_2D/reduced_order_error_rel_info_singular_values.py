@@ -29,7 +29,7 @@ plt.rcParams.update(new_params)
 
 # Example 2: Gravity in 2D
 def f(x, y):
-    alpha = 8e3 * 9.81  # Newton/m^2...?
+    alpha = 8e3 * 100 * 9.81 * 0.01  # N/m^2
     return alpha, 0
 
 
@@ -51,7 +51,7 @@ def make_plots(n, save, q=None, do_errors=True):
 
     # define problem, can not get from saves, here because we want to set n_rom
     s = perf_counter()
-    le2d = LinearElasticity2DProblem.from_functions(n, f, get_dirichlet_edge_func=clamped_bc)
+    le2d = LinearElasticity2DProblem.from_functions(n, f, get_dirichlet_edge_func=clamped_bc, print_info=False)
     txt += f"Assembled HF system in {perf_counter() - s} s" + newline
     sigma2_dict = {}
     mean_err_dict = {}
@@ -180,7 +180,7 @@ def main():
     # took some time!!!! (20: 13 min, 40: 41 min, 80: 2 hours 41 min, total: 2 hours 34 min), with multiprocessing
     multi_process = True
     # !!! Set to True to save the plots!!!
-    save = False
+    save = True
     n_vec = [20, 40, 80]
     text_n_vec = "_".join(str(n) for n in n_vec)
     output_file = "reduced_order_plots/time_log_n" + text_n_vec + ".txt"
