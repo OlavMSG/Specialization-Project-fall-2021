@@ -29,13 +29,10 @@ if __name__ == '__main__':
     import timeit
 
     n = 80
-    directory_path = r"saved_data"
     with open(f"time_code_logs/time_code_log_n{n}.txt", "w") as time_code_log:
         sys.stdout = time_code_log
-
-        # Degrees of freedom info
-        le2d = LinearElasticity2DProblem.from_saves(n, directory_path, print_info=False)
-        le2d.build_rb_model(print_info=False)
+        # Degrees of freedom info, form saves
+        le2d = LinearElasticity2DProblem.from_functions(n, f, get_dirichlet_edge_func=clamped_bc, print_info=False)
         print("Degrees of freedom info")
         print("-" * 50)
         print(f"Nodes along one axis n: {le2d.n}")
@@ -50,8 +47,8 @@ if __name__ == '__main__':
         print(f"Dofs reduction: {round(le2d.n_free / le2d.n_rom)} to 1, ({le2d.n_free / le2d.n_rom} to 1)")
         print("-" * 50)
 
-        # Assemble HF system
-        num1 = 30
+        # Assemble HF system, do not use saved data
+        num1 = 100
         code = "le2d = LinearElasticity2DProblem.from_functions(n, f, " \
                "get_dirichlet_edge_func=clamped_bc, print_info=False)"
         time1 = timeit.timeit(code, number=num1, globals=globals())
@@ -59,28 +56,32 @@ if __name__ == '__main__':
         print(f"total : {time1}  sec, mean time: {time1 / num1} sec, runs: {num1}")
         print("-" * 50)
 
-        # Solve HF system
-        num2 = 300
+        # Solve HF system, do not use saved data
+        num2 = 1_000
         code = "le2d.hfsolve(e_mean, nu_mean, print_info=False)"
-        setup = "LinearElasticity2DProblem.from_saves(n, directory_path, print_info=False)"
+        setup = "le2d = LinearElasticity2DProblem.from_functions(n, f, " \
+                "get_dirichlet_edge_func=clamped_bc, print_info=False)"
         time2 = timeit.timeit(code, number=num2, globals=globals(), setup=setup)
         print("Solve HF system:")
         print(f"total : {time2} sec, mean time: {time2 / num2} sec, runs: {num2}")
         print("-" * 50)
 
-        # Build RB system
-        num3 = 30
+        # Build RB system, do not use saved data
+        num3 = 100
         code = "le2d.build_rb_model(print_info=False)"
-        setup = "LinearElasticity2DProblem.from_saves(n, directory_path, print_info=False)"
+        setup = "le2d = LinearElasticity2DProblem.from_functions(n, f, " \
+                "get_dirichlet_edge_func=clamped_bc, print_info=False)"
         time3 = timeit.timeit(code, number=num3, globals=globals(), setup=setup)
         print("Build RB model:")
         print(f"total : {time3} sec, mean time: {time3 / num3} sec, runs: {num3}")
         print("-" * 50)
 
-        # Solve RB system
-        num4 = 300
+        # Solve RB system, do not use saved data
+        num4 = 1_000
         code = "le2d.rbsolve(e_mean, nu_mean, print_info=False)"
-        setup = "LinearElasticity2DProblem.from_saves(n, directory_path, print_info=False)"
+        setup = "le2d = LinearElasticity2DProblem.from_functions(n, f, " \
+                "get_dirichlet_edge_func=clamped_bc, print_info=False); " \
+                "le2d.build_rb_model(print_info=False)"
         time4 = timeit.timeit(code, number=num4, globals=globals(), setup=setup)
         print("Solve RB system:")
         print(f"total : {time4} sec, mean time: {time4 / num4} sec, runs: {num4}")

@@ -123,9 +123,9 @@ def get_nodal_stress(uh, p, tri):
     uh.set_nodal_stress(nodal_stress)
 
 
-def get_von_mises_yield(uh):
+def get_von_mises_stress(uh):
     """
-    Calculate the von mises yield, using the stress recovery process above.
+    Calculate the von mises stress, using the stress recovery process above.
 
     Parameters
     ----------

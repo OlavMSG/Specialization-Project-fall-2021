@@ -17,7 +17,7 @@ from ._pod import pod_with_energy_norm, get_e_young_nu_poisson_mat
 from ._rb_data_class import ReducedOrderData
 from ._save_and_load import hf_save, rb_save, rb_from_files, hf_from_files
 from ._solution_function_class import SolutionFunctionValues2D
-from ._stress_recovery import get_von_mises_yield, get_nodal_stress
+from ._stress_recovery import get_von_mises_stress, get_nodal_stress
 from .default_constants import file_names_dict, eps_pod, e_young_range, nu_poisson_range, rb_grid, pod_mode, n_rom_cut
 from .exceptions import IsNotAssembledError, PodNotComputedError, CanNotForceNromError, DirectoryDoesNotExistsError, \
     MissingInputFunctionPointerError, LinearElasticity2DProblemNotSolved, PlateLimitsNotFoundError, \
@@ -52,7 +52,7 @@ class LinearElasticity2DProblem:
         self._uh_rom = SolutionFunctionValues2D()
 
         self._is_pod_computed = False
-        self._is_from_files = False
+        self._can_force_n_rom = False
 
     def _hf_assemble(self):
         self._hf_data.hf_assemble_a1_a2_f(self._f_func_vec, self._f_func_is_not_zeros)
@@ -146,12 +146,12 @@ class LinearElasticity2DProblem:
     def rbsolve(self, e_young, nu_poisson, n_rom=None, print_info=True):
         if not self._is_pod_computed:
             raise PodNotComputedError("Pod is not computed. Can not solve.")
-        if self._is_from_files and n_rom is not None:
+        if not self._can_force_n_rom and n_rom is not None:
             raise CanNotForceNromError("Can not force n_rom. Not implemented for LinearElasticity2DProblem for files.")
 
         if n_rom is None:
             n_rom = self._rb_data.n_rom
-        if n_rom != self._rb_data.last_n_rom and not self._is_from_files:
+        if n_rom != self._rb_data.last_n_rom and self._can_force_n_rom:
             self._rb_data.compute_rb_matrices_and_vectors(n_rom, self._hf_data, self._has_neumann,
                                                           self._has_non_homo_dirichlet, self._has_non_homo_neumann)
         self._rb_data.last_n_rom = self._rb_data.n_rom
@@ -177,6 +177,9 @@ class LinearElasticity2DProblem:
     def build_rb_model(self, grid=rb_grid, mode=pod_mode, e_young_range=e_young_range,
                        nu_poisson_range=nu_poisson_range, eps_pod=eps_pod, n_rom_cut=n_rom_cut,
                        print_info=True):
+        if not self._can_force_n_rom:
+            # reset rb_data
+            self._rb_data = ReducedOrderData()
         # set the parameters for building the reduce model
         self._rb_data.set_rb_model_params(grid, e_young_range, nu_poisson_range, eps_pod, mode, n_rom_cut)
         start_time = perf_counter()
@@ -194,9 +197,10 @@ class LinearElasticity2DProblem:
         # reset uh
         self._uh = self._uh = SolutionFunctionValues2D()
         self._is_pod_computed = True
+        self._can_force_n_rom = True
 
     def error_a_rb(self, e_young, nu_poisson, n_rom=None, compute_again=False, print_info=False):
-        if self._is_from_files and n_rom is not None:
+        if not self._can_force_n_rom and n_rom is not None:
             raise CanNotForceNromError("Can not force n_rom. Not implemented for LinearElasticity2DProblem for files.")
         if n_rom is None:
             n_rom = self._rb_data.n_rom
@@ -269,24 +273,24 @@ class LinearElasticity2DProblem:
         if print_info:
             print("Get nodal stress by the property uh_rom.nodal_stress of the class.")
 
-    def hf_von_mises_yield(self, print_info=True):
+    def hf_von_mises_stress(self, print_info=True):
         if self._uh.values is None:
             raise LinearElasticity2DProblemNotSolved("High fidelity Linear Elasticity 2D Problem has not been solved.")
         if self._uh.nodal_stress is None:
             self.hf_nodal_stress(print_info=False)
-        get_von_mises_yield(self._uh)
+        get_von_mises_stress(self._uh)
         if print_info:
             print("Get von Mises yield by the property uh.von_mises of the class.")
 
-    def von_mises_yield(self, print_info=True):
-        self.hf_von_mises_yield(print_info=print_info)
+    def von_mises_stress(self, print_info=True):
+        self.hf_von_mises_stress(print_info=print_info)
 
-    def rb_von_mises_yield(self, print_info=True):
+    def rb_von_mises_stress(self, print_info=True):
         if self._uh_rom.values is None:
             raise LinearElasticity2DProblemNotSolved("Reduced order Linear Elasticity 2D Problem has not been solved.")
         if self._uh_rom.nodal_stress is None:
             self.rb_nodal_stress(print_info=False)
-        get_von_mises_yield(self._uh_rom)
+        get_von_mises_stress(self._uh_rom)
         if print_info:
             print("Get von Mises yield by the property uh_rom.von_mises of the class.")
 
@@ -310,7 +314,7 @@ class LinearElasticity2DProblem:
 
     def hf_plot_von_mises(self, _solve_mode="hf", levels=None):
         if self._uh.von_mises is None:
-            self.hf_von_mises_yield(print_info=False)
+            self.hf_von_mises_stress(print_info=False)
         plot_von_mises(self._uh, self._hf_data.n, self._hf_data.p, self._hf_data.tri,
                        solve_mode=_solve_mode, levels=levels)
 
@@ -319,7 +323,7 @@ class LinearElasticity2DProblem:
 
     def rb_plot_von_mises(self, _solve_mode="rb", levels=None):
         if self._uh_rom.von_mises is None:
-            self.rb_von_mises_yield(print_info=False)
+            self.rb_von_mises_stress(print_info=False)
         plot_von_mises(self._uh_rom, self._hf_data.n, self._hf_data.p, self._hf_data.tri,
                        solve_mode=_solve_mode, levels=levels)
 
@@ -368,7 +372,6 @@ class LinearElasticity2DProblem:
         if problem._is_pod_computed:
             if print_info:
                 print("Loaded the reduced order data in {:.6f} sec".format(perf_counter() - start_time))
-        problem._is_from_files = True
         return problem
 
     def _set_vec_functions(self):

@@ -1,9 +1,9 @@
 Process2
-start time: 15:43:35.095051, n=2, save=True 
-Assembled HF system in 0.017239499999998742 s
+start time: 11:32:07.570734, n=2, save=True 
+Assembled HF system in 0.019082200000000604 s
 --------------------
 mode=uniform, gird=5
-Built RB model in 0.14689060000000076 s
+Built RB model in 0.16777979999999992 s
 Chosen n_rom=3, max use is n_rom_max=5, grid size is ns_rom=25, Number of node on one axis is n=2, Solution matrix rank: 5
 Singular values squared:
 [ 1.31535389e+07  3.65841315e+05  4.32140902e+03  4.02664744e+01
@@ -11,7 +11,7 @@ Singular values squared:
   5.34399792e-10 -3.60293587e-10 -1.20111224e-09 -3.21124475e-09]
 --------------------
 mode=uniform, gird=11
-Built RB model in 0.3691665000000004 s
+Built RB model in 0.35849240000000027 s
 Chosen n_rom=3, max use is n_rom_max=9, grid size is ns_rom=121, Number of node on one axis is n=2, Solution matrix rank: 9
 Singular values squared:
 [ 3.21916651e+07  6.98990563e+05  7.31367990e+03  1.01476433e+02
@@ -19,7 +19,7 @@ Singular values squared:
   2.44083042e-09  8.71038430e-10  2.67617242e-10 -1.52545447e-08]
 --------------------
 mode=gauss lobatto, gird=5
-Built RB model in 0.5697645999999992 s
+Built RB model in 0.4719643999999992 s
 Chosen n_rom=3, max use is n_rom_max=5, grid size is ns_rom=25, Number of node on one axis is n=2, Solution matrix rank: 5
 Singular values squared:
 [ 1.30970709e+07  4.23286561e+05  3.77024413e+03  5.15836665e+01
@@ -27,21 +27,21 @@ Singular values squared:
  -9.80697190e-12 -8.85831173e-10 -9.14287737e-10 -1.70125171e-09]
 --------------------
 mode=gauss lobatto, gird=11
-Built RB model in 0.3373817999999993 s
+Built RB model in 0.3429942999999991 s
 Chosen n_rom=3, max use is n_rom_max=9, grid size is ns_rom=121, Number of node on one axis is n=2, Solution matrix rank: 9
 Singular values squared:
 [ 3.78956738e+07  1.11658856e+06  9.43837323e+03  1.13586596e+02
   7.67306817e-01  1.21782215e-03  1.16503544e-05  4.31894906e-08
   6.71594426e-09  1.98994910e-09 -4.77874916e-10 -1.16087315e-08]
-end time: 15:43:49.632548, n=2, save=True 
+end time: 11:32:21.924731, n=2, save=True 
 
-15:43:49.632548
+11:32:21.924731
 Process3
-start time: 15:43:35.523552, n=3, save=True 
-Assembled HF system in 0.032538300000000575 s
+start time: 11:32:07.676234, n=3, save=True 
+Assembled HF system in 0.03586020000000012 s
 --------------------
 mode=uniform, gird=5
-Built RB model in 0.27329880000000095 s
+Built RB model in 0.42003330000000005 s
 Chosen n_rom=3, max use is n_rom_max=5, grid size is ns_rom=25, Number of node on one axis is n=3, Solution matrix rank: 5
 Singular values squared:
 [ 1.37544329e+07  4.55588636e+05  4.04155605e+03  4.33857213e+01
@@ -52,7 +52,7 @@ Singular values squared:
  -1.20835097e-09 -1.52211594e-09 -4.01237609e-09 -1.74483654e-08]
 --------------------
 mode=uniform, gird=11
-Built RB model in 0.5439631999999985 s
+Built RB model in 0.5671436999999999 s
 Chosen n_rom=3, max use is n_rom_max=11, grid size is ns_rom=121, Number of node on one axis is n=3, Solution matrix rank: 11
 Singular values squared:
 [ 3.36119229e+07  8.70984509e+05  6.83004668e+03  1.06932878e+02
@@ -63,7 +63,7 @@ Singular values squared:
  -1.99538303e-09 -6.13793602e-09 -1.28663356e-08 -2.98933103e-08]
 --------------------
 mode=gauss lobatto, gird=5
-Built RB model in 0.5634093999999976 s
+Built RB model in 0.5067474999999995 s
 Chosen n_rom=3, max use is n_rom_max=5, grid size is ns_rom=25, Number of node on one axis is n=3, Solution matrix rank: 5
 Singular values squared:
 [ 1.37149224e+07  5.27128119e+05  3.52418712e+03  5.41574597e+01
@@ -74,7 +74,7 @@ Singular values squared:
  -1.40213917e-09 -1.64449365e-09 -3.99869992e-09 -1.74274083e-08]
 --------------------
 mode=gauss lobatto, gird=11
-Built RB model in 0.6096502000000008 s
+Built RB model in 0.5693127999999987 s
 Chosen n_rom=3, max use is n_rom_max=11, grid size is ns_rom=121, Number of node on one axis is n=3, Solution matrix rank: 11
 Singular values squared:
 [ 3.96560290e+07  1.39077018e+06  8.79899884e+03  1.19759691e+02
@@ -83,15 +83,15 @@ Singular values squared:
   3.59359195e-10  2.97000252e-10  9.14437756e-11 -1.04132126e-10
  -1.22337223e-10 -2.79366138e-10 -8.93196547e-10 -7.62909536e-09
  -9.51622909e-09 -1.40164933e-08 -1.82288930e-08 -3.80646964e-08]
-end time: 15:44:05.071050, n=3, save=True 
+end time: 11:32:36.988755, n=3, save=True 
 
-15:44:05.071050
+11:32:36.988755
 Process4
-start time: 15:43:35.530552, n=4, save=True 
-Assembled HF system in 0.06558459999999933 s
+start time: 11:32:07.721234, n=4, save=True 
+Assembled HF system in 0.06194400000000044 s
 --------------------
 mode=uniform, gird=5
-Built RB model in 0.3890752000000006 s
+Built RB model in 0.3840743 s
 Chosen n_rom=3, max use is n_rom_max=5, grid size is ns_rom=25, Number of node on one axis is n=4, Solution matrix rank: 5
 Singular values squared:
 [ 1.40318976e+07  5.10927141e+05  4.02379261e+03  3.63442724e+01
@@ -103,7 +103,7 @@ Singular values squared:
  -6.10424801e-11]
 --------------------
 mode=uniform, gird=11
-Built RB model in 0.8595621999999992 s
+Built RB model in 0.9119923999999999 s
 Chosen n_rom=3, max use is n_rom_max=11, grid size is ns_rom=121, Number of node on one axis is n=4, Solution matrix rank: 11
 Singular values squared:
 [ 3.42515960e+07  9.74922151e+05  6.81917886e+03  8.97988272e+01
@@ -118,7 +118,7 @@ Singular values squared:
  -1.70604505e-08 -2.39481635e-08 -3.55253091e-08 -4.61452917e-08]
 --------------------
 mode=gauss lobatto, gird=5
-Built RB model in 0.6112000000000002 s
+Built RB model in 0.5793609999999987 s
 Chosen n_rom=3, max use is n_rom_max=5, grid size is ns_rom=25, Number of node on one axis is n=4, Solution matrix rank: 5
 Singular values squared:
 [ 1.40045339e+07  5.90823907e+05  3.50246875e+03  4.55260222e+01
@@ -130,7 +130,7 @@ Singular values squared:
  -6.79576661e-11]
 --------------------
 mode=gauss lobatto, gird=11
-Built RB model in 0.9666122000000001 s
+Built RB model in 0.9496161000000001 s
 Chosen n_rom=3, max use is n_rom_max=11, grid size is ns_rom=121, Number of node on one axis is n=4, Solution matrix rank: 11
 Singular values squared:
 [ 4.04723536e+07  1.55754826e+06  8.77364791e+03  1.00505014e+02
@@ -143,7 +143,7 @@ Singular values squared:
  -9.06722829e-10 -1.20448298e-09 -1.21731896e-09 -4.74190027e-09
  -6.93154637e-09 -8.28254052e-09 -1.05960025e-08 -1.79497760e-08
  -2.09231162e-08 -2.68409389e-08 -3.46965425e-08 -4.98158784e-08]
-end time: 15:44:17.969550, n=4, save=True 
+end time: 11:32:49.305243, n=4, save=True 
 
-15:44:17.969550
+11:32:49.305243
 killed

@@ -75,16 +75,16 @@ def get_mu_lambda(e_young, nu_poisson):
 
     Parameters
     ----------
-    e_young : float, np.float
+    e_young : float, np.float, np.array
         young's module.
-    nu_poisson : float, np.float
+    nu_poisson : float, np.float, np.array
         poisson ratio.
 
     Returns
     -------
-    mu : float
+    mu : float, np.array
         Lame coefficient mu.
-    lam : float
+    lam : float, np.array
         Lame coefficient lambda.
 
     """
@@ -171,7 +171,7 @@ def get_u_exact(p, u_exact_func):
     return u_exact
 
 
-def check_and_make_folder(n, folder_path):
+def check_and_make_folder(n, folder_path, n_counts_nodes=False):
     """
     Check if the folder/directory and its sub-folder exists, if not make it.
     Check both the folders 'folder_path' and 'folder_path/n{n}'
@@ -182,15 +182,21 @@ def check_and_make_folder(n, folder_path):
         Discretization number
     folder_path : str
         the path to the folder to check and make, form 'folder_path/n{n}'.
+    n_counts_nodes: bool
+        True if n counts the number of nodes along the axes. Default False
 
     Returns
     -------
     str
         the folder name .
     """
+    if n_counts_nodes:
+        m = n - 1
+    else:
+        m = n
     if not os.path.isdir(folder_path):
         os.mkdir(folder_path)
-    folder_path = os.path.join(folder_path, f"n{n - 1}")
+    folder_path = os.path.join(folder_path, f"n{m}")
     if not os.path.isdir(folder_path):
         os.mkdir(folder_path)
     return folder_path

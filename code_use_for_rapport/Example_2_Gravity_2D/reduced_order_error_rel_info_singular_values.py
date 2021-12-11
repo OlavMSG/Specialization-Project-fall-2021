@@ -51,9 +51,7 @@ def make_plots(n, save, q=None, do_errors=True):
 
     # define problem, can not get from saves, here because we want to set n_rom
     s = perf_counter()
-    le2d = LinearElasticity2DProblem.from_functions(n, f,
-                                                    get_dirichlet_edge_func=clamped_bc,
-                                                    print_info=False)
+    le2d = LinearElasticity2DProblem.from_functions(n, f, get_dirichlet_edge_func=clamped_bc)
     txt += f"Assembled HF system in {perf_counter() - s} s" + newline
     sigma2_dict = {}
     mean_err_dict = {}
@@ -182,7 +180,7 @@ def main():
     # took some time!!!! (20: 13 min, 40: 41 min, 80: 2 hours 41 min, total: 2 hours 34 min), with multiprocessing
     multi_process = True
     save = True
-    n_vec = [20, 40, 80]
+    n_vec = [2, 3, 4]
     text_n_vec = "_".join(str(n) for n in n_vec)
     output_file = "reduced_order_plots/time_log_n" + text_n_vec + ".txt"
 

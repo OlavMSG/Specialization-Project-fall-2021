@@ -8,8 +8,7 @@ from linear_elasticity_2d_solver import LinearElasticity2DProblem
 
 
 def f(x, y):
-    alpha = 5e3  # Newton/m^2...?
-    return -alpha, 0
+    return 0, 0
 
 
 def dirichlet_bc_func(x, y):
@@ -20,8 +19,8 @@ def main():
     n = 20
     print(n)
     save = True
-    directory_path = r"saved_data"
-    le2d = LinearElasticity2DProblem.from_saves(n, directory_path)
+    directory_path = r"../code_not_used_in_rapport/saved_data"
+    le2d = LinearElasticity2DProblem.from_functions(n, 0)
     le2d.plot_mesh()
     if save:
         plt.savefig(f"mesh_plots/mesh_plot_n{n}.pdf")
