@@ -1,5 +1,5 @@
-# Fordypningsprosjekt-host-2021
+# TMA4500 Industrial Mathematics, Specialization Project
 
-Code for building a reduced order model for the linear elasticity equation on a square in 2D
+My code for building a reduced order model for the linear elasticity equation on a square in 2D
 
-Use: for now please see example_use folder.
+For Now: please see code_used_in_repport and code_not_used_in_repport for example use and plotting results.
