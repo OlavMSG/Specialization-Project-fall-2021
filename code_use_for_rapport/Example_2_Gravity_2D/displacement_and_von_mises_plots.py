@@ -13,10 +13,11 @@ from linear_elasticity_2d_solver.helpers import check_and_make_folder
 e_mean = np.mean(e_young_range)
 nu_mean = np.mean(nu_poisson_range)
 
+alpha = 8e3 * 100 * 9.81 * 0.01  # N/m^2
+
 
 # Example 2: Gravity in 2D
 def f(x, y):
-    alpha = 8e3 * 100 * 9.81 * 0.01  # N/m^2
     return alpha, 0
 
 
@@ -31,7 +32,7 @@ def clamped_bc(x, y):
 def main():
     n_vec = [20, 40, 80]
     # !!! Set to True to save the plots!!!
-    save = False
+    save = True
     levels = np.linspace(0, 65_000, 25)
     for n in n_vec:
         save_dict = r"displacement_and_von_mises_plots"

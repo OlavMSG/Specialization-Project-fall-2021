@@ -12,11 +12,10 @@ from linear_elasticity_2d_solver.default_constants import default_tol, e_young_r
 
 e_mean = np.mean(e_young_range)
 nu_mean = np.mean(nu_poisson_range)
-
+alpha = 8e3 * 100 * 9.81 * 0.01  # N/m^2
 
 # Example 2: Gravity in 2D
 def f(x, y):
-    alpha = 8e3 * 100 * 9.81 * 0.01  # N/m^2
     return alpha, 0
 
 

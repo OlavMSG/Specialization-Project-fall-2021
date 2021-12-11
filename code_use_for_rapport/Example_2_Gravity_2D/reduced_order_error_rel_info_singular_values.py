@@ -26,10 +26,10 @@ plt.rcParams.update(new_params)
 
 
 # rho_steal = 8e3  # kg/m^3
+alpha = 8e3 * 100 * 9.81 * 0.01  # N/m^2
 
 # Example 2: Gravity in 2D
 def f(x, y):
-    alpha = 8e3 * 100 * 9.81 * 0.01  # N/m^2
     return alpha, 0
 
 
@@ -177,7 +177,7 @@ def listener(q, output_file):
 
 def main():
     # took some time!!!! (20: 12 min, 40: 40 min, 80: 2 hours 42 min, total: 3 hours 34 min), without multiprocessing
-    # took some time!!!! (20: 13 min, 40: 41 min, 80: 2 hours 41 min, total: 2 hours 34 min), with multiprocessing
+    # took some time!!!! (20: 13 min, 40: 41 min, 80: 2 hours 41 min, total: 2 hours 41 min), with multiprocessing
     multi_process = True
     # !!! Set to True to save the plots!!!
     save = True
