@@ -1,0 +1,6 @@
+Degrees of freedom info
+--------------------------------------------------
+Nodes along one axis n: 80
+HF system full size n_full: 13122
+Sample mode used for E_young and nu_poisson: uniform
+Number of sample values used for E_young and nu_poisson (E, nu): (5, 5)
