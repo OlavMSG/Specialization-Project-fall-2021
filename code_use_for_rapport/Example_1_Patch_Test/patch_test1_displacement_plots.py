@@ -26,9 +26,9 @@ def u_exact_func3(x, y):
 
 def main():
     n = 2
-    save = True
+    # !!! Set to True to save the plots!!!
+    save = False
     save_dict = r"patch_plots"
-    print(n)
     le2d = LinearElasticity2DProblem.from_functions(n, f, dirichlet_bc_func=u_exact_func1)
 
     le2d.hfsolve(e_mean, nu_mean)

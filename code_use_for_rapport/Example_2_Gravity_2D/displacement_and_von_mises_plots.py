@@ -30,8 +30,8 @@ def clamped_bc(x, y):
 
 def main():
     n = 80
+    # !!! Set to True to save the plots!!!
     save = False
-    print(n)
     save_dict = r"displacement_and_von_mises_plots"
     save_dict = check_and_make_folder(n, save_dict)
     levels = np.linspace(0, 60_000, 25)

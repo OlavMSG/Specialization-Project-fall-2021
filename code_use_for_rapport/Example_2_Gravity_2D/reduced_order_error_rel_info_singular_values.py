@@ -179,8 +179,9 @@ def main():
     # took some time!!!! (20: 12 min, 40: 40 min, 80: 2 hours 42 min, total: 3 hours 34 min), without multiprocessing
     # took some time!!!! (20: 13 min, 40: 41 min, 80: 2 hours 41 min, total: 2 hours 34 min), with multiprocessing
     multi_process = True
-    save = True
-    n_vec = [2, 3, 4]
+    # !!! Set to True to save the plots!!!
+    save = False
+    n_vec = [20, 40, 80]
     text_n_vec = "_".join(str(n) for n in n_vec)
     output_file = "reduced_order_plots/time_log_n" + text_n_vec + ".txt"
 

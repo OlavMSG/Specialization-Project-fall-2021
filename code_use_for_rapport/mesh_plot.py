@@ -17,9 +17,8 @@ def dirichlet_bc_func(x, y):
 
 def main():
     n = 20
-    print(n)
-    save = True
-    directory_path = r"../code_not_used_in_rapport/saved_data"
+    # !!! Set to True to save the plots!!!
+    save = False
     le2d = LinearElasticity2DProblem.from_functions(n, 0)
     le2d.plot_mesh()
     if save:

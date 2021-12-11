@@ -52,7 +52,7 @@ class LinearElasticity2DProblem:
         self._uh_rom = SolutionFunctionValues2D()
 
         self._is_pod_computed = False
-        self._can_force_n_rom = False
+        self._is_form_files = False
 
     def _hf_assemble(self):
         self._hf_data.hf_assemble_a1_a2_f(self._f_func_vec, self._f_func_is_not_zeros)
@@ -146,12 +146,12 @@ class LinearElasticity2DProblem:
     def rbsolve(self, e_young, nu_poisson, n_rom=None, print_info=True):
         if not self._is_pod_computed:
             raise PodNotComputedError("Pod is not computed. Can not solve.")
-        if not self._can_force_n_rom and n_rom is not None:
+        if self._is_form_files and n_rom is not None:
             raise CanNotForceNromError("Can not force n_rom. Not implemented for LinearElasticity2DProblem for files.")
 
         if n_rom is None:
             n_rom = self._rb_data.n_rom
-        if n_rom != self._rb_data.last_n_rom and self._can_force_n_rom:
+        if n_rom != self._rb_data.last_n_rom and not self._is_form_files:
             self._rb_data.compute_rb_matrices_and_vectors(n_rom, self._hf_data, self._has_neumann,
                                                           self._has_non_homo_dirichlet, self._has_non_homo_neumann)
         self._rb_data.last_n_rom = self._rb_data.n_rom
@@ -177,9 +177,11 @@ class LinearElasticity2DProblem:
     def build_rb_model(self, grid=rb_grid, mode=pod_mode, e_young_range=e_young_range,
                        nu_poisson_range=nu_poisson_range, eps_pod=eps_pod, n_rom_cut=n_rom_cut,
                        print_info=True):
-        if not self._can_force_n_rom:
-            # reset rb_data
-            self._rb_data = ReducedOrderData()
+        if self._is_form_files:
+            error_text = "Computing the reduced basis form saved data gives different results, " \
+                         + "and is therefore not implemented. (Most likely because instability in " \
+                         + "singular_values_squared computation in POD algorithm)."
+            raise NotImplemented(error_text)
         # set the parameters for building the reduce model
         self._rb_data.set_rb_model_params(grid, e_young_range, nu_poisson_range, eps_pod, mode, n_rom_cut)
         start_time = perf_counter()
@@ -197,10 +199,9 @@ class LinearElasticity2DProblem:
         # reset uh
         self._uh = self._uh = SolutionFunctionValues2D()
         self._is_pod_computed = True
-        self._can_force_n_rom = True
 
     def error_a_rb(self, e_young, nu_poisson, n_rom=None, compute_again=False, print_info=False):
-        if not self._can_force_n_rom and n_rom is not None:
+        if self._is_form_files and n_rom is not None:
             raise CanNotForceNromError("Can not force n_rom. Not implemented for LinearElasticity2DProblem for files.")
         if n_rom is None:
             n_rom = self._rb_data.n_rom
@@ -372,6 +373,7 @@ class LinearElasticity2DProblem:
         if problem._is_pod_computed:
             if print_info:
                 print("Loaded the reduced order data in {:.6f} sec".format(perf_counter() - start_time))
+        problem._is_form_files = True
         return problem
 
     def _set_vec_functions(self):
