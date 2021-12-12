@@ -1,0 +1,27 @@
+ & 127Degrees of freedom info
+--------------------------------------------------
+Nodes along one axis n: 80
+HF system full size n_full: 13122
+Sample mode used for E_young and nu_poisson: uniform
+Number of sample values used for E_young and nu_poisson (E, nu): (5, 5)
+ns for solution matrix (ns_rom): 25
+Solution matrix rank: 5
+--------------------------------------------------
+HF dofs Nh (n_free): 12960
+RB dofs N (n_rom): 3
+Dofs reduction: 4320 to 1
+--------------------------------------------------
+Assemble HF system:
+total : 293.5227492  sec, mean time: 58.704549840000006 sec, runs: 5
+--------------------------------------------------
+Solve HF system:
+total : 13.123530499999958 sec, mean time: 2.6247060999999916 sec, runs: 5
+--------------------------------------------------
+Build RB model:
+total : 342.23639419999995 sec, mean time: 68.44727884 sec, runs: 5
+--------------------------------------------------
+Solve RB system:
+total : 0.04755299999987983 sec, mean time: 0.00015850999999959944 sec, runs: 300
+--------------------------------------------------
+Offline CPU time: 127.15182868 sec
+Online CPU time: 0.00015850999999959944 sec
