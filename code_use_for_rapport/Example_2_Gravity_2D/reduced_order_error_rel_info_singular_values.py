@@ -24,9 +24,9 @@ new_params = {'axes.titlesize': fontsize, 'axes.labelsize': fontsize, 'figure.fi
               'xtick.labelsize': fontsize, 'legend.fontsize': fontsize, 'legend.handlelength': 1.5}
 plt.rcParams.update(new_params)
 
-
 # rho_steal = 8e3  # kg/m^3
 alpha = 8e3 * 100 * 9.81 * 0.01  # N/m^2
+
 
 # Example 2: Gravity in 2D
 def f(x, y):
@@ -47,7 +47,8 @@ def make_plots(n, save, q=None, do_errors=True):
     newline = "\n"
     line = "-" * 20
     save_dict = r"reduced_order_plots"
-    save_dict = check_and_make_folder(n, save_dict)
+    if save:
+        save_dict = check_and_make_folder(n, save_dict)
 
     # define problem, can not get from saves, here because we want to set n_rom
     s = perf_counter()
@@ -105,7 +106,7 @@ def make_plots(n, save, q=None, do_errors=True):
     plt.grid()
     plt.legend()
     if save:
-        plt.savefig(save_dict + f"/singular_values_n{n}.pdf")
+        plt.savefig(save_dict + f"/singular_values.pdf")
     plt.show()
 
     # make relative information plot
@@ -121,11 +122,11 @@ def make_plots(n, save, q=None, do_errors=True):
             plt.plot(n_rom, i_n[n_rom - 1], "bo", alpha=.7)
     plt.xlabel("$N$")
     plt.ylabel("$I(N)$")
-    plt.ylim(0.9996, 1.00005)
+    plt.ylim(0.999_6, 1.000_05)
     plt.grid()
     plt.legend()
     if save:
-        plt.savefig(save_dict + f"/relative_information_content_mode_n{n}.pdf")
+        plt.savefig(save_dict + f"/relative_information_content.pdf")
     plt.show()
 
     if do_errors:
@@ -147,7 +148,7 @@ def make_plots(n, save, q=None, do_errors=True):
             # adjust
             ax.legend(loc=9, bbox_to_anchor=(0.5, -0.13), ncol=2)
             if save:
-                plt.savefig(save_dict + f"/reduced_order_errors_mode_grid{grid}_n{n}.pdf", bbox_inches='tight')
+                plt.savefig(save_dict + f"/reduced_order_errors_grid{grid}.pdf", bbox_inches='tight')
             plt.show()
 
     now2 = datetime.datetime.now().time()  # time object
@@ -179,11 +180,16 @@ def main():
     # took some time!!!! (20: 12 min, 40: 40 min, 80: 2 hours 42 min, total: 3 hours 34 min), without multiprocessing
     # took some time!!!! (20: 13 min, 40: 41 min, 80: 2 hours 41 min, total: 2 hours 41 min), with multiprocessing
     multi_process = True
+    do_errors = True
     # !!! Set to True to save the plots!!!
     save = True
-    n_vec = [20, 40, 80]
+    n_vec = [2, 3, 4]
     text_n_vec = "_".join(str(n) for n in n_vec)
-    output_file = "reduced_order_plots/time_log_n" + text_n_vec + ".txt"
+    if do_errors:
+        extra = ""
+    else:
+        extra = "_no_errors"
+    output_file = "reduced_order_plots/time_log_n" + text_n_vec + extra + ".txt"
 
     if multi_process:
         # must use Manager queue here, or will not work
@@ -194,7 +200,7 @@ def main():
         watcher = pool.apply_async(listener, (q, output_file))
         jobs = []
         for n in n_vec:
-            job = pool.apply_async(make_plots, (n, save, q))
+            job = pool.apply_async(make_plots, (n, save, q, do_errors))
             jobs.append(job)
         # collect results from the make_plots through the pool result queue
         for job in jobs:
@@ -207,7 +213,7 @@ def main():
         with open(output_file, "w") as time_code_log:
             sys.stdout = time_code_log
             for n in n_vec:
-                make_plots(n, save)
+                make_plots(n, save, do_errors=do_errors)
 
 
 if __name__ == '__main__':

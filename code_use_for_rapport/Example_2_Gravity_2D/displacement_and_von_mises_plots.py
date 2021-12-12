@@ -36,27 +36,28 @@ def main():
     levels = np.linspace(0, 65_000, 25)
     for n in n_vec:
         save_dict = r"displacement_and_von_mises_plots"
-        save_dict = check_and_make_folder(n, save_dict)
-        print(save_dict)
+        if save:
+            save_dict = check_and_make_folder(n, save_dict)
+            print(save_dict)
 
         le2d = LinearElasticity2DProblem.from_functions(n, f, get_dirichlet_edge_func=clamped_bc)
         le2d.hfsolve(e_mean, nu_mean)
         le2d.hf_plot_displacement()
         if save:
-            plt.savefig(save_dict + f"/hf_displacement_e_nu_mean_n{n}.pdf")
+            plt.savefig(save_dict + f"/hf_displacement_e_nu_mean.pdf")
         le2d.hf_plot_von_mises(levels=levels)
         if save:
-            plt.savefig(save_dict + f"/hf_von_mises_e_nu_mean_n{n}.pdf")
+            plt.savefig(save_dict + f"/hf_von_mises_e_nu_mean_.pdf")
         plt.show()
 
         le2d.build_rb_model()
         le2d.rbsolve(e_mean, nu_mean, n_rom=1)  # note n_rom = 1
         le2d.rb_plot_displacement()
         if save:
-            plt.savefig(save_dict + f"/rb_displacement_e_nu_mean_n{n}.pdf")
+            plt.savefig(save_dict + f"/rb_displacement_e_nu_mean.pdf")
         le2d.rb_plot_von_mises(levels=levels)
         if save:
-            plt.savefig(save_dict + f"/rb_von_mises_e_nu_mean_n{n}.pdf")
+            plt.savefig(save_dict + f"/rb_von_mises_e_nu_mean_.pdf")
         plt.show()
         print(f"True n_rom={le2d.n_rom}")
 
