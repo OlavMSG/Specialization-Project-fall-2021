@@ -132,5 +132,5 @@ dmypy.json
 .idea
 
 # do not inculde folders
-code_not_used_in_rapport/old_reduced_order_error_check_plots
-code_not_used_in_rapport/saved_data
+code_not_used_in_report/old_reduced_order_error_check_plots
+code_not_used_in_report/saved_data
