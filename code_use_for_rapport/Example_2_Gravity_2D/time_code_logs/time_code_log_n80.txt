@@ -4,3 +4,24 @@ Nodes along one axis n: 80
 HF system full size n_full: 13122
 Sample mode used for E_young and nu_poisson: uniform
 Number of sample values used for E_young and nu_poisson (E, nu): (5, 5)
+ns for solution matrix (ns_rom): 25
+Solution matrix rank: 5
+--------------------------------------------------
+HF dofs Nh (n_free): 12960
+RB dofs N (n_rom): 3
+Dofs reduction: 4320 to 1, (4320.0 to 1)
+--------------------------------------------------
+Assemble HF system:
+total : 5778.8936934  sec, mean time: 57.788936934000006 sec, runs: 100
+--------------------------------------------------
+Solve HF system:
+total : 2547.239592000001 sec, mean time: 2.547239592000001 sec, runs: 1000
+--------------------------------------------------
+Build RB model:
+total : 6636.8849876 sec, mean time: 66.368849876 sec, runs: 100
+--------------------------------------------------
+Solve RB system:
+total : 0.13344420000066748 sec, mean time: 0.00013344420000066748 sec, runs: 1000
+--------------------------------------------------
+Offline CPU time: 124.15778681 sec
+Online CPU time: 0.00013344420000066748 sec

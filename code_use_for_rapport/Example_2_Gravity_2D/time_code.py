@@ -29,10 +29,12 @@ if __name__ == '__main__':
     import timeit
 
     n = 80
+
     with open(f"time_code_logs/time_code_log_n{n}.txt", "w") as time_code_log:
         sys.stdout = time_code_log
         # Degrees of freedom info, form saves
         le2d = LinearElasticity2DProblem.from_functions(n, f, get_dirichlet_edge_func=clamped_bc, print_info=False)
+        le2d.build_rb_model(print_info=False)
         print("Degrees of freedom info")
         print("-" * 50)
         print(f"Nodes along one axis n: {le2d.n}")
