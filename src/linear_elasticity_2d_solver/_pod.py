@@ -17,10 +17,10 @@ from .exceptions import SolutionMatrixIsZeroCanNotComputePODError
 
 
 def get_vec_from_range(range_, m, mode):
-    if mode == "uniform":
+    if mode.lower() == "uniform":
         return np.linspace(range_[0], range_[1], m)
 
-    elif mode == "gauss lobatto":
+    elif mode.lower() == "gauss-lobatto":
         from quadpy.c1 import gauss_lobatto
         return 0.5 * ((range_[1] - range_[0]) * gauss_lobatto(m).points + (range_[1] + range_[0]))
     else:

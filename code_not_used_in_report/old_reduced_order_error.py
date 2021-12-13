@@ -45,7 +45,7 @@ def main():
     # define problem
     le2d = LinearElasticity2DProblem.from_functions(n, f,
                                                     get_dirichlet_edge_func=clamped_bc)
-    for mode in ("uniform", "gauss lobatto"):
+    for mode in ("uniform", "gauss-lobatto"):
         for grid in (5, 11):
             print("-" * 20)
             print(mode, grid)

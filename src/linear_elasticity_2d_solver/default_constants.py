@@ -11,7 +11,8 @@ plate_limits = (0, 1)
 # Default rb grid
 rb_grid = (5, 5)
 # default pod mode
-pod_mode = "uniform"
+pod_mode = "Uniform"
+implemented_pod_modes = ("Uniform", "Gauss-Lobatto")
 # Ranges for parameters
 e_young_range = (10e3, 310e3)  # MPa
 e_young_unit = "MPa"

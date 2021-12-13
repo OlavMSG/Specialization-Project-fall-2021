@@ -54,9 +54,9 @@ def plot_mesh(n, p, tri):
 
 def plot_displacement(uh, n, p, tri, solve_mode=""):
     if solve_mode == "hf":
-        title_text = f"Displacement in high fidelity solution, $n={n-1}$"
+        title_text = f"Displacement in high-fidelity solution, $n={n-1}$"
     elif solve_mode == "rb":
-        title_text = f"Displacement in reduced order solution, $n={n-1}$"
+        title_text = f"Displacement in reduced-order solution, $n={n-1}$"
     else:
         title_text = f"Displacement, $n={n-1}$"
 
@@ -72,11 +72,11 @@ def plot_displacement(uh, n, p, tri, solve_mode=""):
 
 def plot_von_mises(uh, n, p, tri, solve_mode="", levels=None):
     if solve_mode == "hf":
-        title_text = f"Stress intensity, von Mises stress, \n in high fidelity solution, $n={n-1}$"
+        title_text = f"Von Mises stress in high-fidelity solution, $n={n-1}$"
     elif solve_mode == "rb":
-        title_text = f"Stress intensity, von Mises stress, \n in reduced order solution, $n={n-1}$"
+        title_text = f"Von Mises stress in reduced-order solution, $n={n-1}$"
     else:
-        title_text = f"Stress intensity, von Mises stress, $n={n-1}$"
+        title_text = f"Von Mises stress, $n={n-1}$"
     if levels is None:
         levels = np.linspace(0, np.max(uh.von_mises), 25)
     plt.figure(title_text)

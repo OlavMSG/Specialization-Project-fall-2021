@@ -1,0 +1,98 @@
+# -*- coding: utf-8 -*-
+"""
+@author: Olav Milian Gran
+"""
+
+import numpy as np
+
+from linear_elasticity_2d_solver import LinearElasticity2DProblem
+from linear_elasticity_2d_solver.default_constants import default_tol, e_young_range, nu_poisson_range
+
+e_mean = np.mean(e_young_range)
+nu_mean = np.mean(nu_poisson_range)
+
+# Example 1: Traction forces
+def clamped_bc(x, y):
+    return abs(x) <= default_tol
+
+
+beta = 1e3
+
+
+def neumann_bc_func(x, y):
+    if abs(y) <= default_tol and abs(y - 1) <= default_tol:
+        return 0, 0
+    elif abs(x - 1) <= default_tol:
+        return 0, beta * y * (1 - y) * 4
+    else:
+        return 0, 0
+
+
+if __name__ == '__main__':
+    import sys
+    import timeit
+
+    n = 80
+
+    with open(f"time_code_logs/time_code_log_n{n}.txt", "w") as time_code_log:
+        sys.stdout = time_code_log
+        # Degrees of freedom info, form saves
+        le2d = LinearElasticity2DProblem.from_functions(n, 0, get_dirichlet_edge_func=clamped_bc,
+                                                        neumann_bc_func=neumann_bc_func, print_info=False)
+        le2d.build_rb_model(print_info=False)
+        print("Degrees of freedom info")
+        print("-" * 50)
+        print(f"Nodes along one axis n: {le2d.n}")
+        print(f"HF system full size n_full: {le2d.n_full}")
+        print(f"Sample mode used for E_young and nu_poisson: {le2d.pod_mode}")
+        print(f"Number of sample values used for E_young and nu_poisson (E, nu): {le2d.rb_grid}")
+        print(f"ns for solution matrix (ns_rom): {le2d.ns_rom}")
+        print(f"Solution matrix rank: {le2d.solution_matrix_rank}")
+        print("-" * 50)
+        print(f"HF dofs Nh (n_free): {le2d.n_free}")
+        print(f"RB dofs N (n_rom): {le2d.n_rom}")
+        print(f"Dofs reduction: {round(le2d.n_free / le2d.n_rom)} to 1, ({le2d.n_free / le2d.n_rom} to 1)")
+        print("-" * 50)
+
+        # Assemble HF system, do not use saved data
+        num1 = 100
+        code = "le2d = LinearElasticity2DProblem.from_functions(n, 0, get_dirichlet_edge_func=clamped_bc," \
+               "neumann_bc_func=neumann_bc_func, print_info=False)"
+        time1 = timeit.timeit(code, number=num1, globals=globals())
+        print("Assemble HF system:")
+        print(f"total : {time1}  sec, mean time: {time1 / num1} sec, runs: {num1}")
+        print("-" * 50)
+
+        # Solve HF system, do not use saved data
+        num2 = 1_000
+        code = "le2d.hfsolve(e_mean, nu_mean, print_info=False)"
+        setup = "le2d = LinearElasticity2DProblem.from_functions(n, 0, get_dirichlet_edge_func=clamped_bc," \
+                "neumann_bc_func=neumann_bc_func, print_info=False)"
+        time2 = timeit.timeit(code, number=num2, globals=globals(), setup=setup)
+        print("Solve HF system:")
+        print(f"total : {time2} sec, mean time: {time2 / num2} sec, runs: {num2}")
+        print("-" * 50)
+
+        # Build RB system, do not use saved data
+        num3 = 100
+        code = "le2d.build_rb_model(print_info=False)"
+        setup = "le2d = LinearElasticity2DProblem.from_functions(n, 0, get_dirichlet_edge_func=clamped_bc," \
+                "neumann_bc_func=neumann_bc_func, print_info=False)"
+        time3 = timeit.timeit(code, number=num3, globals=globals(), setup=setup)
+        print("Build RB model:")
+        print(f"total : {time3} sec, mean time: {time3 / num3} sec, runs: {num3}")
+        print("-" * 50)
+
+        # Solve RB system, do not use saved data
+        num4 = 1_000
+        code = "le2d.rbsolve(e_mean, nu_mean, print_info=False)"
+        setup = "le2d = LinearElasticity2DProblem.from_functions(n, 0, get_dirichlet_edge_func=clamped_bc," \
+                "neumann_bc_func=neumann_bc_func, print_info=False); " \
+                "le2d.build_rb_model(print_info=False)"
+        time4 = timeit.timeit(code, number=num4, globals=globals(), setup=setup)
+        print("Solve RB system:")
+        print(f"total : {time4} sec, mean time: {time4 / num4} sec, runs: {num4}")
+        print("-" * 50)
+
+        print(f"Offline CPU time: {time1 / num1 + time3 / num3} sec")
+        print(f"Online CPU time: {time4 / num4} sec")

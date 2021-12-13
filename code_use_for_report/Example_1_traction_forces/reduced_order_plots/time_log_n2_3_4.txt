@@ -1,0 +1,149 @@
+Process2
+start time: 19:27:56.016704, n=2, save=True 
+Assembled HF system in 0.00934849999999976 s
+--------------------
+mode=Uniform, gird=5
+Built RB model in 0.15254869999999876 s
+Chosen n_rom=3, max use is n_rom_max=5, grid size is ns_rom=25, Number of node on one axis is n=2, Solution matrix rank: 5
+Singular values squared:
+[ 2.37964083e+05  1.56475914e+03  3.56509250e+00  3.40328561e-03
+  1.78746369e-06  2.84704829e-10  8.59464770e-11  2.74180870e-11
+  1.58715967e-11  1.51723757e-11 -9.28192030e-11 -3.37842990e-10]
+--------------------
+mode=Uniform, gird=11
+Built RB model in 0.3234854000000009 s
+Chosen n_rom=3, max use is n_rom_max=9, grid size is ns_rom=121, Number of node on one axis is n=2, Solution matrix rank: 9
+Singular values squared:
+[ 5.71434145e+05  3.00544230e+03  6.10085374e+00  6.55756290e-03
+  6.68464467e-06  1.98831422e-08  7.06083557e-10  2.10497231e-10
+  9.93266423e-11  7.37857028e-11 -1.71559099e-10 -4.92710625e-10]
+--------------------
+mode=Gauss-Lobatto, gird=5
+Built RB model in 0.5854663999999978 s
+Chosen n_rom=3, max use is n_rom_max=5, grid size is ns_rom=25, Number of node on one axis is n=2, Solution matrix rank: 5
+Singular values squared:
+[ 2.40382016e+05  1.80151226e+03  3.05031316e+00  3.04712657e-03
+  3.63819961e-06  2.80047860e-10  5.26790278e-11  4.63054957e-11
+  2.42380934e-11 -9.49909367e-12 -1.20659925e-10 -3.63611703e-10]
+--------------------
+mode=Gauss-Lobatto, gird=11
+Built RB model in 0.36765279999999834 s
+Chosen n_rom=3, max use is n_rom_max=9, grid size is ns_rom=121, Number of node on one axis is n=2, Solution matrix rank: 9
+Singular values squared:
+[ 6.89471451e+05  4.76012088e+03  7.83981917e+00  7.32863453e-03
+  7.05783688e-06  2.18064801e-08  5.90036995e-10  5.55623726e-10
+  1.05719296e-10 -5.48539277e-11 -2.94200593e-10 -8.01655443e-10]
+end time: 19:28:10.763702, n=2, save=True 
+
+19:28:10.763702
+Process3
+start time: 19:27:56.215202, n=3, save=True 
+Assembled HF system in 0.028600799999999538 s
+--------------------
+mode=Uniform, gird=5
+Built RB model in 0.26099549999999994 s
+Chosen n_rom=3, max use is n_rom_max=5, grid size is ns_rom=25, Number of node on one axis is n=3, Solution matrix rank: 5
+Singular values squared:
+[ 2.93944218e+05  2.65690318e+03  6.20791721e+00  1.60684021e-02
+  2.04685253e-05  7.01651559e-10  3.45888219e-10  2.53603349e-10
+  1.75875981e-10  1.24916756e-10  1.05280759e-10  5.12932790e-11
+  3.49994939e-11  2.28716215e-11  1.04818456e-11  9.13813221e-12
+ -1.15753997e-11 -3.01713442e-11 -8.84322549e-11 -1.02080836e-10
+ -1.23092316e-10 -1.81894513e-10 -4.16763075e-10 -9.97118954e-10]
+--------------------
+mode=Uniform, gird=11
+Built RB model in 0.5680787000000009 s
+Chosen n_rom=3, max use is n_rom_max=10, grid size is ns_rom=121, Number of node on one axis is n=3, Solution matrix rank: 10
+Singular values squared:
+[ 7.06006270e+05  5.10656705e+03  1.05863966e+01  3.09369075e-02
+  7.53003851e-05  9.00581795e-08  1.61676881e-09  1.48493439e-09
+  8.09026180e-10  4.58109981e-10  4.03499904e-10  2.01226693e-10
+  1.57360689e-10  1.38011731e-10  8.86303612e-11  4.73770328e-11
+  6.76503846e-12 -1.25912768e-11 -1.55016364e-10 -2.19548422e-10
+ -4.36800458e-10 -5.37010937e-10 -1.05473892e-09 -2.31360132e-09]
+--------------------
+mode=Gauss-Lobatto, gird=5
+Built RB model in 0.5331896 s
+Chosen n_rom=3, max use is n_rom_max=5, grid size is ns_rom=25, Number of node on one axis is n=3, Solution matrix rank: 5
+Singular values squared:
+[ 2.96888773e+05  3.06692487e+03  5.29631907e+00  1.44109530e-02
+  4.17728287e-05  8.15868994e-10  3.43858906e-10  2.22255814e-10
+  1.37809598e-10  1.15917951e-10  9.78534314e-11  2.72074661e-11
+  2.20385557e-11  1.83487934e-11  1.50460277e-11  1.75992120e-12
+ -1.54373490e-11 -3.21665765e-11 -3.34775337e-11 -1.14623659e-10
+ -1.35278305e-10 -2.18144228e-10 -3.98406156e-10 -9.32571917e-10]
+--------------------
+mode=Gauss-Lobatto, gird=11
+Built RB model in 0.5904786000000009 s
+Chosen n_rom=3, max use is n_rom_max=10, grid size is ns_rom=121, Number of node on one axis is n=3, Solution matrix rank: 10
+Singular values squared:
+[ 8.51626777e+05  8.10388348e+03  1.35998647e+01  3.45627126e-02
+  7.93718092e-05  9.94962326e-08  2.24670093e-09  1.17265184e-09
+  9.23486793e-10  7.18219952e-10  4.96875522e-10  3.07856527e-10
+  1.13958240e-10  1.06291854e-10  3.97185957e-11  3.40902313e-11
+  1.92001100e-11  1.26010368e-11 -6.90232772e-11 -1.81021626e-10
+ -4.85045702e-10 -6.60848412e-10 -1.98722796e-09 -2.78363690e-09]
+end time: 19:28:23.520701, n=3, save=True 
+
+19:28:23.520701
+Process4
+start time: 19:27:56.367702, n=4, save=True 
+Assembled HF system in 0.04453330000000122 s
+--------------------
+mode=Uniform, gird=5
+Built RB model in 0.41314419999999963 s
+Chosen n_rom=3, max use is n_rom_max=5, grid size is ns_rom=25, Number of node on one axis is n=4, Solution matrix rank: 5
+Singular values squared:
+[ 3.26048982e+05  3.46476880e+03  6.86200412e+00  2.10847710e-02
+  3.18227286e-05  6.17447106e-12  1.70260000e-12  1.04160373e-12
+  8.49930261e-13  5.44546196e-13  7.39172565e-14  3.49317553e-14
+  2.48034203e-14  2.16512560e-14  1.80221336e-14 -5.31599341e-14
+ -6.09755365e-14 -7.67783310e-14 -2.09585683e-13 -2.28186203e-13
+ -4.59614330e-13 -5.19248025e-13 -7.14710518e-13 -1.17925300e-12
+ -1.07884350e-11]
+--------------------
+mode=Uniform, gird=11
+Built RB model in 0.9415390000000006 s
+Chosen n_rom=3, max use is n_rom_max=10, grid size is ns_rom=121, Number of node on one axis is n=4, Solution matrix rank: 10
+Singular values squared:
+[ 7.82886186e+05  6.65929303e+03  1.16903331e+01  4.05535553e-02
+  1.16757545e-04  2.28447025e-07  4.21437852e-09  2.34487757e-09
+  1.62364155e-09  9.49754958e-10  8.32531987e-10  5.60474837e-10
+  4.80877516e-10  3.21366099e-10  2.30626576e-10  1.12584090e-10
+  7.40334620e-11  2.26862171e-11  2.19863580e-11  1.42452039e-11
+  1.39650560e-11  7.29707817e-12  4.33050747e-12  2.27221717e-12
+  9.83559998e-13 -5.05034283e-12 -5.36598240e-12 -8.93335426e-12
+ -1.74263244e-11 -1.04805858e-10 -1.69867541e-10 -2.20367462e-10
+ -4.09143740e-10 -4.45839649e-10 -7.07388558e-10 -8.40843398e-10
+ -1.09103712e-09 -1.45393977e-09 -1.99942596e-09 -4.63230253e-09]
+--------------------
+mode=Gauss-Lobatto, gird=5
+Built RB model in 0.5864103999999983 s
+Chosen n_rom=3, max use is n_rom_max=5, grid size is ns_rom=25, Number of node on one axis is n=4, Solution matrix rank: 5
+Singular values squared:
+[ 3.29385728e+05  4.00277205e+03  5.84690336e+00  1.88957616e-02
+  6.52735927e-05  2.28347337e-12  1.17039758e-12  9.77047774e-13
+  4.83080008e-13  4.77126985e-13  1.93212977e-13  1.42344275e-13
+ -5.65993600e-17 -2.24571230e-15 -1.95046968e-14 -2.58103616e-14
+ -2.67268258e-14 -2.70083432e-14 -3.58293841e-14 -4.47046625e-14
+ -5.49828945e-14 -1.79899303e-13 -7.34497747e-13 -2.69969123e-12
+ -4.90256349e-12]
+--------------------
+mode=Gauss-Lobatto, gird=11
+Built RB model in 0.9241354999999984 s
+Chosen n_rom=3, max use is n_rom_max=10, grid size is ns_rom=121, Number of node on one axis is n=4, Solution matrix rank: 10
+Singular values squared:
+[ 9.44719541e+05  1.05759190e+04  1.50132017e+01  4.52938263e-02
+  1.23014149e-04  2.51531707e-07  5.02765953e-09  2.46600590e-09
+  1.74665706e-09  1.15261276e-09  9.38584832e-10  7.31317914e-10
+  4.89709891e-10  3.75697533e-10  2.03248551e-10  1.29297347e-10
+  1.03997653e-10  8.42291124e-11  4.54070380e-11  3.74948728e-11
+  3.05589566e-11  2.49087796e-11  1.40924375e-11  1.05064336e-11
+  8.36717154e-12 -5.85352943e-12 -7.50880471e-12 -7.66885540e-12
+ -3.69161084e-11 -3.83956969e-11 -5.06604381e-11 -6.90591630e-11
+ -1.74282930e-10 -3.64004795e-10 -4.09278832e-10 -8.97126328e-10
+ -9.71406908e-10 -1.51021825e-09 -2.72655495e-09 -5.57409798e-09]
+end time: 19:28:35.744702, n=4, save=True 
+
+19:28:35.744702
+killed
