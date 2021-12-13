@@ -23,29 +23,30 @@ def phi(n, i):
 
 
 def main():
-    n = 1
+    n_vec = [1, 2, 10]
     save = True
-    save_dict = r"other_plots"
-    plt.figure("1D Linear Lagrange basis")
-    plt.title("1D Linear Lagrange basis")
-    x_vec = np.linspace(0, 1, n + 1)
-    for i in range(n + 1):
-        plt.plot(x_vec, phi(n, i), "-")
-        if i % 2 == 0:
-            y = 1.02
-        else:
-            y = 1.12
-        if n == 1:
-            y = 1.02
-        plt.annotate("$\\varphi_{" + str(i) + "}(x)$", (x_vec[i], y), fontsize=30,
-                     ha='center')
-    plt.grid()
-    plt.xlim(-0.08, 1.08)
-    plt.ylim(-0.05, 1.22)
+    save_dict = r"Lagrange_basis_plots"
+    for n in n_vec:
+        plt.figure("1D Linear Lagrange basis")
+        plt.title("1D Linear Lagrange basis")
+        x_vec = np.linspace(0, 1, n + 1)
+        for i in range(n + 1):
+            plt.plot(x_vec, phi(n, i), "-")
+            if i % 2 == 0:
+                y = 1.02
+            else:
+                y = 1.12
+            if n == 1:
+                y = 1.02
+            plt.annotate("$\\varphi_{" + str(i) + "}(x)$", (x_vec[i], y), fontsize=30,
+                         ha='center')
+        plt.grid()
+        plt.xlim(-0.08, 1.08)
+        plt.ylim(-0.05, 1.22)
 
-    if save:
-        plt.savefig(save_dict + f"/1D_linear_lagrange_basis_n{n}.pdf")
-    plt.show()
+        if save:
+            plt.savefig(save_dict + f"/1D_linear_lagrange_basis_n{n}.pdf")
+        plt.show()
 
 
 if __name__ == '__main__':

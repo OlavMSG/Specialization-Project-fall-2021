@@ -184,8 +184,8 @@ def listener(q, output_file):
 
 # Example 1: Traction forces
 def main():
-    # took some time!!!! (20: 12 min, 40: 40 min, 80: 2 hours 42 min, total: 3 hours 34 min), without multiprocessing
-    # took some time!!!! (20: 13 min, 40: 41 min, 80: 2 hours 41 min, total: 2 hours 41 min), with multiprocessing
+    # took some time!!!! (20: 11 min, 40: 40 min, 80: 2 hours 19 min, total: 3 hours 10 min), without multiprocessing
+    # took some time!!!! (20: 11 min, 40: 40 min, 80: 2 hours 19 min, total: 2 hours 19 min), with multiprocessing
     multi_process = True
     do_errors = True
     # !!! Set to True to save the plots!!!

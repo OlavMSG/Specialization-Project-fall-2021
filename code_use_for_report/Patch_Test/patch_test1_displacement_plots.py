@@ -27,7 +27,7 @@ def u_exact_func3(x, y):
 def main():
     n = 2
     # !!! Set to True to save the plots!!!
-    save = False
+    save = True
     save_dict = r"patch_plots"
     le2d = LinearElasticity2DProblem.from_functions(n, f, dirichlet_bc_func=u_exact_func1)
 
