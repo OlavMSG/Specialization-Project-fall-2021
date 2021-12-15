@@ -6,7 +6,8 @@ Please see the [Code used in report](code_use_for_report) for examples and plott
 from the report, as the [Patch Test](code_use_for_report/Patch_Test), 
 [Example 1 traction forces](code_use_for_report/Example_1_traction_forces) and 
 [Example 2 ``Gravity in 2D´´](code_use_for_report/Example_2_Gravity_in_2D).
-Whereas [Code not use in report](code_not_used_for_report) has some unused example code and 
+
+[Code not use in report](code_not_used_for_report) has some unused example code and 
 old plotting/example code.
 
 ## The solver Class
