@@ -37,7 +37,7 @@ for documentation.
 Please see [Gauss quadrature](src/linear_elasticity_2d_solver/_gauss_quadrature.py)
 for documentation.
 
-#### Normal plotting
+#### Plotting
 Please see [Plotting](src/linear_elasticity_2d_solver/_plotting.py)
 for documentation.
 
