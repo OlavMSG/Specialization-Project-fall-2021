@@ -35,7 +35,7 @@ def hf_save(hf_data, directory_path, has_neumann, has_non_homo_dirichlet, has_no
     has_non_homo_dirichlet : bool
         Does the problem have non homogeneous Dirichlet boundary conditions.
     has_non_homo_neumann : bool
-        DESCRIPTION.
+        Does the problem have non homogeneous Neumann boundary conditions.
     default_file_names_dict : dict, optional
         Dictionary of names for the files, see e.g. file_names_dict in default_constants.
         The default is file_names_dict.
@@ -97,7 +97,7 @@ def rb_save(n, rb_data, directory_path, has_neumann, has_non_homo_dirichlet, has
     has_non_homo_dirichlet : bool
         Does the problem have non homogeneous Dirichlet boundary conditions.
     has_non_homo_neumann : bool
-        DESCRIPTION.
+        Does the problem have non homogeneous Neumann boundary conditions.
     default_file_names_dict : dict, optional
         Dictionary of names for the files, see e.g. file_names_dict in default_constants.
         The default is file_names_dict.
@@ -129,10 +129,10 @@ def rb_save(n, rb_data, directory_path, has_neumann, has_non_homo_dirichlet, has
         f2_dir_rom_file_path = os.path.join(rb_folder_path, default_file_names_dict["f2_dir_rom"])
         np.save(f1_dir_rom_file_path, rb_data.f1_dirichlet_rom, allow_pickle=False)
         np.save(f2_dir_rom_file_path, rb_data.f2_dirichlet_rom, allow_pickle=False)
-    # the mattrix v
+    # the matrix v
     v_mat_file_path = os.path.join(rb_folder_path, default_file_names_dict["v"])
     np.save(v_mat_file_path, rb_data.v, allow_pickle=False)
-    # The sigular values squared
+    # The singular values squared
     sigma2_file_path = os.path.join(rb_folder_path, default_file_names_dict["sigma2"])
     np.save(sigma2_file_path, rb_data.sigma2_vec, allow_pickle=False)
     # Pod parameters
@@ -173,7 +173,7 @@ def hf_from_files(hf_data, directory_path, default_file_names_dict=file_names_di
     has_non_homo_dirichlet : bool
         Does the problem have non homogeneous Dirichlet boundary conditions.
     has_non_homo_neumann : bool
-        DESCRIPTION.
+        Does the problem have non homogeneous Neumann boundary conditions.
     
 
     """
@@ -198,7 +198,7 @@ def hf_from_files(hf_data, directory_path, default_file_names_dict=file_names_di
     hf_data.p = p_tri_edge['p']
     hf_data.tri = p_tri_edge['tri']
     hf_data.edge = p_tri_edge['edge']
-    # Neumann loead vector
+    # Neumann load vector
     f_load_neumann_file_path = os.path.join(hf_folder_path, default_file_names_dict["f_load_neumann"])
     has_neumann = os.path.isfile(f_load_neumann_file_path)
     has_non_homo_neumann = True

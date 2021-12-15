@@ -20,11 +20,11 @@ def f(x, y):
 # Here just example
 def neumann_bc_func(x, y):
     # sigma(u) @ normal_vec = _neumann_bc_func_non_vec
-    if abs(y + 1) < default_tol:  # south _edge, y = -1
+    if abs(y) <= default_tol:  # south _edge, y = 0
         return 1, 2
-    elif abs(x - 1) < default_tol:  # east _edge, x = 1
+    elif abs(x - 1) <= default_tol:  # east _edge, x = 1
         return 1, 2
-    elif abs(y - 1) < default_tol:  # north _edge, y = 1
+    elif abs(y - 1) <= default_tol:  # north _edge, y = 1
         return 1, 2
     else:
         # should not come here, but if we do return 0
@@ -32,25 +32,29 @@ def neumann_bc_func(x, y):
 
 
 # Here just example
-def dirichlet_bc_func(x, y, d):
-    if abs(x + 1) < default_tol:  # west _edge, x = -1
+def dirichlet_bc_func(x, y):
+    if abs(x) <= default_tol:  # west _edge, x = 0
         return 1, 2
     else:
         # should not come here, but if we do return 0
         return 0, 0
 
 
-# Here just example used
-def u_exact(x, y):
-    return (x * x - 1) * (y * y - 1)
+def clamped_bc(x, y):
+    return abs(x) <= default_tol
 
 
 def main():
     n = 10
     print(n)
     e_young, nu_poisson = 2.1e5, 0.3
-    le2d = LinearElasticity2DProblem.from_functions(n, f)
-    le2d.solve(e_young, nu_poisson)
+    le2d = LinearElasticity2DProblem.from_functions(n, f, get_dirichlet_edge_func=clamped_bc,
+                                                    dirichlet_bc_func=dirichlet_bc_func,
+                                                    neumann_bc_func=neumann_bc_func)
+    le2d.hfsolve(e_young, nu_poisson)
+    le2d.build_rb_model()
+    le2d.rbsolve(e_young, nu_poisson)
+    print(le2d.n_rom)
 
 
 if __name__ == '__main__':

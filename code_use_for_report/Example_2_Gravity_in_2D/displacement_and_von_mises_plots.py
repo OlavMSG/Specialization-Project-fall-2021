@@ -20,6 +20,7 @@ alpha = 8e3 * 100 * 9.81 * 0.01  # N/m^2
 def f(x, y):
     return alpha, 0
 
+
 def clamped_bc(x, y):
     return abs(x) <= default_tol
 

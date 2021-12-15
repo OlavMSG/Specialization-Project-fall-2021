@@ -64,7 +64,7 @@ class LinearElasticity2DProblem:
         self._hf_data.hf_assemble_a1_a2_f(self._f_func_vec, self._f_func_is_not_zeros)
 
         if self._has_neumann:
-            self._hf_data.hf_neumann_edge()
+            self._hf_data.edges()
             if self._has_non_homo_neumann:
                 self._hf_data.hf_assemble_f_neumann(self._neumann_bc_func_vec)
         else:
@@ -187,7 +187,7 @@ class LinearElasticity2DProblem:
             error_text = "Computing the reduced basis form saved data gives different results, " \
                          + "and is therefore not implemented. (Most likely because instability in " \
                          + "singular_values_squared computation in POD algorithm)."
-            raise NotImplemented(error_text)
+            raise NotImplementedError(error_text)
         # set the parameters for building the reduce model
         self._rb_data.set_rb_model_params(grid, e_young_range, nu_poisson_range, eps_pod, mode, n_rom_cut)
         start_time = perf_counter()
@@ -358,6 +358,15 @@ class LinearElasticity2DProblem:
             rb_save(self._hf_data.n, self._rb_data, directory_path, self._has_neumann, self._has_non_homo_dirichlet,
                     self._has_non_homo_neumann, default_file_names_dict=self.DEFAULT_FILE_NAMES_DICT)
 
+    def _set_vec_functions(self):
+        self._f_func_vec = VectorizedFunction2D(self._f_func_non_vec)
+        if self._neumann_bc_func_non_vec is not None:
+            self._neumann_bc_func_vec = VectorizedFunction2D(self._neumann_bc_func_non_vec)
+            self._has_neumann = True
+        if self._dirichlet_bc_func_non_vec is not None:
+            self._dirichlet_bc_func_vec = VectorizedFunction2D(self._dirichlet_bc_func_non_vec)
+            self._has_non_homo_dirichlet = True
+
     @classmethod
     def from_saves(cls, n, directory_path, rb_warnings=True, print_info=True):
 
@@ -381,15 +390,6 @@ class LinearElasticity2DProblem:
                 print("Loaded the reduced order data in {:.6f} sec".format(perf_counter() - start_time))
         problem._is_form_files = True
         return problem
-
-    def _set_vec_functions(self):
-        self._f_func_vec = VectorizedFunction2D(self._f_func_non_vec)
-        if self._neumann_bc_func_non_vec is not None:
-            self._neumann_bc_func_vec = VectorizedFunction2D(self._neumann_bc_func_non_vec)
-            self._has_neumann = True
-        if self._dirichlet_bc_func_non_vec is not None:
-            self._dirichlet_bc_func_vec = VectorizedFunction2D(self._dirichlet_bc_func_non_vec)
-            self._has_non_homo_dirichlet = True
 
     @classmethod
     def from_functions(cls, n, f_func, dirichlet_bc_func=None, get_dirichlet_edge_func=None,
