@@ -1,6 +1,6 @@
 # TMA4500 Industrial Mathematics, Specialization Project
 
-My code for building a reduced order model for the linear elasticity equation on a square in 2D.
+My code for building a reduced-order model for the linear elasticity equation on a square in 2D, solving for plane stress, under the conditons that the body force f, the prescribed traction force(s) h on the Neumann bondary and the prescribed displacment u on the Dirichlet boundary do not depend on my choice of parameters, the Young's module E and the Poisson ration &nu;.
 
 Please see the [Code used in report](code_use_for_report) for code for the examples and the plotting results 
 from the report, as the [Patch Test](code_use_for_report/Patch_Test), 
