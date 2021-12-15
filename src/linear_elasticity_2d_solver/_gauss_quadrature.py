@@ -8,6 +8,26 @@ from scipy.special import roots_legendre
 
 
 def line_integral_with_basis(a, b, nq, g):
+    """
+    Line integral with local basis functions on line from a to b
+
+    Parameters
+    ----------
+    a : np.array
+        point a.
+    b : np.array
+        point b.
+    nq : int
+        scheme order.
+    g : function
+        the function to integrate (times basis functions).
+
+    Returns
+    -------
+    line_ints : np.array
+        array of line integrals.
+
+    """
     z, rho = roots_legendre(nq)
     # Weights and gaussian quadrature points
     # if nq == 1:
@@ -52,6 +72,28 @@ def line_integral_with_basis(a, b, nq, g):
 
 
 def quadrature2D(p1, p2, p3, nq, g):
+    """
+    Integral over the triangle with vertices in p1, p2 and p3
+
+    Parameters
+    ----------
+    p1 : np.array
+        point p1.
+    p2 : np.array
+        point p2.
+    p3 : np.array
+        point p3.
+    nq : int
+        scheme order.
+    g : function
+        the function to integrate.
+
+    Returns
+    -------
+    float
+        value of integral.
+
+    """
     # Weights and gaussian quadrature points
     z, rho = get_points_and_weights_quad_2D(nq)
     # calculate the area of the triangle
@@ -65,6 +107,27 @@ def quadrature2D(p1, p2, p3, nq, g):
 
 
 def get_points_and_weights_quad_2D(nq):
+    """
+    Get Gauss quadrature points and weighs in 2D
+
+    Parameters
+    ----------
+    nq : int
+        scheme order.
+
+    Raises
+    ------
+    ValueError
+        if nq is not {1, 3, 4}.
+
+    Returns
+    -------
+    z : np.array
+        quadrature points.
+    rho : np.array
+        quadrature weights.
+
+    """
     # Weights and gaussian quadrature points
     if nq == 1:
         z = np.ones((1, 3), dtype=float) / 3
@@ -91,5 +154,23 @@ def get_points_and_weights_quad_2D(nq):
 
 
 def get_area_triangle(p1, p2, p3):
+    """
+    Get the area of the triangle with vertices in p1, p2 and p3
+
+    Parameters
+    ----------
+    p1 : np.array
+        point p1.
+    p2 : np.array
+        point p2.
+    p3 : np.array
+        point p3.
+
+    Returns
+    -------
+    float
+        area of triangle.
+
+    """
     det_jac = (p1[0] - p3[0]) * (p2[1] - p3[1]) - (p2[0] - p3[0]) * (p1[1] - p3[1])
     return 0.5 * abs(det_jac)

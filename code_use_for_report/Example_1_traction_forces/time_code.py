@@ -11,6 +11,7 @@ from linear_elasticity_2d_solver.default_constants import default_tol, e_young_r
 e_mean = np.mean(e_young_range)
 nu_mean = np.mean(nu_poisson_range)
 
+
 # Example 1: Traction forces
 def clamped_bc(x, y):
     return abs(x) <= default_tol
@@ -44,7 +45,7 @@ if __name__ == '__main__':
         print("-" * 50)
         print(f"Nodes along one axis n: {le2d.n}")
         print(f"HF system full size n_full: {le2d.n_full}")
-        print(f"Sample mode used for E_young and nu_poisson: {le2d.pod_mode}")
+        print(f"Sample mode used for E_young and nu_poisson: {le2d.pod_sampling_mode}")
         print(f"Number of sample values used for E_young and nu_poisson (E, nu): {le2d.rb_grid}")
         print(f"ns for solution matrix (ns_rom): {le2d.ns_rom}")
         print(f"Solution matrix rank: {le2d.solution_matrix_rank}")

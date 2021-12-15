@@ -5,11 +5,19 @@
 import numpy as np
 
 from ._pod import compute_v
-from .default_constants import eps_pod, e_young_range, nu_poisson_range, rb_grid, pod_mode, n_rom_cut
+from .default_constants import eps_pod, e_young_range, nu_poisson_range, rb_grid, pod_sampling_mode, n_rom_cut
 
 
 class ReducedOrderData:
     def __init__(self):
+        """
+        Setup
+
+        Returns
+        -------
+        None.
+
+        """
         # set to something it never is
         self.last_n_rom = -1
         # set as a large number
@@ -21,7 +29,7 @@ class ReducedOrderData:
         self.rb_grid = rb_grid
         self.ns_rom = rb_grid[0] * rb_grid[1]
         self.eps_pod = eps_pod
-        self.pod_mode = pod_mode
+        self.pod_sampling_mode = pod_sampling_mode
 
         self.v = None
         self.n_rom = None
@@ -56,7 +64,7 @@ class ReducedOrderData:
         if eps_pod is not None:
             self.eps_pod = eps_pod
         if mode is not None:
-            self.pod_mode = mode
+            self.pod_sampling_mode = mode
         if n_rom_cut is not None:
             self.n_rom_cut = n_rom_cut
 

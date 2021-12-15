@@ -18,7 +18,8 @@ from ._rb_data_class import ReducedOrderData
 from ._save_and_load import hf_save, rb_save, rb_from_files, hf_from_files
 from ._solution_function_class import SolutionFunctionValues2D
 from ._stress_recovery import get_von_mises_stress, get_nodal_stress
-from .default_constants import file_names_dict, eps_pod, e_young_range, nu_poisson_range, rb_grid, pod_mode, n_rom_cut
+from .default_constants import file_names_dict, eps_pod, e_young_range, nu_poisson_range, rb_grid, pod_sampling_mode, \
+    n_rom_cut
 from .exceptions import IsNotAssembledError, PodNotComputedError, CanNotForceNromError, DirectoryDoesNotExistsError, \
     MissingInputFunctionPointerError, LinearElasticity2DProblemNotSolved, PlateLimitsNotFoundError, \
     CanNotComputeSolutionMatrixRankError
@@ -30,7 +31,12 @@ class LinearElasticity2DProblem:
 
     def __init__(self):
         """
-        Initial constructor.
+        Setup
+
+        Returns
+        -------
+        None.
+
         """
         self._f_func_non_vec = None
         self._neumann_bc_func_non_vec = None
@@ -174,7 +180,7 @@ class LinearElasticity2DProblem:
             print("Get solution by the property uh_rom, uh_rom_free or uh_rom_full of the class.\n" +
                   "The property uh_rom, extra properties values, x and y are available.")
 
-    def build_rb_model(self, grid=rb_grid, mode=pod_mode, e_young_range=e_young_range,
+    def build_rb_model(self, grid=rb_grid, mode=pod_sampling_mode, e_young_range=e_young_range,
                        nu_poisson_range=nu_poisson_range, eps_pod=eps_pod, n_rom_cut=n_rom_cut,
                        print_info=True):
         if self._is_form_files:
@@ -597,7 +603,7 @@ class LinearElasticity2DProblem:
     def pod_mode(self):
         if not self._is_pod_computed:
             warnings.warn("Pod is not computed. Returning default value.")
-        return self._rb_data.pod_mode
+        return self._rb_data.pod_sampling_mode
 
     @property
     def e_young_nu_poisson_mat(self):

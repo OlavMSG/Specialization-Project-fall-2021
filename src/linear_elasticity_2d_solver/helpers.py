@@ -374,29 +374,92 @@ class FunctionValues2D:
 
     @property
     def values(self):
+        """
+        Values
+
+        Returns
+        -------
+        np.array
+            values
+
+        """
         return self._values
 
     @property
     def x(self):
+        """
+        x-values
+
+        Returns
+        -------
+        np.array
+            x-values.
+
+        """
         return self._values[:, 0]
 
     @property
     def y(self):
+        """
+        y-values
+
+        Returns
+        -------
+        np.array
+            y-values.
+
+        """
         return self._values[:, 1]
 
     @property
     def flatt_values(self):
+        """
+        The flattened values
+
+        Returns
+        -------
+        np.array
+            flatted values in form [x0, y0, x1, y1, ...].
+
+        """
         # return [x0, y0, x1, y1, ...]
         return self._values.reshape((1, self.n * 2)).ravel()
 
     @property
     def dim(self):
+        """
+        Dimension
+
+        Returns
+        -------
+        int
+            dimension.
+
+        """
         return 2
 
     @property
     def n(self):
+        """
+        Number of (x,y)-values
+
+        Returns
+        -------
+        int
+            number of (x,y)-values.
+
+        """
         return self._n
 
     @property
     def shape(self):
+        """
+        Shape
+
+        Returns
+        -------
+        tuple
+            shape of values.
+
+        """
         return self._values.shape

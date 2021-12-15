@@ -101,16 +101,52 @@ class SolutionFunctionValues2D(FunctionValues2D):
 
     @property
     def e_young(self):
+        """
+        The Young's module E
+
+        Returns
+        -------
+        float
+            the Young's module E.
+
+        """
         return self._e_young
 
     @property
     def nu_poisson(self):
+        """
+        The Poisson ratio nu
+
+        Returns
+        -------
+        float
+            the Poisson ratio nu.
+
+        """
         return self._nu_poisson
 
     @property
     def nodal_stress(self):
+        """
+        The nodal stress
+
+        Returns
+        -------
+        np.array
+            nodal stress.
+
+        """
         return self._nodal_stress
 
     @property
     def von_mises(self):
+        """
+        Von Mises stress
+
+        Returns
+        -------
+        np.array
+            von Mises stress.
+
+        """
         return self._von_mises

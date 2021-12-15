@@ -14,6 +14,14 @@ from .helpers import expand_index, FunctionValues2D
 class HighFidelityData:
 
     def __init__(self):
+        """
+        Setup
+
+        Returns
+        -------
+        None.
+
+        """
 
         self.get_dirichlet_edge_func = None
 

@@ -10,7 +10,7 @@
 # Returns:
 #   p		Nodal points, (x,y)-coordinates for point i given in row i.
 #   tri   	Elements. Index to the three corners of element i given in row i.
-#   edge  	Index list of all nodal points on the outer _edge.
+#   edge  	Index list of all nodal points on the outer edge.
 #
 #   Written by Olav M. S. Gran using the
 #   Boiler code by: Kjetil a. Johannessen, Abdullah Abdulhaque (October 2019)
@@ -22,6 +22,20 @@ import scipy.spatial as spsa
 
 
 def _make_edge(n):
+    """
+    Make the edge
+
+    Parameters
+    ----------
+    n : int
+        Number of nodes in each spatial direction (n^2 total nodes).
+
+    Returns
+    -------
+    edge : np.array
+        Index list of all nodal points on the outer edge.
+
+    """
     n2 = n * n
     # Generating nodal points on outer _edge.
     south_edge = np.array([np.arange(1, n), np.arange(2, n + 1)]).T
@@ -36,6 +50,28 @@ def _make_edge(n):
 
 
 def getPlatev2(n, a=0, b=1):
+    """
+    Get the plate (a,b)^2, version 2
+
+    Parameters
+    ----------
+    n : int
+        Number of nodes in each spatial direction (n^2 total nodes).
+    a : float, optional
+        Lower limit for x and y. The default is 0.
+    b : float, optional
+        Upper limit for x and y. The default is 1.
+
+    Returns
+    -------
+    p : np.array
+        Nodal points, (x,y)-coordinates for point i given in row i.
+    tri : np.array
+        Elements. Index to the three corners of element i given in row i.
+    edge : np.array
+        Index list of all nodal points on the outer edge.
+
+    """
     # Defining auxiliary variables.
     l = np.linspace(a, b, n)
     y, x = np.meshgrid(l, l)
@@ -54,6 +90,28 @@ def getPlatev2(n, a=0, b=1):
 
 
 def getPlatev3(n, a=0, b=1):
+    """
+    Get the plate (a,b)^2, version 3
+
+    Parameters
+    ----------
+    n : int
+        Number of nodes in each spatial direction (n^2 total nodes).
+    a : float, optional
+        Lower limit for x and y. The default is 0.
+    b : float, optional
+        Upper limit for x and y. The default is 1.
+
+    Returns
+    -------
+    p : np.array
+        Nodal points, (x,y)-coordinates for point i given in row i.
+    tri : np.array
+        Elements. Index to the three corners of element i given in row i.
+    edge : np.array
+        Index list of all nodal points on the outer edge.
+
+    """
     # Defining auxiliary variables.
     l = np.linspace(a, b, n)
     y, x = np.meshgrid(l, l)

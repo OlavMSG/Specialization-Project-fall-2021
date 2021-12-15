@@ -39,7 +39,7 @@ if __name__ == '__main__':
         print("-" * 50)
         print(f"Nodes along one axis n: {le2d.n}")
         print(f"HF system full size n_full: {le2d.n_full}")
-        print(f"Sample mode used for E_young and nu_poisson: {le2d.pod_mode}")
+        print(f"Sample mode used for E_young and nu_poisson: {le2d.pod_sampling_mode}")
         print(f"Number of sample values used for E_young and nu_poisson (E, nu): {le2d.rb_grid}")
         print(f"ns for solution matrix (ns_rom): {le2d.ns_rom}")
         print(f"Solution matrix rank: {le2d.solution_matrix_rank}")

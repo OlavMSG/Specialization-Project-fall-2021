@@ -44,8 +44,8 @@ def make_solution_matrix(ns, e_young_vec, nu_poisson_vec, le2d):
 
 
 def pod_with_energy_norm(le2d, rb_data):
-    e_young_vec = get_vec_from_range(rb_data.e_young_range, rb_data.rb_grid[0], rb_data.pod_mode)
-    nu_poisson_vec = get_vec_from_range(rb_data.nu_poisson_range, rb_data.rb_grid[1], rb_data.pod_mode)
+    e_young_vec = get_vec_from_range(rb_data.e_young_range, rb_data.rb_grid[0], rb_data.pod_sampling_mode)
+    nu_poisson_vec = get_vec_from_range(rb_data.nu_poisson_range, rb_data.rb_grid[1], rb_data.pod_sampling_mode)
 
     e_mean = np.mean(rb_data.e_young_range)
     nu_mean = np.mean(rb_data.nu_poisson_range)
@@ -82,6 +82,6 @@ def compute_v(n, n_free, rb_data):
 
 
 def get_e_young_nu_poisson_mat(rb_data):
-    e_young_vec = get_vec_from_range(rb_data.e_young_range, rb_data.rb_grid[0], rb_data.pod_mode)
-    nu_poisson_vec = get_vec_from_range(rb_data.nu_poisson_range, rb_data.rb_grid[1], rb_data.pod_mode)
+    e_young_vec = get_vec_from_range(rb_data.e_young_range, rb_data.rb_grid[0], rb_data.pod_sampling_mode)
+    nu_poisson_vec = get_vec_from_range(rb_data.nu_poisson_range, rb_data.rb_grid[1], rb_data.pod_sampling_mode)
     return np.array(list(product(e_young_vec, nu_poisson_vec)))
