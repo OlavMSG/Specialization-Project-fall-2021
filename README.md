@@ -1,6 +1,7 @@
 # TMA4500 Industrial Mathematics, Specialization Project
 
 My code for building a reduced order model for the linear elasticity equation on a square in 2D.
+
 Please see the [Code used in report](code_use_for_report) for examples and plotting results 
 from the report, as the [Patch Test](code_use_for_report/Patch_Test), 
 [Example 1 traction forces](code_use_for_report/Example_1_traction_forces) and 
