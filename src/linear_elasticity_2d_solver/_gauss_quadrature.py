@@ -18,7 +18,7 @@ def line_integral_with_basis(a, b, nq, g):
     b : np.array
         point b.
     nq : int
-        scheme order.
+            scheme order.
     g : function
         the function to integrate (times basis functions).
 

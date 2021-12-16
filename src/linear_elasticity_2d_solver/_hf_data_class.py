@@ -22,28 +22,31 @@ class HighFidelityData:
         None.
 
         """
-
+        # function to get the Dirichlet edge
         self.get_dirichlet_edge_func = None
-
+        # Triangulation
         self.p = None
         self.tri = None
         self.edge = None
-
+        # full matrices and load vectors
         self.a1_full = None
         self.a2_full = None
         self.f_load_lv_full = None
         self.f_load_neumann_full = None
+        # lifting function
         self.rg = None
-
+        # Dirichlet and Neumann edge
         self.dirichlet_edge = None
         self.neumann_edge = None
-
+        # size parameter
         self.n = None
+        # full number of degrees
         self.n_full = None
+        # hf number of degrees of freedom
         self.n_free = None
-
+        # the plate limits
         self.plate_limits = plate_limits
-
+        # free and dirichlet indexes
         self.free_index = None
         self.dirichlet_edge_index = None
         self.expanded_free_index = None

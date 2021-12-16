@@ -151,7 +151,7 @@ def plot_von_mises(uh, n, p, tri, solve_mode="", levels=None):
     tri : np.array
         Elements. Index to the three corners of element i given in row i..
     solve_mode : str, optional
-        high-fidelity ("hf"), reduced-order ("rb") or nothing ("") displacement text. The default is "".
+        high-fidelity ("hf"), reduced-order ("rb") or nothing ("") von Mises text. The default is "".
     levels : np.array, optional
         array for the color levels, default 25 levels between 0 and max(von_mises). The default is None.
 

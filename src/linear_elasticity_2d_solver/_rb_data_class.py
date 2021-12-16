@@ -18,26 +18,35 @@ class ReducedOrderData:
         None.
 
         """
-        # set to something it never is
+        # last n_rom used, set to something it never is
         self.last_n_rom = -1
-        # set as a large number
+        # maximum pod depet, set as a large number
         self.n_rom_max = np.inf
+        # where to cut for n_rom_max
         self.n_rom_cut = n_rom_cut
-
+        # Young's module range
         self.e_young_range = e_young_range
+        # Poisson ratio range
         self.nu_poisson_range = nu_poisson_range
+        # sampling grid
         self.rb_grid = rb_grid
+        # number of snapshots
         self.ns_rom = rb_grid[0] * rb_grid[1]
+        # pod tolerance
         self.eps_pod = eps_pod
+        # pod sampling mode
         self.pod_sampling_mode = pod_sampling_mode
-
+        # pod matrices and eigenvectors
         self.v = None
-        self.n_rom = None
-        self.s_mat = None
         self.z_mat = None
-        self.sigma2_vec = None
         self.x05 = None
-
+        # snapshot matrix
+        self.s_mat = None
+        # singular values squared
+        self.sigma2_vec = None
+        # rb deegres of freedom
+        self.n_rom = None
+        # rb matrices and load vectors
         self.a1_free_rom = None
         self.a2_free_rom = None
         self.f_load_lv_free_rom = None

@@ -75,9 +75,9 @@ def get_lambda_mu(e_young, nu_poisson):
 
     Parameters
     ----------
-    e_young : float, np.float, np.array
+    e_young : float, np.float, np.ndarray
         young's module.
-    nu_poisson : float, np.float, np.array
+    nu_poisson : float, np.float, np.ndarray
         poisson ratio.
 
     Returns
