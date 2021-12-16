@@ -30,7 +30,7 @@ for documentation.
 Please see [Get plate](src/linear_elasticity_2d_solver/get_plate.py)
 for documentation.
 
-## Other documentation
+### Other documentation
 #### High-fidelity assembly
 Please see [Default constants](src/linear_elasticity_2d_solver/default_constants.py)
 for documentation.
