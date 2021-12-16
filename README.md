@@ -10,6 +10,8 @@ from the report, as the [Patch Test](code_use_for_report/Patch_Test),
 [Code not use in report](code_not_used_for_report) has some unused code (example code) and 
 old plotting/example code.
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5786409.svg)](https://doi.org/10.5281/zenodo.5786409)
+
 ## The solver Class
 Please see [LinearElasticity2DProblem](src/linear_elasticity_2d_solver/_linear_elasticity_2d_problem_class.py)
 for more documentation.
